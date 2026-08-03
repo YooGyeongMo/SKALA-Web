@@ -2,6 +2,7 @@
 import LessonLayout from '@/layouts/LessonLayout.vue'
 import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
 import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
+import WeatherParent from '@/practices/component/WeatherParent.vue'
 </script>
 
 <template>
@@ -39,6 +40,23 @@ import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
       </template>
       <template #preview>
         <WeatherComposition />
+      </template>
+    </LessonLayout>
+
+    <LessonLayout index="03" title="날씨 컴포넌트" subtitle="props · emits · slot · scoped">
+      <template #spec>
+        <ul class="spec-list">
+          <li>4개 컴포넌트 분리 — 기능 변경 없음</li>
+          <li>WeatherParent — 반응형 데이터 소유</li>
+          <li>BaseDashboardCard — 공통 디자인 + <code>slot</code></li>
+          <li>SearchBar — <code>props</code> / <code>update-query</code></li>
+          <li>WeatherCard — <code>select-card</code> / <code>click-detail</code></li>
+          <li>튜닝 — header/footer Named Slot · actions Scoped Slot</li>
+        </ul>
+        <p class="spec-note">각 컴포넌트 스타일은 style scoped로 분리</p>
+      </template>
+      <template #preview>
+        <WeatherParent />
       </template>
     </LessonLayout>
   </div>
