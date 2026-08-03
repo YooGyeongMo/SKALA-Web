@@ -15,6 +15,21 @@ const weatherList = ref([
 // 타이핑 즉시 동기화가 필요할 때는 :value + @input 조합을 쓴다
 const searchQuery = ref('')
 
+// [튜닝] v-model.trim.lazy 비교용 검색어
+// - @input: 키 입력마다 즉시 반영
+// - .lazy: input 대신 change 이벤트(포커스 아웃/Enter) 시점에 반영
+// - .trim: 반영될 때 앞뒤 공백 자동 제거
+const lazyQuery = ref('')
+
+// [튜닝] v-memo 리렌더링 횟수 확인용 카운터
+// 반응형으로 만들면 카운트 갱신이 다시 렌더를 부르므로 일반 객체를 쓴다
+const renderCounts = {}
+const logCardRender = (name) => {
+  renderCounts[name] = (renderCounts[name] || 0) + 1
+  console.log(`[v-memo] ${name} 카드 렌더 ${renderCounts[name]}회`)
+  return '' // 화면에는 아무것도 출력하지 않는다
+}
+
 // 상태바 문구
 const selectedCityInfo = ref('카드를 클릭하거나 검색해 보세요.')
 
@@ -38,18 +53,34 @@ const showDetail = (cityName, status) => {
       <p class="search-echo">
         검색 중인 도시: <strong>{{ searchQuery }}</strong>
       </p>
+
+      <!-- [튜닝] v-model.trim.lazy 동작 비교
+           위 입력은 타이핑 즉시 반영되고, 아래 입력은 Enter나 포커스 아웃 시점에 반영된다 -->
+      <input
+        v-model.trim.lazy="lazyQuery"
+        type="text"
+        placeholder="v-model.trim.lazy 비교 (Enter/포커스 아웃 시 반영)"
+        class="search-input compare"
+      />
+      <p class="search-echo">
+        지연 반영된 값: <strong>{{ lazyQuery }}</strong>
+      </p>
     </section>
 
     <section class="list-box">
       <h3 class="box-title">지역별 날씨 현황</h3>
 
       <!-- 배열 렌더링: :key에는 반드시 고유 id를 바인딩한다 -->
+      <!-- [튜닝] v-memo: temp/status가 그대로면 이 카드의 DOM 패치를 건너뛴다.
+           검색어 타이핑으로 컴포넌트가 다시 렌더돼도 카드 렌더 로그가 늘지 않는 것으로 확인 -->
       <article
         v-for="item in weatherList"
         :key="item.id"
+        v-memo="[item.temp, item.status]"
         class="weather-card"
         @click="selectedCityInfo = `${item.name}이 선택되었습니다.`"
       >
+        {{ logCardRender(item.name) }}
         <div class="card-main">
           <h4 class="city-name">
             {{ item.name }} <span class="city-status">{{ item.status }}</span>
@@ -97,6 +128,12 @@ const showDetail = (cityName, status) => {
 
 .search-input:focus {
   box-shadow: 2px 2px 0 var(--line-strong);
+}
+
+.search-input.compare {
+  margin-top: var(--s2);
+  border-color: var(--line);
+  border-style: dashed;
 }
 
 .search-echo {
