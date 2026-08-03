@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, watchEffect } from 'vue'
 
 // [1일차 동일] 가상의 백엔드 날씨 데이터
 const weatherList = ref([
@@ -24,6 +24,22 @@ const filteredWeatherList = computed(() => {
   const query = searchQuery.value.trim()
   if (!query) return weatherList.value
   return weatherList.value.filter((item) => item.name.includes(query))
+})
+
+// watch: 감시 대상을 명시하고, 바뀌기 전/후 값을 함께 받는다
+// [튜닝] immediate: true — 최초 마운트 시점에도 콜백이 1회 실행된다 (콘솔로 확인)
+watch(
+  selectedCityInfo,
+  (newInfo, oldInfo) => {
+    console.log(`[watch] 상태 바 문구 변경: "${oldInfo ?? '(최초 마운트)'}" → "${newInfo}"`)
+  },
+  { immediate: true },
+)
+
+// watchEffect: 콜백 안에서 읽은 반응형 값(searchQuery)을 자동으로 추적한다
+// 등록 즉시 1회 실행되는 것이 watch와의 차이
+watchEffect(() => {
+  console.log(`[watchEffect] 현재 검색어 '${searchQuery.value}' 에 매칭되는 데이터를 필터링합니다.`)
 })
 </script>
 
