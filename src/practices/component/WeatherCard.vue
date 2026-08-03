@@ -24,10 +24,17 @@ const emit = defineEmits(['select-card', 'click-detail'])
     <span v-else-if="cityItem.temp >= 20" class="chip mild">🌤 보통 (20~24도)</span>
     <span v-else class="chip cool">❄️ 선선함 (20도 미만)</span>
 
-    <!-- .stop: 카드 select-card 클릭과 겹치지 않도록 버블링 차단 -->
-    <button class="btn-detail" @click.stop="emit('click-detail', cityItem.name, cityItem.status)">
-      상세보기
-    </button>
+    <!-- [튜닝] Scoped Slot: 상세보기 버튼 영역을 부모가 커스터마이징할 수 있다.
+         :city로 현재 카드의 도시 데이터를 슬롯 밖(부모)에 넘겨준다.
+         부모가 슬롯을 채우지 않으면 아래 기본 상세보기 버튼이 렌더링된다.
+         래퍼의 @click.stop으로 카드 select-card와의 버블링을 차단한다 -->
+    <div class="card-actions" @click.stop>
+      <slot name="actions" :city="cityItem">
+        <button class="btn-detail" @click="emit('click-detail', cityItem.name, cityItem.status)">
+          상세보기
+        </button>
+      </slot>
+    </div>
   </article>
 </template>
 
@@ -90,10 +97,13 @@ const emit = defineEmits(['select-card', 'click-detail'])
   color: var(--cool);
 }
 
-.btn-detail {
+.card-actions {
   position: absolute;
   right: var(--s2);
   bottom: var(--s2);
+}
+
+.btn-detail {
   padding: 4px 12px;
   font-size: 12px;
   background: var(--paper);

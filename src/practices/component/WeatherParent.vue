@@ -41,13 +41,22 @@ const showDetail = (cityName, status) => {
     <BaseDashboardCard>
       <template #header>지역별 날씨 현황</template>
 
+      <!-- [튜닝] Scoped Slot으로 상세보기 영역을 부모가 직접 구성한다.
+           슬롯 내용은 부모 스코프에서 컴파일되므로 부모의 showDetail을 바로 호출할 수 있다.
+           이 template 블록을 지우면 WeatherCard의 기본 상세보기 버튼이 나타난다 -->
       <WeatherCard
         v-for="item in filteredWeatherList"
         :key="item.id"
         :city-item="item"
         @select-card="(msg) => (selectedCityInfo = msg)"
         @click-detail="showDetail"
-      />
+      >
+        <template #actions="{ city }">
+          <button class="btn-report" @click="showDetail(city.name, city.status)">
+            {{ city.name }} 리포트
+          </button>
+        </template>
+      </WeatherCard>
 
       <p v-if="filteredWeatherList.length === 0" class="empty-result">
         검색 결과와 일치하는 도시가 없습니다.
@@ -65,6 +74,22 @@ const showDetail = (cityName, status) => {
   display: grid;
   gap: var(--s1);
   max-width: 560px;
+}
+
+/* 슬롯으로 주입한 버튼 — 부모 스코프이므로 부모의 scoped 스타일이 적용된다 */
+.btn-report {
+  padding: 4px 12px;
+  font-size: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-report:hover {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .empty-result {
