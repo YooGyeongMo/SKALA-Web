@@ -102,13 +102,11 @@ defineProps({
   gap: var(--s2);
 }
 
+/* 모눈 대신 담백한 단색 캔버스 — 카드가 배경과 싸우지 않게 */
 .preview-canvas {
-  border: 1px solid var(--line-strong);
-  background-color: var(--canvas);
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 24px 24px;
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--line-strong);
+  background: var(--canvas);
   padding: var(--s4);
 }
 

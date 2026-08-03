@@ -20,7 +20,7 @@
 <style scoped>
 .base-dashboard-card {
   background: var(--paper);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   padding: var(--s2);
   margin-bottom: var(--s2);
 }

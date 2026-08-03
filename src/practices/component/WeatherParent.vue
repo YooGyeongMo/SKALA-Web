@@ -101,8 +101,9 @@ const showDetail = (cityName, status) => {
 }
 
 .status-bar {
-  border: 1px solid var(--line-strong);
-  border-left: 6px solid var(--line-strong);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
   padding: 10px var(--s2);
   font-size: 13px;
   font-weight: 500;

@@ -51,6 +51,7 @@ const emit = defineEmits(['select-card', 'click-detail'])
 
 .weather-card:hover {
   border-color: var(--line-strong);
+  box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
 }
 
 .card-main {
@@ -80,20 +81,22 @@ const emit = defineEmits(['select-card', 'click-detail'])
 .chip {
   display: inline-block;
   margin-top: var(--s1);
-  padding: 2px 10px;
+  padding: 3px 10px;
   font-size: 12px;
-  border: 1px solid currentColor;
 }
 
 .chip.hot {
+  background: var(--hot-bg);
   color: var(--hot);
 }
 
 .chip.mild {
+  background: var(--mild-bg);
   color: var(--mild);
 }
 
 .chip.cool {
+  background: var(--cool-bg);
   color: var(--cool);
 }
 
