@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 // [1일차 동일] 가상의 백엔드 날씨 데이터
 const weatherList = ref([
@@ -16,6 +16,15 @@ const selectedCityInfo = ref('카드를 클릭하거나 검색해 보세요.')
 const showDetail = (cityName, status) => {
   window.alert(`${cityName}의 현재 날씨는 [${status}] 상태입니다.`)
 }
+
+// computed: 검색어가 도시 이름에 포함된 항목만 필터링
+// - 검색어가 비어 있으면 원본 배열 그대로 반환
+// - 의존하는 값(searchQuery, weatherList)이 바뀔 때만 다시 계산된다
+const filteredWeatherList = computed(() => {
+  const query = searchQuery.value.trim()
+  if (!query) return weatherList.value
+  return weatherList.value.filter((item) => item.name.includes(query))
+})
 </script>
 
 <template>
@@ -37,8 +46,10 @@ const showDetail = (cityName, status) => {
     <section class="list-box">
       <h3 class="box-title">지역별 날씨 현황</h3>
 
+      <!-- 원본 대신 computed 결과를 렌더링한다
+           빈 검색어 → 원본 전체 / 일치 → 해당 데이터만 -->
       <article
-        v-for="item in weatherList"
+        v-for="item in filteredWeatherList"
         :key="item.id"
         class="weather-card"
         @click="selectedCityInfo = `${item.name}이 선택되었습니다.`"
@@ -56,6 +67,11 @@ const showDetail = (cityName, status) => {
 
         <button class="btn-detail" @click.stop="showDetail(item.name, item.status)">상세보기</button>
       </article>
+
+      <!-- 불일치: 검색 결과가 없을 때 안내 -->
+      <p v-if="filteredWeatherList.length === 0" class="empty-result">
+        검색 결과와 일치하는 도시가 없습니다.
+      </p>
     </section>
 
     <div class="status-bar">{{ selectedCityInfo }}</div>
@@ -181,5 +197,13 @@ const showDetail = (cityName, status) => {
   padding: 10px var(--s2);
   font-size: 13px;
   font-weight: 500;
+}
+
+.empty-result {
+  border: 1px dashed var(--line);
+  padding: var(--s2);
+  text-align: center;
+  font-size: 13px;
+  color: var(--hot);
 }
 </style>
