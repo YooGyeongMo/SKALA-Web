@@ -43,10 +43,13 @@ const showDetail = (cityName, status) => {
   <div class="mockup">
     <section class="search-box">
       <h3 class="box-title">도시 검색</h3>
+
+      <!-- 방식 A: 타이핑 즉시 반영 -->
+      <p class="input-label">A. 즉시 반영 — <code>:value</code> / <code>@input</code></p>
       <input
         type="text"
         :value="searchQuery"
-        placeholder="검색할 도시 이름 입력"
+        placeholder="타이핑하는 글자마다 아래에 바로 반영"
         class="search-input"
         @input="(e) => (searchQuery = e.target.value)"
       />
@@ -54,12 +57,15 @@ const showDetail = (cityName, status) => {
         검색 중인 도시: <strong>{{ searchQuery }}</strong>
       </p>
 
-      <!-- [튜닝] v-model.trim.lazy 동작 비교
-           위 입력은 타이핑 즉시 반영되고, 아래 입력은 Enter나 포커스 아웃 시점에 반영된다 -->
+      <!-- [튜닝] 방식 B: 지연 반영 비교 (A와 독립된 별도 입력)
+           이 칸에 직접 입력해야 하며, Enter나 포커스 아웃 시점에만 반영된다 -->
+      <p class="input-label compare-label">
+        B. 지연 반영 — <code>v-model.trim.lazy</code> · 이 칸에 입력 후 Enter
+      </p>
       <input
         v-model.trim.lazy="lazyQuery"
         type="text"
-        placeholder="v-model.trim.lazy 비교 (Enter/포커스 아웃 시 반영)"
+        placeholder="타이핑 중엔 조용하다가 Enter/포커스 아웃 때 반영"
         class="search-input compare"
       />
       <p class="search-echo">
@@ -142,9 +148,31 @@ const showDetail = (cityName, status) => {
 }
 
 .search-input.compare {
-  margin-top: var(--s2);
   border-color: var(--line);
   border-style: dashed;
+}
+
+.input-label {
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+.input-label.compare-label {
+  margin-top: var(--s2);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.input-label code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  padding: 0 4px;
 }
 
 .search-echo {
