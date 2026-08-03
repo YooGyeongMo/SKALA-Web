@@ -7,10 +7,29 @@ const weatherList = ref([
   { id: 'city_02', name: '수원', temp: 24, status: '비' },
   { id: 'city_03', name: '부산', temp: 26, status: '구름' },
 ])
+
+// 검색어 상태
+// v-model은 한글(IME) 조합이 끝나야 반영되므로,
+// 타이핑 즉시 동기화가 필요할 때는 :value + @input 조합을 쓴다
+const searchQuery = ref('')
 </script>
 
 <template>
   <div class="mockup">
+    <section class="search-box">
+      <h3 class="box-title">도시 검색</h3>
+      <input
+        type="text"
+        :value="searchQuery"
+        placeholder="검색할 도시 이름 입력"
+        class="search-input"
+        @input="(e) => (searchQuery = e.target.value)"
+      />
+      <p class="search-echo">
+        검색 중인 도시: <strong>{{ searchQuery }}</strong>
+      </p>
+    </section>
+
     <section class="list-box">
       <h3 class="box-title">지역별 날씨 현황</h3>
 
@@ -45,6 +64,28 @@ const weatherList = ref([
   margin-bottom: var(--s2);
   padding-bottom: var(--s1);
   border-bottom: 1px solid var(--line-strong);
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  outline: none;
+}
+
+.search-input:focus {
+  box-shadow: 2px 2px 0 var(--line-strong);
+}
+
+.search-echo {
+  margin-top: var(--s1);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.search-echo strong {
+  color: var(--ink);
 }
 
 .weather-card {
