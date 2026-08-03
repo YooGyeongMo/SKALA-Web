@@ -6,6 +6,8 @@ const weatherList = ref([
   { id: 'city_01', name: '서울', temp: 28, status: '맑음' },
   { id: 'city_02', name: '수원', temp: 24, status: '비' },
   { id: 'city_03', name: '부산', temp: 26, status: '구름' },
+  // 3단계 라벨(선선함 구간) 확인용으로 추가
+  { id: 'city_04', name: '제주', temp: 18, status: '흐림' },
 ])
 
 // 검색어 상태
@@ -55,9 +57,10 @@ const showDetail = (cityName, status) => {
           <p class="city-temp">{{ item.temp }}°C</p>
         </div>
 
-        <!-- 조건부 렌더링: 25도 기준으로 라벨 분기 -->
+        <!-- 조건부 렌더링: v-else-if로 3단계 분기 (튜닝) -->
         <span v-if="item.temp >= 25" class="chip hot">🔥 더움 (25도 이상)</span>
-        <span v-else class="chip cool">❄️ 선선함 (25도 미만)</span>
+        <span v-else-if="item.temp >= 20" class="chip mild">🌤 보통 (20~24도)</span>
+        <span v-else class="chip cool">❄️ 선선함 (20도 미만)</span>
 
         <!-- .stop: 부모(카드)로의 클릭 버블링을 차단한다 -->
         <button class="btn-detail" @click.stop="showDetail(item.name, item.status)">상세보기</button>
@@ -180,6 +183,10 @@ const showDetail = (cityName, status) => {
 
 .chip.hot {
   color: var(--hot);
+}
+
+.chip.mild {
+  color: var(--mild);
 }
 
 .chip.cool {
