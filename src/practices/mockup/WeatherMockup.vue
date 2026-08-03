@@ -12,6 +12,14 @@ const weatherList = ref([
 // v-model은 한글(IME) 조합이 끝나야 반영되므로,
 // 타이핑 즉시 동기화가 필요할 때는 :value + @input 조합을 쓴다
 const searchQuery = ref('')
+
+// 상태바 문구
+const selectedCityInfo = ref('카드를 클릭하거나 검색해 보세요.')
+
+// 상세보기 알림 — 카드 클릭과 겹치지 않도록 버튼에서 @click.stop으로 호출한다
+const showDetail = (cityName, status) => {
+  window.alert(`${cityName}의 현재 날씨는 [${status}] 상태입니다.`)
+}
 </script>
 
 <template>
@@ -34,7 +42,12 @@ const searchQuery = ref('')
       <h3 class="box-title">지역별 날씨 현황</h3>
 
       <!-- 배열 렌더링: :key에는 반드시 고유 id를 바인딩한다 -->
-      <article v-for="item in weatherList" :key="item.id" class="weather-card">
+      <article
+        v-for="item in weatherList"
+        :key="item.id"
+        class="weather-card"
+        @click="selectedCityInfo = `${item.name}이 선택되었습니다.`"
+      >
         <div class="card-main">
           <h4 class="city-name">
             {{ item.name }} <span class="city-status">{{ item.status }}</span>
@@ -45,8 +58,13 @@ const searchQuery = ref('')
         <!-- 조건부 렌더링: 25도 기준으로 라벨 분기 -->
         <span v-if="item.temp >= 25" class="chip hot">🔥 더움 (25도 이상)</span>
         <span v-else class="chip cool">❄️ 선선함 (25도 미만)</span>
+
+        <!-- .stop: 부모(카드)로의 클릭 버블링을 차단한다 -->
+        <button class="btn-detail" @click.stop="showDetail(item.name, item.status)">상세보기</button>
       </article>
     </section>
+
+    <div class="status-bar">{{ selectedCityInfo }}</div>
   </div>
 </template>
 
@@ -89,10 +107,42 @@ const searchQuery = ref('')
 }
 
 .weather-card {
+  position: relative;
   background: var(--paper);
   border: 1px solid var(--line);
   padding: var(--s2);
   margin-bottom: var(--s1);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.weather-card:hover {
+  border-color: var(--line-strong);
+}
+
+.btn-detail {
+  position: absolute;
+  right: var(--s2);
+  bottom: var(--s2);
+  padding: 4px 12px;
+  font-size: 12px;
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-detail:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.status-bar {
+  border: 1px solid var(--line-strong);
+  border-left: 6px solid var(--line-strong);
+  padding: 10px var(--s2);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .card-main {
