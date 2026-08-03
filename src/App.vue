@@ -1,6 +1,7 @@
 <script setup>
 import LessonLayout from '@/layouts/LessonLayout.vue'
 import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
+import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
 </script>
 
 <template>
@@ -21,6 +22,23 @@ import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
       </template>
       <template #preview>
         <WeatherMockup />
+      </template>
+    </LessonLayout>
+
+    <LessonLayout index="02" title="날씨 컴포지션" subtitle="computed · watch · watchEffect">
+      <template #spec>
+        <ul class="spec-list">
+          <li>반응형 상태 정의 — 1일차 동일</li>
+          <li>검색 필터 — <code>computed</code></li>
+          <li><code>watch</code> 상태바 추적 + <code>immediate</code></li>
+          <li><code>watchEffect</code> 검색어 추적</li>
+          <li>결과 3분기 — 원본 / 일치 / 없음 안내</li>
+          <li>튜닝 — <code>useWeatherSearch()</code> · <code>nextTick</code> · <code>onUpdated</code></li>
+        </ul>
+        <p class="spec-note">동작 로그는 브라우저 콘솔에서 확인</p>
+      </template>
+      <template #preview>
+        <WeatherComposition />
       </template>
     </LessonLayout>
   </div>
@@ -78,5 +96,12 @@ import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
   background: var(--canvas);
   border: 1px solid var(--line);
   padding: 0 4px;
+}
+
+.spec-note {
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: var(--s1);
 }
 </style>
