@@ -37,8 +37,9 @@ const showDetail = (cityName, status) => {
       <SearchBar :current-query="searchQuery" @update-query="(val) => (searchQuery = val)" />
     </BaseDashboardCard>
 
+    <!-- [튜닝] header/footer Named Slot으로 제목과 요약을 주입한다 -->
     <BaseDashboardCard>
-      <h3 class="box-title">지역별 날씨 현황</h3>
+      <template #header>지역별 날씨 현황</template>
 
       <WeatherCard
         v-for="item in filteredWeatherList"
@@ -51,6 +52,8 @@ const showDetail = (cityName, status) => {
       <p v-if="filteredWeatherList.length === 0" class="empty-result">
         검색 결과와 일치하는 도시가 없습니다.
       </p>
+
+      <template #footer>총 {{ filteredWeatherList.length }}개 도시 표시 중</template>
     </BaseDashboardCard>
 
     <div class="status-bar">{{ selectedCityInfo }}</div>
@@ -62,15 +65,6 @@ const showDetail = (cityName, status) => {
   display: grid;
   gap: var(--s1);
   max-width: 560px;
-}
-
-.box-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  margin-bottom: var(--s2);
-  padding-bottom: var(--s1);
-  border-bottom: 1px solid var(--line-strong);
 }
 
 .empty-result {
