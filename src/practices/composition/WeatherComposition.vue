@@ -99,7 +99,10 @@ onUpdated(() => {
       </p>
     </section>
 
-    <div class="status-bar">{{ selectedCityInfo }}</div>
+    <div class="status-bar">
+      <span class="status-label">Status</span>
+      <span class="status-text">{{ selectedCityInfo }}</span>
+    </div>
   </div>
 </template>
 
@@ -227,12 +230,29 @@ onUpdated(() => {
   color: var(--paper);
 }
 
+/* 상태바 — 카드와 성격이 다른 요소라 검정 스트립으로 분리 */
 .status-bar {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  background: var(--ink);
+  color: var(--paper);
   padding: 10px var(--s2);
   font-size: 13px;
+}
+
+.status-label {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.status-text {
   font-weight: 500;
 }
 
