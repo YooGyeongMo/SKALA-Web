@@ -22,6 +22,10 @@ const weatherList = ref([
           </h4>
           <p class="city-temp">{{ item.temp }}°C</p>
         </div>
+
+        <!-- 조건부 렌더링: 25도 기준으로 라벨 분기 -->
+        <span v-if="item.temp >= 25" class="chip hot">🔥 더움 (25도 이상)</span>
+        <span v-else class="chip cool">❄️ 선선함 (25도 미만)</span>
       </article>
     </section>
   </div>
@@ -72,5 +76,22 @@ const weatherList = ref([
   font-size: 20px;
   font-weight: 300;
   font-variant-numeric: tabular-nums;
+}
+
+/* 라벨 칩 — 채우지 않고 외곽선만 남긴다 */
+.chip {
+  display: inline-block;
+  margin-top: var(--s1);
+  padding: 2px 10px;
+  font-size: 12px;
+  border: 1px solid currentColor;
+}
+
+.chip.hot {
+  color: var(--hot);
+}
+
+.chip.cool {
+  color: var(--cool);
 }
 </style>
