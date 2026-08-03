@@ -1,0 +1,74 @@
+/* ============================================================
+   디자인 토큰 — 화이트 베이스 · 헤어라인 · 기하학 그리드
+   ============================================================ */
+:root {
+  /* 색 — 흰 바탕 위에 잉크와 가는 선만 남긴다 */
+  --paper: #ffffff;
+  --ink: #111111;
+  --muted: #8a8a8a;
+  --line: #e6e6e6;
+  --line-strong: #111111;
+  --canvas: #fafafa;
+
+  /* 기능색 — 과제 라벨용 (최소한만) */
+  --hot: #c2402a;
+  --mild: #8a8a8a;
+  --cool: #2456c4;
+  --ok: #1e7a46;
+
+  /* 간격 — 8px 그리드 */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s6: 48px;
+  --s8: 64px;
+
+  /* 타이포 */
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+
+/* ============================================================
+   리셋
+   ============================================================ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'tnum';
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+/* ============================================================
+   공통 유틸 — 섹션 라벨 (작은 대문자 인덱스)
+   ============================================================ */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
