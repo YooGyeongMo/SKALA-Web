@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick, onUpdated } from 'vue'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 
 // [1일차 동일] 가상의 백엔드 날씨 데이터
@@ -30,6 +30,26 @@ watch(
   { immediate: true },
 )
 
+// ── [튜닝] 상태 변경 → 가상 DOM 비교 → 실제 DOM 패치 시점 추적 ──────────
+// 상태(filteredWeatherList)는 즉시 바뀌지만 실제 DOM은 비동기로 늦게 갱신된다.
+// nextTick 전/후로 실제 DOM의 카드 개수를 세어 그 시차를 콘솔에서 확인한다.
+const listEl = ref(null)
+
+watch(filteredWeatherList, async (list) => {
+  const before = listEl.value?.querySelectorAll('.weather-card').length
+  console.log(`[상태 변경] 필터 결과 ${list.length}건 / 실제 DOM 카드 ${before}개 (아직 이전 화면)`)
+
+  await nextTick() // DOM 업데이트 완료를 기다린다
+
+  const after = listEl.value?.querySelectorAll('.weather-card').length
+  console.log(`[nextTick 후] 실제 DOM 카드 ${after}개 — 패치 반영 완료`)
+})
+
+// onUpdated: 이 컴포넌트의 DOM 패치가 끝난 직후마다 호출된다.
+// 상태는 바뀌었는데 이 로그가 없다면 실제 DOM 패치가 일어나지 않았다는 뜻이다.
+onUpdated(() => {
+  console.log('[onUpdated] 컴포넌트 DOM 패치 완료')
+})
 </script>
 
 <template>
@@ -48,7 +68,7 @@ watch(
       </p>
     </section>
 
-    <section class="list-box">
+    <section ref="listEl" class="list-box">
       <h3 class="box-title">지역별 날씨 현황</h3>
 
       <!-- 원본 대신 computed 결과를 렌더링한다
