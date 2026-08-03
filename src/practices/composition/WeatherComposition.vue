@@ -110,6 +110,14 @@ onUpdated(() => {
   max-width: 560px;
 }
 
+/* 회색 캔버스 위에서 흰 패널로 그룹을 분리한다 */
+.search-box,
+.list-box {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: var(--s2);
+}
+
 .box-title {
   font-size: 13px;
   font-weight: 700;
@@ -153,6 +161,7 @@ onUpdated(() => {
 
 .weather-card:hover {
   border-color: var(--line-strong);
+  box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
 }
 
 .card-main {
@@ -182,20 +191,22 @@ onUpdated(() => {
 .chip {
   display: inline-block;
   margin-top: var(--s1);
-  padding: 2px 10px;
+  padding: 3px 10px;
   font-size: 12px;
-  border: 1px solid currentColor;
 }
 
 .chip.hot {
+  background: var(--hot-bg);
   color: var(--hot);
 }
 
 .chip.mild {
+  background: var(--mild-bg);
   color: var(--mild);
 }
 
 .chip.cool {
+  background: var(--cool-bg);
   color: var(--cool);
 }
 
@@ -217,8 +228,9 @@ onUpdated(() => {
 }
 
 .status-bar {
-  border: 1px solid var(--line-strong);
-  border-left: 6px solid var(--line-strong);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
   padding: 10px var(--s2);
   font-size: 13px;
   font-weight: 500;

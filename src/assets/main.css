@@ -6,14 +6,17 @@
   --paper: #ffffff;
   --ink: #111111;
   --muted: #8a8a8a;
-  --line: #e6e6e6;
+  --line: #e2e2e2;
   --line-strong: #111111;
-  --canvas: #fafafa;
+  --canvas: #f7f7f5;
 
-  /* 기능색 — 과제 라벨용 (최소한만) */
-  --hot: #c2402a;
-  --mild: #8a8a8a;
-  --cool: #2456c4;
+  /* 기능색 — 과제 라벨용 (옅은 배경 + 진한 글자 짝) */
+  --hot: #b03a26;
+  --hot-bg: #f9edea;
+  --mild: #5f5f5f;
+  --mild-bg: #f1f1f1;
+  --cool: #24509e;
+  --cool-bg: #ebf1fa;
   --ok: #1e7a46;
 
   /* 간격 — 8px 그리드 */
