@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
 import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
@@ -41,7 +41,7 @@ const loadCapitals = async () => {
     countryCards.value = countryCards.value.map((card, i) => ({
       ...card,
       temp: results[i].main.temp,
-      status: results[i].weather[0].description,
+      status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
     }))
     dataSource.value = 'live'

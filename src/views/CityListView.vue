@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCountryByCode } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
@@ -37,7 +37,7 @@ const loadCities = async () => {
     weatherList.value = country.cities.map((c, i) => ({
       ...c,
       temp: results[i].main.temp,
-      status: results[i].weather[0].description,
+      status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
     }))
     dataSource.value = 'live'

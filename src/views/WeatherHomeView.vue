@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { cityList } from '@/data/cities'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
@@ -27,7 +27,7 @@ const loadRealTimeWeather = async () => {
     weatherList.value = cityList.map((city, i) => ({
       ...city,
       temp: results[i].main.temp,
-      status: results[i].weather[0].description,
+      status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
     }))
     dataSource.value = 'live'
