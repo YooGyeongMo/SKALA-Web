@@ -49,9 +49,9 @@ const updateArchiveReturn = async () => {
 watch(() => route.fullPath, updateArchiveReturn)
 
 const returnToArchive = () => {
-  // 히스토리 상태에 기대지 않고 04 Router 섹션으로 곧장 이동한다.
-  // 해시는 scrollBehavior가 받아 해당 섹션까지 부드럽게 스크롤한다.
-  router.push({ path: '/lessons', hash: '#lesson-04' })
+  // 단순하게 이전 화면으로 돌아간다.
+  // 스크롤 위치는 scrollBehavior의 savedPosition이 복원해 준다.
+  router.back()
 }
 
 // 기본은 풀폭 헤더, 스크롤을 내리면 둥근 리퀴드 필로 변형된다
@@ -114,9 +114,9 @@ onBeforeUnmount(() => {
       <RouterView />
     </main>
 
-    <!-- 아카이브에서 온 방문에만 나타나는 복귀 칩 — 04 Router 섹션으로 직행 -->
+    <!-- 아카이브에서 온 방문에만 나타나는 복귀 칩 -->
     <button v-if="showArchiveReturn" class="archive-return" @click="returnToArchive">
-      ← 아카이브 04로 돌아가기
+      ← 이전 화면으로
     </button>
   </div>
 </template>
