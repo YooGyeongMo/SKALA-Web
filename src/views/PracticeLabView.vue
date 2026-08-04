@@ -35,7 +35,7 @@ const lessons = [
     </header>
 
     <div id="lesson-01" class="lesson-anchor"></div>
-    <LessonLayout index="01" title="날씨 Mockup" subtitle="v-for, v-if, 바인딩, 이벤트 수식어">
+    <LessonLayout index="01" title="날씨 Mockup" toc-href="#archive-top" subtitle="v-for, v-if, 바인딩, 이벤트 수식어">
       <template #spec>
         <ul class="spec-list">
           <li>배열 렌더링: <code>v-for</code>와 <code>:key</code></li>
@@ -50,7 +50,7 @@ const lessons = [
     </LessonLayout>
 
     <div id="lesson-02" class="lesson-anchor"></div>
-    <LessonLayout index="02" title="날씨 컴포지션" subtitle="computed, watch, watchEffect">
+    <LessonLayout index="02" title="날씨 컴포지션" toc-href="#archive-top" subtitle="computed, watch, watchEffect">
       <template #spec>
         <ul class="spec-list">
           <li>반응형 상태 정의 (1일차와 동일)</li>
@@ -68,7 +68,7 @@ const lessons = [
     </LessonLayout>
 
     <div id="lesson-03" class="lesson-anchor"></div>
-    <LessonLayout index="03" title="날씨 컴포넌트" subtitle="props, emits, slot, scoped">
+    <LessonLayout index="03" title="날씨 컴포넌트" toc-href="#archive-top" subtitle="props, emits, slot, scoped">
       <template #spec>
         <ul class="spec-list">
           <li>4개 컴포넌트 분리 (기능 변경 없음)</li>
@@ -86,7 +86,7 @@ const lessons = [
     </LessonLayout>
 
     <div id="lesson-04" class="lesson-anchor"></div>
-    <LessonLayout index="04" title="Router 활용" subtitle="RouterLink, RouterView, 동적 매칭, 지연 로딩">
+    <LessonLayout index="04" title="Router 활용" toc-href="#archive-top" subtitle="RouterLink, RouterView, 동적 매칭, 지연 로딩">
       <template #spec>
         <ul class="spec-list">
           <li>라우터 전역 주입과 규칙 정의</li>
