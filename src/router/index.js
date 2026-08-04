@@ -49,6 +49,17 @@ const router = createRouter({
       name: 'lessons-store-weather-detail',
       component: () => import('@/views/WeatherDetailView.vue'),
     },
+    // 06 Axios 데모 경로
+    {
+      path: '/lessons/api/home',
+      name: 'lessons-api-home',
+      component: WeatherHomeView,
+    },
+    {
+      path: '/lessons/api/weather/:cityId',
+      name: 'lessons-api-weather-detail',
+      component: () => import('@/views/WeatherDetailView.vue'),
+    },
     {
       path: '/about',
       name: 'about',
