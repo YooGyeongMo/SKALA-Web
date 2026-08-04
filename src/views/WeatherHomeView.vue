@@ -1,19 +1,16 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { cityList } from '@/data/cities'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
 import WeatherCard from '@/practices/component/WeatherCard.vue'
 
 // WeatherParent를 페이지(View)로 옮긴 메인 대시보드.
-// 부품 컴포넌트(BaseDashboardCard/SearchBar/WeatherCard)는 과제3 것을 그대로 재사용한다.
-const weatherList = ref([
-  { id: 'city_01', name: '서울', temp: 28, status: '맑음' },
-  { id: 'city_02', name: '수원', temp: 24, status: '비' },
-  { id: 'city_03', name: '부산', temp: 26, status: '구름' },
-  { id: 'city_04', name: '제주', temp: 18, status: '흐림' },
-])
+// 부품 컴포넌트(BaseDashboardCard/SearchBar/WeatherCard)는 과제3 것을 그대로 재사용하고,
+// 데이터는 단일 출처(data/cities.js)에서 가져와 상세 페이지와 항상 같은 값을 보게 한다.
+const weatherList = ref([...cityList])
 
 const selectedCityInfo = ref('카드를 클릭하거나 검색해 보세요.')
 const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
@@ -128,11 +125,15 @@ watch(searchQuery, (newQuery) => {
   color: var(--hot);
 }
 
+/* 은은한 반투명 검정 글래스 — 배경 그라데이션이 살짝 비친다 */
 .status-bar {
   display: flex;
   align-items: center;
   gap: var(--s2);
-  background: var(--ink);
+  background: rgba(17, 17, 17, 0.78);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border-radius: 10px;
   color: var(--paper);
   padding: 10px var(--s2);
   font-size: 13px;

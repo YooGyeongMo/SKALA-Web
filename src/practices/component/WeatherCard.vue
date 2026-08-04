@@ -1,5 +1,7 @@
 <script setup>
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
+import CityLandmark from '@/components/weather/CityLandmark.vue'
+import TierMark from '@/components/weather/TierMark.vue'
 
 // 선택된 도시 객체를 부모로부터 단방향으로 전달받는다 (props)
 defineProps({
@@ -15,6 +17,9 @@ const emit = defineEmits(['select-card', 'click-detail'])
 
 <template>
   <article class="weather-card" @click="emit('select-card', `${cityItem.name}이 선택되었습니다.`)">
+    <!-- 도시 랜드마크가 카드 배경에 아주 옅게 깔리고, 호버하면 살짝 드러난다 -->
+    <CityLandmark :city-id="cityItem.id" class="card-landmark" />
+
     <div class="card-main">
       <h4 class="city-name">
         {{ cityItem.name }} <span class="city-status">{{ cityItem.status }}</span>
@@ -25,9 +30,15 @@ const emit = defineEmits(['select-card', 'click-detail'])
       </div>
     </div>
 
-    <span v-if="cityItem.temp >= 25" class="chip hot">더움 (25도 이상)</span>
-    <span v-else-if="cityItem.temp >= 20" class="chip mild">보통 (20~24도)</span>
-    <span v-else class="chip cool">선선함 (20도 미만)</span>
+    <span v-if="cityItem.temp >= 25" class="chip hot">
+      <TierMark tier="hot" />더움 (25도 이상)
+    </span>
+    <span v-else-if="cityItem.temp >= 20" class="chip mild">
+      <TierMark tier="mild" />보통 (20~24도)
+    </span>
+    <span v-else class="chip cool">
+      <TierMark tier="cool" />선선함 (20도 미만)
+    </span>
 
     <!-- [튜닝] Scoped Slot: 상세보기 버튼 영역을 부모가 커스터마이징할 수 있다.
          :city로 현재 카드의 도시 데이터를 슬롯 밖(부모)에 넘겨준다.
@@ -57,6 +68,21 @@ const emit = defineEmits(['select-card', 'click-detail'])
 .weather-card:hover {
   border-color: var(--line-strong);
   box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
+}
+
+.card-landmark {
+  position: absolute;
+  right: 96px;
+  bottom: 6px;
+  width: 150px;
+  color: var(--ink);
+  opacity: 0.05;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.weather-card:hover .card-landmark {
+  opacity: 0.11;
 }
 
 .card-main {
@@ -96,16 +122,7 @@ const emit = defineEmits(['select-card', 'click-detail'])
   font-size: 12px;
 }
 
-/* 이모지 대신 작은 사각 마커로 톤을 맞춘다 */
-.chip::before {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: currentColor;
-  margin-right: 7px;
-  vertical-align: 1px;
-}
+/* 마커는 TierMark 글리프가 담당한다 (불꽃 / 반원 해 / 바람) */
 
 .chip.hot {
   background: var(--hot-bg);
