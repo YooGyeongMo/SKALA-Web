@@ -12,6 +12,12 @@ const router = createRouter({
       name: 'lessons',
       component: () => import('@/views/PracticeLabView.vue'),
     },
+    // 동적 경로 매칭 — :cityId 파라미터를 상세 페이지가 수신한다
+    {
+      path: '/weather/:cityId',
+      name: 'weather-detail',
+      component: () => import('@/views/WeatherDetailView.vue'),
+    },
   ],
 })
 
