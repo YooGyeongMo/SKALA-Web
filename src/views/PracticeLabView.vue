@@ -18,8 +18,8 @@ const lessons = [
   <div class="page">
     <header id="archive-top" class="page-head">
       <p class="section-label">Practice Archive</p>
-      <h1 class="page-title">Day 1–3 실습 아카이브</h1>
-      <p class="page-sub">Vue 문법, Composition API, Component 실습 기록</p>
+      <h1 class="page-title">실습 아카이브</h1>
+      <p class="page-sub">Vue 문법, Composition API, Component, Router 실습 기록</p>
 
       <!-- 기하학 인덱스 목차 — 큰 번호와 가는 룰로 구성 -->
       <nav class="toc">
