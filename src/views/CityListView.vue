@@ -7,7 +7,7 @@ import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
 import WeatherCard from '@/practices/component/WeatherCard.vue'
-import CountryOutline from '@/components/weather/CountryOutline.vue'
+import CountryEmblem from '@/components/weather/CountryEmblem.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -63,7 +63,7 @@ const goHome = () => {
   <div class="cities">
     <template v-if="country">
       <header class="cities-head">
-        <CountryOutline :country-code="country.code" class="head-outline" />
+        <CountryEmblem :country-code="country.code" class="head-emblem" />
         <p class="head-en">{{ country.english }}</p>
         <h1 class="head-title">{{ country.name }} 대표 도시</h1>
         <p class="data-source" :class="dataSource">
@@ -127,27 +127,14 @@ const goHome = () => {
   margin-bottom: var(--s4);
 }
 
-/* 나라 윤곽이 헤더 우측에 옅게 깔린다 */
-.head-outline {
+/* 나라 엠블럼이 헤더 우측에 은은하게 자리한다 */
+.head-emblem {
   position: absolute;
   right: 0;
-  top: -12px;
-  width: 120px;
-  color: var(--ink);
-  opacity: 0.16;
+  top: -18px;
+  width: 92px;
+  opacity: 0.55;
   pointer-events: none;
-}
-
-.head-outline :deep(path) {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: outline-draw 1.4s ease 0.15s forwards;
-}
-
-@keyframes outline-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
 }
 
 .head-en {

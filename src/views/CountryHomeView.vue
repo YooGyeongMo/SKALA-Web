@@ -5,7 +5,7 @@ import { countries } from '@/data/countries'
 import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
 import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
-import CountryOutline from '@/components/weather/CountryOutline.vue'
+import CountryEmblem from '@/components/weather/CountryEmblem.vue'
 
 const router = useRouter()
 const uiStore = useUiStore()
@@ -84,7 +84,7 @@ const goCountry = (code) => {
         class="country-card"
         @click="goCountry(card.code)"
       >
-        <CountryOutline :country-code="card.code" class="country-outline" />
+        <CountryEmblem :country-code="card.code" class="country-emblem" />
         <div class="country-meta">
           <p class="country-en">{{ card.english }}</p>
           <h2 class="country-name">{{ card.name }}</h2>
@@ -168,49 +168,31 @@ const goCountry = (code) => {
   box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.08);
 }
 
-/* 윤곽 드로잉 — 카드별로 시차를 두고 그려지고, 호버하면 다시 그려진다 */
-.country-outline {
-  width: 130px;
+/* 국기 엠블럼 — 카드별 시차는 --emblem-delay 변수로 준다 */
+.country-emblem {
+  width: 112px;
   justify-self: end;
-  color: var(--ink);
-  opacity: 0.5;
-  transition: opacity 0.25s ease;
+  transition: transform 0.25s ease;
 }
 
-.country-card:hover .country-outline {
-  opacity: 0.85;
+.country-card:hover .country-emblem {
+  transform: scale(1.06);
 }
 
-.country-card :deep(path) {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: outline-draw 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.country-card:nth-child(1) .country-emblem {
+  --emblem-delay: 0s;
 }
-
-.country-card:nth-child(1) :deep(path) {
-  animation-delay: 0.1s;
+.country-card:nth-child(2) .country-emblem {
+  --emblem-delay: 0.12s;
 }
-.country-card:nth-child(2) :deep(path) {
-  animation-delay: 0.25s;
+.country-card:nth-child(3) .country-emblem {
+  --emblem-delay: 0.24s;
 }
-.country-card:nth-child(3) :deep(path) {
-  animation-delay: 0.4s;
+.country-card:nth-child(4) .country-emblem {
+  --emblem-delay: 0.36s;
 }
-.country-card:nth-child(4) :deep(path) {
-  animation-delay: 0.55s;
-}
-.country-card:nth-child(5) :deep(path) {
-  animation-delay: 0.7s;
-}
-
-.country-card:hover :deep(path) {
-  animation: outline-draw 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes outline-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+.country-card:nth-child(5) .country-emblem {
+  --emblem-delay: 0.48s;
 }
 
 .country-meta {
