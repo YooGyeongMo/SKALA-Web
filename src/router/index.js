@@ -3,6 +3,13 @@ import WeatherHomeView from '@/views/WeatherHomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // 뒤로가기로 돌아오면 떠났던 스크롤 위치를 그대로 복원한다.
+  // 아카이브 04에서 데모를 눌러 다녀와도 그 자리로 되돌아온다.
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0 }
+  },
   routes: [
     // 첫 화면(홈)은 즉시 로딩한다
     { path: '/', name: 'home', component: WeatherHomeView },
