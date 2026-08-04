@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, watch, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
@@ -20,9 +20,27 @@ const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
 
 // 상세보기: window.alert 대신 Programmatic Navigation으로 상세 페이지 이동
 const router = useRouter()
+const route = useRoute()
 const goDetail = (cityId) => {
   router.push('/weather/' + cityId)
 }
+
+// 최초 마운트 시 주소창의 ?search= 값을 읽어 검색 상태를 복원한다
+// 상세 페이지에 다녀오거나 링크를 공유해도 검색 결과가 유지된다
+onMounted(() => {
+  if (route.query.search) {
+    searchQuery.value = route.query.search
+  }
+})
+
+// 타이핑할 때마다 검색어를 쿼리스트링에 반영한다
+// push 대신 replace를 써서 글자 하나마다 히스토리가 쌓이는 것을 막는다
+watch(searchQuery, (newQuery) => {
+  router.replace({
+    path: route.path,
+    query: { search: newQuery || undefined },
+  })
+})
 </script>
 
 <template>
