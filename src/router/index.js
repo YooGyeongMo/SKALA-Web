@@ -25,6 +25,18 @@ const router = createRouter({
       name: 'weather-detail',
       component: () => import('@/views/WeatherDetailView.vue'),
     },
+    // 아카이브 데모 경로 — 아카이브(/lessons) 아래로 깊어지는 뎁스를 URL로 표현한다.
+    // /lessons → /lessons/home → /lessons/weather/city_01 처럼 공통 프리픽스가 이어진다
+    {
+      path: '/lessons/home',
+      name: 'lessons-home',
+      component: WeatherHomeView,
+    },
+    {
+      path: '/lessons/weather/:cityId',
+      name: 'lessons-weather-detail',
+      component: () => import('@/views/WeatherDetailView.vue'),
+    },
     {
       path: '/about',
       name: 'about',

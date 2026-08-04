@@ -19,13 +19,14 @@ const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
 const router = useRouter()
 const route = useRoute()
 const goDetail = (cityId) => {
-  router.push('/weather/' + cityId)
+  // 데모 맥락에서는 상세로 들어가도 /lessons 프리픽스를 유지해 뎁스가 이어진다
+  const base = cameFromArchive.value ? '/lessons' : ''
+  router.push(base + '/weather/' + cityId)
 }
 
-// 아카이브 데모 링크는 ?from=archive 를 달고 들어온다.
-// 히스토리 추측이 아니라 명시적인 상태(쿼리)로 판정하므로,
-// 내비로 온 일반 홈 방문에는 절대 버튼이 뜨지 않는다
-const cameFromArchive = computed(() => route.query.from === 'archive')
+// 아카이브 데모는 /lessons/home 처럼 아카이브 하위 경로로 들어온다.
+// 경로 자체가 상태라서 내비로 온 일반 홈(/)에는 절대 버튼이 뜨지 않는다
+const cameFromArchive = computed(() => route.path.startsWith('/lessons/'))
 
 const goBack = () => {
   router.back()
