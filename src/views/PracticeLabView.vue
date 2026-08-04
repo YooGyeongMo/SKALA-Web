@@ -17,6 +17,7 @@ const lessons = [
   { no: '03', anchor: '#lesson-03', title: '날씨 컴포넌트', desc: '컴포넌트 분리' },
   { no: '04', anchor: '#lesson-04', title: 'Router 활용', desc: '페이지 전환과 동적 매칭' },
   { no: '05', anchor: '#lesson-05', title: 'Store 적용', desc: 'Pinia 전역 상태' },
+  { no: '06', anchor: '#lesson-06', title: '데이터 연동', desc: 'Axios와 OpenWeather' },
 ]
 </script>
 
@@ -151,6 +152,35 @@ const lessons = [
           <div class="demo-links">
             <RouterLink to="/lessons/store/home" class="demo-link">홈에서 단위 적용 확인 /lessons/store/home</RouterLink>
             <RouterLink to="/lessons/store/weather/city_01" class="demo-link">상세에서 단위 적용 확인 /lessons/store/weather/city_01</RouterLink>
+          </div>
+        </div>
+      </template>
+    </LessonLayout>
+
+    <div id="lesson-06" class="lesson-anchor"></div>
+    <LessonLayout index="06" title="날씨 데이터 연동" subtitle="Axios, REST API, async와 await" toc-href="#archive-top">
+      <template #spec>
+        <ul class="spec-list">
+          <li>axios 설치와 <code>axios.create</code> 인스턴스</li>
+          <li>OpenWeatherMap 가입과 키 발급</li>
+          <li>키는 <code>.env</code>로 관리 (공개 저장소 커밋 금지)</li>
+          <li>메인: <code>Promise.all</code> 4개 도시 병렬 호출</li>
+          <li>상세: 영문명 매핑 후 실시간 관측값 교체</li>
+          <li><code>try / catch / finally</code>와 로딩 상태 처리</li>
+          <li>키 미설정이나 통신 실패 시 목데이터 폴백</li>
+        </ul>
+        <p class="spec-note">홈 제목 아래 점 표시로 실시간(초록)과 목데이터(회색)를 구분합니다</p>
+      </template>
+      <template #preview>
+        <div class="store-demo">
+          <p class="demo-title">실시간 연동 데모</p>
+          <p class="demo-desc">
+            홈과 상세가 OpenWeather 실시간 관측값으로 채워집니다. 관측 시각과 구름량, 기압까지
+            실제 데이터가 들어오고, 통신이 불가능하면 목데이터로 자연스럽게 내려앉습니다.
+          </p>
+          <div class="demo-links">
+            <RouterLink to="/lessons/api/home" class="demo-link">실시간 대시보드 /lessons/api/home</RouterLink>
+            <RouterLink to="/lessons/api/weather/city_01" class="demo-link">서울 실시간 관측 /lessons/api/weather/city_01</RouterLink>
           </div>
         </div>
       </template>

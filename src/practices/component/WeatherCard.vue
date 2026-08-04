@@ -24,7 +24,7 @@ const displayTemp = computed(() => {
   if (configStore.unit === 'fahrenheit') {
     return Math.round((rawTemp * 9) / 5 + 32)
   }
-  return rawTemp
+  return Math.round(rawTemp) // 실시간 데이터는 소수점이 오므로 반올림해 표시한다
 })
 </script>
 
@@ -38,7 +38,7 @@ const displayTemp = computed(() => {
         {{ cityItem.name }} <span class="city-status">{{ cityItem.status }}</span>
       </h4>
       <div class="temp-wrap">
-        <WeatherGlyph :status="cityItem.status" :size="30" />
+        <WeatherGlyph :status="cityItem.glyph || cityItem.status" :size="30" />
         <p class="city-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
       </div>
     </div>
