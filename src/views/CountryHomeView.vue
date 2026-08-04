@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
 import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
@@ -58,7 +58,23 @@ const loadCapitals = async () => {
   }
 }
 
-onMounted(loadCapitals)
+// 24시간제 현재 시각 — 콜론이 1초 간격으로 깜빡인다
+const now = ref(new Date())
+let clockTimer = null
+
+const hours = computed(() => String(now.value.getHours()).padStart(2, '0'))
+const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
+
+onMounted(() => {
+  loadCapitals()
+  clockTimer = setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(clockTimer)
+})
 
 const goCountry = (code) => {
   router.push('/country/' + code)
@@ -68,6 +84,11 @@ const goCountry = (code) => {
 <template>
   <div class="world">
     <header class="world-head">
+      <div class="clock" aria-label="현재 시각">
+        <span class="clock-digits">{{ hours }}</span>
+        <span class="clock-colon">:</span>
+        <span class="clock-digits">{{ minutes }}</span>
+      </div>
       <h1 class="world-title">세계 날씨 대시보드</h1>
       <p class="world-sub">나라를 고르면 대표 도시 10곳의 실시간 날씨를 볼 수 있습니다.</p>
       <p class="data-source" :class="dataSource">
@@ -122,7 +143,34 @@ const goCountry = (code) => {
 }
 
 .world-head {
+  position: relative;
   margin-bottom: var(--s4);
+}
+
+/* 24시간 시계 — 우측 상단, 콜론이 1초마다 깜빡인다 */
+.clock {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-colon {
+  margin: 0 2px;
+  animation: colon-blink 1s steps(1) infinite;
+}
+
+@keyframes colon-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .world-title {
@@ -279,6 +327,12 @@ const goCountry = (code) => {
   stroke-dashoffset: 1;
   animation: emblem-draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--emblem-delay, 0s) + 0.1s)
     forwards;
+}
+
+.country-card:hover .country-emblem :deep(path),
+.country-card:hover .country-emblem :deep(rect),
+.country-card:hover .country-emblem :deep(circle) {
+  animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .country-card:hover .country-emblem :deep(.f) {
