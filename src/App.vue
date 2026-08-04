@@ -3,6 +3,7 @@
 // 실제 페이지 내용은 views/ 아래 페이지 컴포넌트가 맡는다.
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
+import UnitToggler from '@/components/weather/UnitToggler.vue'
 
 // 실습이 Day 단위로 계속 늘어나므로 내비에는 기간을 표기하지 않는다
 const links = [
@@ -68,7 +69,8 @@ onBeforeUnmount(() => {
       <div class="global-nav" :class="{ scrolled: isScrolled }">
         <RouterLink to="/" class="brand">SKALA WEATHER</RouterLink>
 
-        <nav class="nav-links">
+        <div class="nav-right">
+          <nav class="nav-links">
           <RouterLink
             v-for="(link, i) in links"
             :key="link.to"
@@ -78,16 +80,20 @@ onBeforeUnmount(() => {
             {{ link.label }}
           </RouterLink>
 
-          <!-- 활성 링크를 따라 미끄러지는 선 -->
-          <span
-            class="nav-indicator"
-            :style="{
-              left: indicator.left + 'px',
-              width: indicator.width + 'px',
-              opacity: indicator.opacity,
-            }"
-          ></span>
-        </nav>
+            <!-- 활성 링크를 따라 미끄러지는 선 -->
+            <span
+              class="nav-indicator"
+              :style="{
+                left: indicator.left + 'px',
+                width: indicator.width + 'px',
+                opacity: indicator.opacity,
+              }"
+            ></span>
+          </nav>
+
+          <!-- 전역 스토어와 연결된 온도 단위 토글 -->
+          <UnitToggler />
+        </div>
       </div>
     </header>
 
@@ -152,6 +158,12 @@ onBeforeUnmount(() => {
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
 }
 
 .nav-links {

@@ -1,7 +1,7 @@
 # SKALA-Web
 
 SKALA Full-Stack Engineering — Vue.js 실습 저장소.
-Day 1~3 실습(Vue 문법 · Composition API · Component)에 Day 4 Vue Router를 얹어,
+Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router와 Day 5 Pinia를 얹어,
 날씨 대시보드(`/`) · 상세 페이지(`/weather/:cityId`) · 소개(`/about`) · 실습 아카이브(`/lessons`)로 구성했습니다.
 
 ## 실행 방법
@@ -23,6 +23,8 @@ src/
 ├── App.vue                  # 내비게이션 바(RouterLink) + 메인 콘텐츠 영역(RouterView)
 ├── router/
 │   └── index.js             # 라우트 규칙 정의 · Lazy Loading · Catch-all
+├── stores/
+│   └── configStore.js       # Pinia 전역 상태 — 온도 단위(unit/unitSymbol/toggleUnit)
 ├── views/                   # 페이지 단위 컴포넌트
 │   ├── WeatherHomeView.vue      # / — 메인 날씨 대시보드 (WeatherParent 대체)
 │   ├── WeatherDetailView.vue    # /weather/:cityId — 동적 매칭 상세 관측 페이지

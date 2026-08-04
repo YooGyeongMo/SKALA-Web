@@ -3,6 +3,11 @@ import LessonLayout from '@/layouts/LessonLayout.vue'
 import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
 import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
 import WeatherParent from '@/practices/component/WeatherParent.vue'
+import UnitToggler from '@/components/weather/UnitToggler.vue'
+import { useConfigStore } from '@/stores/configStore'
+
+// 05 스토어 데모 — 아래 토글과 내비의 토글이 같은 전역 상태를 바라본다
+const configStore = useConfigStore()
 
 // 인덱스 목차 — 클릭하면 해당 실습 섹션으로 부드럽게 이동한다
 // Day가 늘어나면 이 배열에 항목만 추가하면 목차와 섹션 이동이 함께 늘어난다
@@ -11,6 +16,7 @@ const lessons = [
   { no: '02', anchor: '#lesson-02', title: '날씨 컴포지션', desc: 'Composition API' },
   { no: '03', anchor: '#lesson-03', title: '날씨 컴포넌트', desc: '컴포넌트 분리' },
   { no: '04', anchor: '#lesson-04', title: 'Router 활용', desc: '페이지 전환과 동적 매칭' },
+  { no: '05', anchor: '#lesson-05', title: 'Store 적용', desc: 'Pinia 전역 상태' },
 ]
 </script>
 
@@ -115,6 +121,40 @@ const lessons = [
       </template>
     </LessonLayout>
 
+    <div id="lesson-05" class="lesson-anchor"></div>
+    <LessonLayout index="05" title="Store 적용" subtitle="Pinia, state, getters, actions" toc-href="#archive-top">
+      <template #spec>
+        <ul class="spec-list">
+          <li>Pinia 전역 등록: <code>createPinia()</code></li>
+          <li>configStore — state: <code>unit</code></li>
+          <li>getters: <code>unitSymbol</code> (℃와 ℉)</li>
+          <li>actions: <code>toggleUnit</code></li>
+          <li>UnitToggler를 내비게이션 바 옆에 배치</li>
+          <li>메인과 상세 온도 표시에 단위 변환 적용</li>
+          <li>주의: state 구조분해는 <code>storeToRefs</code>로</li>
+        </ul>
+        <p class="spec-note">원본 데이터는 섭씨로 유지하고 표시할 때만 변환합니다</p>
+      </template>
+      <template #preview>
+        <div class="store-demo">
+          <p class="demo-title">전역 상태 데모</p>
+          <p class="demo-desc">
+            아래 토글과 내비게이션 바의 토글은 같은 configStore를 바라봅니다. 어느 쪽을 눌러도
+            둘이 함께 바뀌고, 홈 카드와 상세 페이지의 온도 표시도 같이 반응합니다.
+          </p>
+          <div class="store-demo-row">
+            <UnitToggler />
+            <span class="store-demo-state">
+              현재 단위: <strong>{{ configStore.unit }}</strong> ({{ configStore.unitSymbol }})
+            </span>
+          </div>
+          <div class="demo-links">
+            <RouterLink to="/lessons/home" class="demo-link">홈에서 단위 적용 확인 /lessons/home</RouterLink>
+            <RouterLink to="/lessons/weather/city_01" class="demo-link">상세에서 단위 적용 확인 /lessons/weather/city_01</RouterLink>
+          </div>
+        </div>
+      </template>
+    </LessonLayout>
   </div>
 </template>
 
@@ -206,6 +246,31 @@ const lessons = [
 /* 글래스 내비 높이만큼 여유를 두고 앵커가 멈추게 한다 */
 .lesson-anchor {
   scroll-margin-top: 96px;
+}
+
+/* 스토어 데모 (05) */
+.store-demo {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: var(--s3);
+}
+
+.store-demo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: var(--s2);
+}
+
+.store-demo-state {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.store-demo-state strong {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
 }
 
 /* 라우터 데모 (04) */

@@ -1,10 +1,12 @@
 <script setup>
+import { computed } from 'vue'
+import { useConfigStore } from '@/stores/configStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CityLandmark from '@/components/weather/CityLandmark.vue'
 import TierMark from '@/components/weather/TierMark.vue'
 
 // 선택된 도시 객체를 부모로부터 단방향으로 전달받는다 (props)
-defineProps({
+const props = defineProps({
   cityItem: {
     type: Object,
     required: true,
@@ -13,6 +15,17 @@ defineProps({
 
 // 카드 선택(select-card)과 상세보기(click-detail)를 부모에게 전달한다 (emits)
 const emit = defineEmits(['select-card', 'click-detail'])
+
+// 전역 단위 설정에 따라 표시 온도를 변환한다.
+// 원본 데이터는 항상 섭씨로 유지하고, 화면에 그릴 때만 화씨로 계산한다
+const configStore = useConfigStore()
+const displayTemp = computed(() => {
+  const rawTemp = props.cityItem.temp
+  if (configStore.unit === 'fahrenheit') {
+    return Math.round((rawTemp * 9) / 5 + 32)
+  }
+  return rawTemp
+})
 </script>
 
 <template>
@@ -26,10 +39,11 @@ const emit = defineEmits(['select-card', 'click-detail'])
       </h4>
       <div class="temp-wrap">
         <WeatherGlyph :status="cityItem.status" :size="30" />
-        <p class="city-temp">{{ cityItem.temp }}°C</p>
+        <p class="city-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
       </div>
     </div>
 
+    <!-- 구간 판정은 항상 섭씨 원본 기준 — 표시 단위와 무관하게 라벨이 유지된다 -->
     <span v-if="cityItem.temp >= 25" class="chip hot">
       <TierMark tier="hot" />더움 (25도 이상)
     </span>
