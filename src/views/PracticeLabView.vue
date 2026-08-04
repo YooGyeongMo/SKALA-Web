@@ -3,15 +3,36 @@ import LessonLayout from '@/layouts/LessonLayout.vue'
 import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
 import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
 import WeatherParent from '@/practices/component/WeatherParent.vue'
+
+// 인덱스 목차 — 클릭하면 해당 실습 섹션으로 부드럽게 이동한다
+const lessons = [
+  { no: '01', anchor: '#lesson-01', title: '날씨 Mockup', desc: 'Vue 기본 문법' },
+  { no: '02', anchor: '#lesson-02', title: '날씨 컴포지션', desc: 'Composition API' },
+  { no: '03', anchor: '#lesson-03', title: '날씨 컴포넌트', desc: '컴포넌트 분리' },
+]
 </script>
 
 <template>
   <div class="page">
     <header class="page-head">
+      <p class="section-label">Practice Archive</p>
       <h1 class="page-title">Day 1–3 실습 아카이브</h1>
       <p class="page-sub">Vue 문법, Composition API, Component 실습 기록</p>
+
+      <!-- 기하학 인덱스 목차 — 큰 번호와 가는 룰로 구성 -->
+      <nav class="toc">
+        <a v-for="lesson in lessons" :key="lesson.no" :href="lesson.anchor" class="toc-item">
+          <span class="toc-no">{{ lesson.no }}</span>
+          <span class="toc-body">
+            <span class="toc-title">{{ lesson.title }}</span>
+            <span class="toc-desc">{{ lesson.desc }}</span>
+          </span>
+          <span class="toc-arrow">↓</span>
+        </a>
+      </nav>
     </header>
 
+    <div id="lesson-01" class="lesson-anchor"></div>
     <LessonLayout index="01" title="날씨 Mockup" subtitle="v-for, v-if, 바인딩, 이벤트 수식어">
       <template #spec>
         <ul class="spec-list">
@@ -26,6 +47,7 @@ import WeatherParent from '@/practices/component/WeatherParent.vue'
       </template>
     </LessonLayout>
 
+    <div id="lesson-02" class="lesson-anchor"></div>
     <LessonLayout index="02" title="날씨 컴포지션" subtitle="computed, watch, watchEffect">
       <template #spec>
         <ul class="spec-list">
@@ -43,6 +65,7 @@ import WeatherParent from '@/practices/component/WeatherParent.vue'
       </template>
     </LessonLayout>
 
+    <div id="lesson-03" class="lesson-anchor"></div>
     <LessonLayout index="03" title="날씨 컴포넌트" subtitle="props, emits, slot, scoped">
       <template #spec>
         <ul class="spec-list">
@@ -83,6 +106,74 @@ import WeatherParent from '@/practices/component/WeatherParent.vue'
   margin-top: 4px;
   font-size: 13px;
   color: var(--muted);
+}
+
+/* 인덱스 목차 — 상단 2px 잉크 룰 아래 큰 번호가 정렬된다 */
+.toc {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s2);
+  margin-top: var(--s4);
+}
+
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  padding: var(--s2) var(--s1) var(--s2) 0;
+  border-top: 2px solid var(--line-strong);
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 0.2s ease;
+}
+
+.toc-item:hover {
+  background: var(--canvas);
+}
+
+.toc-no {
+  font-size: 34px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.toc-body {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+}
+
+.toc-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.toc-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.toc-arrow {
+  font-size: 13px;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.toc-item:hover .toc-arrow {
+  transform: translateY(3px);
+}
+
+/* 글래스 내비 높이만큼 여유를 두고 앵커가 멈추게 한다 */
+.lesson-anchor {
+  scroll-margin-top: 96px;
+}
+
+@media (max-width: 720px) {
+  .toc {
+    grid-template-columns: 1fr;
+  }
 }
 
 .spec-list {
