@@ -8,18 +8,18 @@
     <div class="about-body">
       <p>
         SKALA Weather는 Vue 3 실습으로 만든 지역별 날씨 대시보드입니다. 도시별 현재 기온과 날씨
-        상태를 카드로 보여주고, 상세 페이지에서 체감 온도·습도·바람 같은 관측 정보를 확인할 수
-        있습니다.
+        상태를 카드로 보여주고, 상세 페이지에서는 체감 온도, 습도, 바람 같은 관측 정보를 확인할
+        수 있습니다.
       </p>
       <p>
-        Day 1–3에서 만든 대시보드 컴포넌트(BaseDashboardCard · SearchBar · WeatherCard)를 그대로
-        재사용하고, Day 4에서 Vue Router로 페이지 전환(내비게이션, 동적 경로 매칭, Lazy Loading,
-        Catch-all)을 얹었습니다.
+        Day 1부터 3까지 만든 대시보드 컴포넌트(BaseDashboardCard, SearchBar, WeatherCard)를
+        그대로 재사용했고, Day 4에서 Vue Router로 내비게이션과 동적 경로 매칭, 지연 로딩,
+        Catch-all까지 페이지 전환 구조를 얹었습니다.
       </p>
       <ul class="about-stack">
-        <li>Vue 3 · Composition API</li>
-        <li>Vue Router — 동적 매칭 / Lazy Loading</li>
-        <li>컴포넌트 재사용 — props · emits · slot</li>
+        <li>Vue 3 기반 Composition API</li>
+        <li>Vue Router의 동적 매칭과 지연 로딩</li>
+        <li>props, emits, slot을 활용한 컴포넌트 재사용</li>
       </ul>
     </div>
 

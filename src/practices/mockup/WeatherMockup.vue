@@ -45,7 +45,7 @@ const showDetail = (cityName, status) => {
       <h3 class="box-title">도시 검색</h3>
 
       <!-- 방식 A: 타이핑 즉시 반영 -->
-      <p class="input-label">A. 즉시 반영 — <code>:value</code> / <code>@input</code></p>
+      <p class="input-label">A. 즉시 반영: <code>:value</code>와 <code>@input</code></p>
       <input
         type="text"
         :value="searchQuery"
@@ -60,7 +60,7 @@ const showDetail = (cityName, status) => {
       <!-- [튜닝] 방식 B: 지연 반영 비교 (A와 독립된 별도 입력)
            이 칸에 직접 입력해야 하며, Enter나 포커스 아웃 시점에만 반영된다 -->
       <p class="input-label compare-label">
-        B. 지연 반영 — <code>v-model.trim.lazy</code> · 이 칸에 입력 후 Enter
+        B. 지연 반영: <code>v-model.trim.lazy</code> (이 칸에 입력하고 Enter)
       </p>
       <input
         v-model.trim.lazy="lazyQuery"

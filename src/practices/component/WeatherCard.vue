@@ -1,4 +1,6 @@
 <script setup>
+import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
+
 // 선택된 도시 객체를 부모로부터 단방향으로 전달받는다 (props)
 defineProps({
   cityItem: {
@@ -17,12 +19,15 @@ const emit = defineEmits(['select-card', 'click-detail'])
       <h4 class="city-name">
         {{ cityItem.name }} <span class="city-status">{{ cityItem.status }}</span>
       </h4>
-      <p class="city-temp">{{ cityItem.temp }}°C</p>
+      <div class="temp-wrap">
+        <WeatherGlyph :status="cityItem.status" :size="30" />
+        <p class="city-temp">{{ cityItem.temp }}°C</p>
+      </div>
     </div>
 
-    <span v-if="cityItem.temp >= 25" class="chip hot">🔥 더움 (25도 이상)</span>
-    <span v-else-if="cityItem.temp >= 20" class="chip mild">🌤 보통 (20~24도)</span>
-    <span v-else class="chip cool">❄️ 선선함 (20도 미만)</span>
+    <span v-if="cityItem.temp >= 25" class="chip hot">더움 (25도 이상)</span>
+    <span v-else-if="cityItem.temp >= 20" class="chip mild">보통 (20~24도)</span>
+    <span v-else class="chip cool">선선함 (20도 미만)</span>
 
     <!-- [튜닝] Scoped Slot: 상세보기 버튼 영역을 부모가 커스터마이징할 수 있다.
          :city로 현재 카드의 도시 데이터를 슬롯 밖(부모)에 넘겨준다.
@@ -72,6 +77,12 @@ const emit = defineEmits(['select-card', 'click-detail'])
   margin-left: 6px;
 }
 
+.temp-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .city-temp {
   font-size: 20px;
   font-weight: 300;
@@ -83,6 +94,17 @@ const emit = defineEmits(['select-card', 'click-detail'])
   margin-top: var(--s1);
   padding: 3px 10px;
   font-size: 12px;
+}
+
+/* 이모지 대신 작은 사각 마커로 톤을 맞춘다 */
+.chip::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  margin-right: 7px;
+  vertical-align: 1px;
 }
 
 .chip.hot {

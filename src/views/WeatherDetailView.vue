@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 
 // 도시 코드별 상세 기상관측 Mock Data (API 연동 전 임시)
 const mockObservations = [
@@ -23,6 +24,20 @@ onMounted(() => {
 const goBack = () => {
   router.push('/')
 }
+
+// 기온 게이지 — 0~40도 범위를 비율로 환산한다
+const gaugePercent = computed(() => {
+  if (!city.value) return 0
+  return Math.min(100, Math.max(0, (city.value.temp / 40) * 100))
+})
+
+// 기온 구간에 따라 게이지 색을 맞춘다
+const gaugeColor = computed(() => {
+  if (!city.value) return 'var(--mild)'
+  if (city.value.temp >= 25) return 'var(--hot)'
+  if (city.value.temp >= 20) return 'var(--mild)'
+  return 'var(--cool)'
+})
 </script>
 
 <template>
@@ -30,11 +45,30 @@ const goBack = () => {
     <!-- 존재하는 도시: 상세 관측 정보 -->
     <template v-if="city">
       <header class="detail-head">
-        <p class="detail-code">{{ city.id }} · {{ city.observedAt }} 관측</p>
+        <p class="detail-code">{{ city.id }} 기준 {{ city.observedAt }} 관측</p>
         <h1 class="detail-title">
           {{ city.name }} <span class="detail-status">{{ city.status }}</span>
         </h1>
-        <p class="detail-temp">{{ city.temp }}°C</p>
+
+        <div class="temp-row">
+          <WeatherGlyph :status="city.status" :size="56" />
+          <p class="detail-temp">{{ city.temp }}°C</p>
+        </div>
+
+        <!-- 기온 게이지: 0~40도 범위에서 현재 기온 위치를 보여준다 -->
+        <div class="temp-gauge">
+          <div class="gauge-track">
+            <div
+              class="gauge-fill"
+              :style="{ width: gaugePercent + '%', background: gaugeColor }"
+            ></div>
+          </div>
+          <div class="gauge-scale">
+            <span>0°</span>
+            <span>20°</span>
+            <span>40°</span>
+          </div>
+        </div>
       </header>
 
       <ul class="obs-grid">
@@ -110,10 +144,43 @@ const goBack = () => {
   margin-left: 8px;
 }
 
+.temp-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
 .detail-temp {
   font-size: 64px;
   font-weight: 200;
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 기온 게이지 */
+.temp-gauge {
+  margin-top: var(--s2);
+  max-width: 320px;
+}
+
+.gauge-track {
+  height: 6px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.gauge-fill {
+  height: 100%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gauge-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 10.5px;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 
