@@ -2,6 +2,7 @@
 // 도시별 랜드마크 라인 드로잉
 // 사진 대신 가는 선(기하학) 일러스트로 도시의 정체성을 표현한다.
 // 색은 부모의 currentColor를 따르고, 알파는 부모가 opacity로 조절한다.
+// 준비된 랜드마크가 없는 도시는 아무것도 그리지 않는다.
 defineProps({
   cityId: {
     type: String,
@@ -43,7 +44,7 @@ defineProps({
     </svg>
 
     <!-- 제주: 돌하르방 — 둥근 모자와 큰 눈, 뭉툭한 코, 배 위에 얹은 두 손 -->
-    <svg v-else viewBox="0 0 320 180">
+    <svg v-else-if="cityId === 'city_04'" viewBox="0 0 320 180">
       <path pathLength="1" d="M118 40 Q160 12 202 40" />
       <path pathLength="1" d="M110 46 H210" />
       <path pathLength="1" d="M126 46 C122 84 130 96 160 98 C190 96 198 84 194 46" />
