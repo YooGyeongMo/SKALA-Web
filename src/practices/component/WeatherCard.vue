@@ -36,6 +36,7 @@ const displayTemp = computed(() => {
     <div class="card-main">
       <h4 class="city-name">
         {{ cityItem.name }} <span class="city-status">{{ cityItem.status }}</span>
+        <span v-if="cityItem.localTime" class="city-time">{{ cityItem.localTime }}</span>
       </h4>
       <div class="temp-wrap">
         <WeatherGlyph :status="cityItem.glyph || cityItem.status" :size="30" />
@@ -128,6 +129,15 @@ const displayTemp = computed(() => {
   font-weight: 400;
   color: var(--muted);
   margin-left: 6px;
+}
+
+.city-time {
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .temp-wrap {
