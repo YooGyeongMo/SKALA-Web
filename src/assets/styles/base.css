@@ -1,0 +1,36 @@
+/* ============================================================
+   리셋과 문서 기본값
+   ============================================================ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  /* 가장자리에만 옅게 깔리는 파스텔 그라데이션 — 콘텐츠 패널은 흰색을 유지한다 */
+  background:
+    radial-gradient(900px 620px at 0% 100%, var(--grad-peach), transparent 60%),
+    radial-gradient(820px 520px at 100% 0%, var(--grad-sky), transparent 60%),
+    radial-gradient(700px 500px at 0% 0%, var(--grad-mint), transparent 60%),
+    var(--paper);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'tnum';
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
