@@ -116,6 +116,7 @@ onBeforeUnmount(() => {
 /* 기본 상태: 풀폭 헤더 — 배경은 투명하게 두고 하단에 가는 잉크 선 하나만 남긴다.
    배경색을 깔면 그라데이션과 색이 달라 띠처럼 분리되어 보인다 */
 .global-nav {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -125,7 +126,6 @@ onBeforeUnmount(() => {
   padding: 18px 32px;
   background: transparent;
   border: 1px solid transparent;
-  border-bottom: 1px solid var(--line-strong);
   border-radius: 0;
   box-shadow: none;
   transition:
@@ -136,6 +136,33 @@ onBeforeUnmount(() => {
     border-color 0.35s ease,
     background 0.35s ease,
     box-shadow 0.35s ease;
+}
+
+/* 하단 잉크 선 — 첫 진입 때 중앙에서 양쪽으로 그어진다 */
+.global-nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--line-strong);
+  transform-origin: center;
+  animation: line-draw 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.15s backwards;
+  transition: opacity 0.35s ease;
+}
+
+.global-nav.scrolled::after {
+  opacity: 0;
+}
+
+@keyframes line-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 /* 스크롤 상태: 가장자리가 둥글게 말리며 리퀴드 글래스 필로 */
@@ -149,6 +176,79 @@ onBeforeUnmount(() => {
   border-color: rgba(17, 17, 17, 0.08);
   border-radius: 999px;
   box-shadow: 0 8px 24px rgba(17, 17, 17, 0.08);
+}
+
+/* 첫 진입 순차 등장 — 선(0.15s) → 브랜드(0.55s) → 링크들(0.75s~) → 토글 → 본문 */
+.brand {
+  animation: rise-in 0.5s ease 0.55s backwards;
+}
+
+.nav-links a {
+  animation: rise-in 0.45s ease backwards;
+}
+
+.nav-links a:nth-child(1) {
+  animation-delay: 0.75s;
+}
+
+.nav-links a:nth-child(2) {
+  animation-delay: 0.85s;
+}
+
+.nav-links a:nth-child(3) {
+  animation-delay: 0.95s;
+}
+
+.nav-right :deep(.unit-toggler) {
+  animation: rise-in 0.45s ease 1.05s backwards;
+}
+
+.nav-indicator {
+  animation: fade-in 0.3s ease 1.1s backwards;
+}
+
+.app-main {
+  animation: content-rise 0.65s ease 1.15s backwards;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes content-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* 모션을 줄이고 싶은 사용자에게는 인트로를 생략한다 */
+@media (prefers-reduced-motion: reduce) {
+  .global-nav::after,
+  .brand,
+  .nav-links a,
+  .nav-right :deep(.unit-toggler),
+  .nav-indicator,
+  .app-main {
+    animation: none;
+  }
 }
 
 .brand {
