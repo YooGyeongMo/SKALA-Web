@@ -4,10 +4,11 @@
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 
+// 실습이 Day 단위로 계속 늘어나므로 내비에는 기간을 표기하지 않는다
 const links = [
   { to: '/', label: '홈' },
   { to: '/about', label: '소개' },
-  { to: '/lessons', label: 'Day 1–3 실습' },
+  { to: '/lessons', label: '실습 아카이브' },
 ]
 
 const route = useRoute()
@@ -100,8 +101,8 @@ onBeforeUnmount(() => {
 .global-nav {
   display: flex;
   align-items: center;
-  gap: var(--s4);
-  padding: 11px 24px;
+  gap: var(--s6);
+  padding: 12px 14px 12px 28px;
   background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
@@ -111,9 +112,9 @@ onBeforeUnmount(() => {
 }
 
 .brand {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   color: var(--ink);
   text-decoration: none;
 }
@@ -126,33 +127,39 @@ onBeforeUnmount(() => {
 .nav-links {
   position: relative;
   display: flex;
-  gap: var(--s3);
-  padding-bottom: 4px;
+  gap: 4px;
 }
 
 .nav-links a {
-  font-size: 13px;
+  position: relative;
+  z-index: 1;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color 0.25s ease;
 }
 
 .nav-links a:hover {
   color: var(--ink);
 }
 
+/* 활성 링크는 잉크 필 위에 올라가므로 글자가 흰색으로 반전된다 */
 .nav-links a.router-link-exact-active {
-  color: var(--ink);
+  color: var(--paper);
   font-weight: 700;
 }
 
-/* 활성 링크를 따라 좌우로 미끄러지는 검정 바 */
+/* 밑줄이 아니라 항목 영역 전체를 덮으며 미끄러지는 잉크 필 */
 .nav-indicator {
   position: absolute;
+  top: 0;
   bottom: 0;
-  height: 2px;
+  z-index: 0;
   background: var(--ink);
+  border-radius: 999px;
   transition:
     left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
