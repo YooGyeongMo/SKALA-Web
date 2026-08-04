@@ -48,10 +48,12 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="app">
-    <header class="global-nav">
-      <RouterLink to="/" class="brand">SKALA<span class="dot">·</span>WEATHER</RouterLink>
+    <!-- 스크롤을 따라 떠 있는 글래스 내비 — 배경 그라데이션이 블러로 비쳐 보인다 -->
+    <header class="nav-wrap">
+      <div class="global-nav">
+        <RouterLink to="/" class="brand">SKALA<span class="dot">·</span>WEATHER</RouterLink>
 
-      <nav class="nav-links">
+        <nav class="nav-links">
         <RouterLink
           v-for="(link, i) in links"
           :key="link.to"
@@ -61,16 +63,17 @@ onBeforeUnmount(() => {
           {{ link.label }}
         </RouterLink>
 
-        <!-- 슬라이딩 인디케이터 — 활성 링크 아래로 이동한다 -->
-        <span
-          class="nav-indicator"
-          :style="{
-            left: indicator.left + 'px',
-            width: indicator.width + 'px',
-            opacity: indicator.opacity,
-          }"
-        ></span>
-      </nav>
+          <!-- 슬라이딩 인디케이터 — 활성 링크 아래로 이동한다 -->
+          <span
+            class="nav-indicator"
+            :style="{
+              left: indicator.left + 'px',
+              width: indicator.width + 'px',
+              opacity: indicator.opacity,
+            }"
+          ></span>
+        </nav>
+      </div>
     </header>
 
     <main class="app-main">
@@ -80,14 +83,31 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.nav-wrap {
+  position: sticky;
+  top: 14px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: var(--s2) var(--s2) 0 var(--s2);
+}
+
+.app-main {
+  margin-top: var(--s2);
+}
+
+/* 리퀴드 글래스 필 — 반투명 흰색 + 블러, 아래 콘텐츠가 은은히 비친다 */
 .global-nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: var(--s2) var(--s3);
-  border-bottom: 1px solid var(--line-strong);
+  gap: var(--s4);
+  padding: 11px 24px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
 }
 
 .brand {
