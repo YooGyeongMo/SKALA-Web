@@ -170,6 +170,198 @@ defineProps({
       <path pathLength="1" d="M134 96 C130 118 126 140 124 158" />
       <path pathLength="1" d="M86 158 H192" />
     </svg>
+
+    <!-- 상하이: 동방명주 — 두 구슬을 꿴 탑과 삼각 다리 -->
+    <svg v-else-if="cityId === 'cn_shanghai'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 8 V34" />
+      <path pathLength="1" d="M160 34 a13 13 0 1 0 0.1 0" />
+      <path pathLength="1" d="M160 60 V76" />
+      <path pathLength="1" d="M160 76 a22 22 0 1 0 0.1 0" />
+      <path pathLength="1" d="M148 118 L128 158 M172 118 L192 158" />
+      <path pathLength="1" d="M160 120 V158" />
+      <path pathLength="1" d="M112 158 H208" />
+    </svg>
+
+    <!-- 광저우: 광저우타워 — 허리가 잘록한 격자 타워 -->
+    <svg v-else-if="cityId === 'cn_guangzhou'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 6 V22" />
+      <path pathLength="1" d="M138 22 C150 62 148 98 132 152 M182 22 C170 62 172 98 188 152" />
+      <path pathLength="1" d="M141 40 H179 M146 66 H174 M148 92 H172 M144 118 H176 M136 144 H184" />
+      <path pathLength="1" d="M120 152 H200" />
+    </svg>
+
+    <!-- 선전: 핑안 금융센터 — 뾰족하게 모이는 마천루 -->
+    <svg v-else-if="cityId === 'cn_shenzhen'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M146 156 L154 34 L160 18 L166 34 L174 156" />
+      <path pathLength="1" d="M154 60 H166 M152 96 H168 M150 128 H170" />
+      <path pathLength="1" d="M108 156 V96 L122 84 V156 M198 156 V108 L212 96 V156" />
+      <path pathLength="1" d="M92 156 H228" />
+    </svg>
+
+    <!-- 청두: 판다 — 둥근 얼굴과 눈 패치 -->
+    <svg v-else-if="cityId === 'cn_chengdu'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M104 96 a56 50 0 1 0 112 0 a56 50 0 1 0 -112 0" />
+      <path pathLength="1" d="M112 56 a14 12 0 1 0 22 -14 a14 12 0 1 0 -22 14" />
+      <path pathLength="1" d="M186 42 a14 12 0 1 0 22 14 a14 12 0 1 0 -22 -14" />
+      <path pathLength="1" d="M130 88 a11 13 0 1 0 22 0 a11 13 0 1 0 -22 0" />
+      <path pathLength="1" d="M168 88 a11 13 0 1 0 22 0 a11 13 0 1 0 -22 0" />
+      <path pathLength="1" d="M154 112 Q160 118 166 112" />
+      <path pathLength="1" d="M160 118 V124 M160 124 Q150 132 144 126 M160 124 Q170 132 176 126" />
+    </svg>
+
+    <!-- 시안: 대안탑 — 층층이 좁아지는 벽돌탑 -->
+    <svg v-else-if="cityId === 'cn_xian'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 10 V24" />
+      <path pathLength="1" d="M146 24 H174 L170 48 H150 Z" />
+      <path pathLength="1" d="M142 48 H178 L174 76 H146 Z" />
+      <path pathLength="1" d="M136 76 H184 L180 108 H140 Z" />
+      <path pathLength="1" d="M130 108 H190 L186 144 H134 Z" />
+      <path pathLength="1" d="M116 144 H204 M108 156 H212" />
+    </svg>
+
+    <!-- 항저우: 서호 — 아치교와 삼담인월 석탑 -->
+    <svg v-else-if="cityId === 'cn_hangzhou'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M20 128 H300" />
+      <path pathLength="1" d="M60 128 Q100 84 140 128" />
+      <path pathLength="1" d="M76 128 Q100 100 124 128" />
+      <path pathLength="1" d="M212 128 V112 M204 112 H220 M206 112 Q212 96 218 112 M212 96 V90 M208 90 H216" />
+      <path pathLength="1" d="M40 148 Q70 140 100 148 M180 152 Q220 142 260 152" />
+      <path pathLength="1" d="M252 70 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0" />
+    </svg>
+
+    <!-- 우한: 황학루 — 겹처마가 층층이 올라가는 누각 -->
+    <svg v-else-if="cityId === 'cn_wuhan'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 10 V22" />
+      <path pathLength="1" d="M118 44 Q160 20 202 44" />
+      <path pathLength="1" d="M132 44 V58 M188 44 V58" />
+      <path pathLength="1" d="M104 76 Q160 52 216 76" />
+      <path pathLength="1" d="M122 76 V92 M198 76 V92" />
+      <path pathLength="1" d="M90 112 Q160 86 230 112" />
+      <path pathLength="1" d="M110 112 V150 M160 118 V150 M210 112 V150" />
+      <path pathLength="1" d="M84 150 H236 M96 162 H224" />
+    </svg>
+
+    <!-- 충칭: 홍야동 — 강가 절벽에 층층이 쌓인 누각 -->
+    <svg v-else-if="cityId === 'cn_chongqing'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M20 152 H300" />
+      <path pathLength="1" d="M60 152 V120 H120 V152" />
+      <path pathLength="1" d="M50 120 Q90 108 130 120" />
+      <path pathLength="1" d="M74 108 V84 H150 V108" />
+      <path pathLength="1" d="M64 84 Q112 70 160 84" />
+      <path pathLength="1" d="M96 70 V48 H184 V70" />
+      <path pathLength="1" d="M86 48 Q140 32 194 48" />
+      <path pathLength="1" d="M196 152 V96 M216 152 V96 M196 96 Q206 88 216 96" />
+      <path pathLength="1" d="M232 164 Q262 156 292 164" />
+    </svg>
+
+    <!-- 하얼빈: 성 소피아 성당 — 양파 돔과 십자가 -->
+    <svg v-else-if="cityId === 'cn_harbin'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 8 V22 M153 14 H167" />
+      <path pathLength="1" d="M160 22 C182 34 188 52 182 66 C176 76 144 76 138 66 C132 52 138 34 160 22" />
+      <path pathLength="1" d="M134 66 H186" />
+      <path pathLength="1" d="M140 66 V96 M180 66 V96" />
+      <path pathLength="1" d="M118 96 H202 V152 H118 Z" />
+      <path pathLength="1" d="M146 152 V124 A14 12 0 0 1 174 124 V152" />
+      <path pathLength="1" d="M96 152 V116 L108 104 L118 116 M224 152 V116 L212 104 L202 116" />
+      <path pathLength="1" d="M84 152 H236" />
+    </svg>
+
+    <!-- 오사카: 오사카성 — 층층 처마의 천수각과 석벽 -->
+    <svg v-else-if="cityId === 'jp_osaka'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M148 18 Q160 12 172 18 M160 12 V26" />
+      <path pathLength="1" d="M132 40 Q160 24 188 40 L180 42 H140 Z" />
+      <path pathLength="1" d="M140 42 V58 M180 42 V58" />
+      <path pathLength="1" d="M120 70 Q160 52 200 70 L190 72 H130 Z" />
+      <path pathLength="1" d="M130 72 V92 M190 72 V92" />
+      <path pathLength="1" d="M106 104 Q160 84 214 104 L202 106 H118 Z" />
+      <path pathLength="1" d="M118 106 V126 M202 106 V126" />
+      <path pathLength="1" d="M100 126 H220 L242 158 H78 Z" />
+    </svg>
+
+    <!-- 교토: 토리이 — 부드럽게 휜 카사기와 두 기둥 -->
+    <svg v-else-if="cityId === 'jp_kyoto'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M84 46 Q160 30 236 46 L232 58 Q160 44 88 58 Z" />
+      <path pathLength="1" d="M160 58 V78" />
+      <path pathLength="1" d="M104 78 H216" />
+      <path pathLength="1" d="M112 58 L104 152 M120 78 L114 152" />
+      <path pathLength="1" d="M208 58 L216 152 M200 78 L206 152" />
+      <path pathLength="1" d="M92 152 H128 M192 152 H228" />
+    </svg>
+
+    <!-- 요코하마: 코스모 클록 — 대관람차 -->
+    <svg v-else-if="cityId === 'jp_yokohama'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M104 80 a56 56 0 1 0 112 0 a56 56 0 1 0 -112 0" />
+      <path pathLength="1" d="M160 24 V136 M104 80 H216" />
+      <path pathLength="1" d="M120 40 L200 120 M200 40 L120 120" />
+      <path pathLength="1" d="M160 80 a6 6 0 1 0 0.1 0" />
+      <path pathLength="1" d="M140 136 L128 160 M180 136 L192 160" />
+      <path pathLength="1" d="M112 160 H208" />
+    </svg>
+
+    <!-- 나고야: 나고야성 — 지붕 위 금샤치 한 쌍 -->
+    <svg v-else-if="cityId === 'jp_nagoya'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M128 34 C124 22 132 14 138 12 C136 20 140 26 144 30" />
+      <path pathLength="1" d="M192 34 C196 22 188 14 182 12 C184 20 180 26 176 30" />
+      <path pathLength="1" d="M116 46 Q160 30 204 46 L194 48 H126 Z" />
+      <path pathLength="1" d="M126 48 V68 M194 48 V68" />
+      <path pathLength="1" d="M108 80 Q160 62 212 80 L202 82 H118 Z" />
+      <path pathLength="1" d="M118 82 V106 M202 82 V106" />
+      <path pathLength="1" d="M104 106 H216 V132 H104 Z" />
+      <path pathLength="1" d="M96 132 H224 L246 160 H74 Z" />
+    </svg>
+
+    <!-- 삿포로: 도케이다이 시계탑 — 박공지붕과 둥근 시계 -->
+    <svg v-else-if="cityId === 'jp_sapporo'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 14 V28 M154 20 H166" />
+      <path pathLength="1" d="M138 46 L160 28 L182 46 V64 H138 Z" />
+      <path pathLength="1" d="M150 50 a10 10 0 1 0 20 0 a10 10 0 1 0 -20 0" />
+      <path pathLength="1" d="M160 50 V44 M160 50 L166 54" />
+      <path pathLength="1" d="M108 92 L160 64 L212 92" />
+      <path pathLength="1" d="M116 92 V152 M204 92 V152" />
+      <path pathLength="1" d="M140 152 V116 H180 V152" />
+      <path pathLength="1" d="M104 152 H216" />
+    </svg>
+
+    <!-- 후쿠오카: 후쿠오카 타워 — 좁아지는 판형 타워와 다이아 격자 -->
+    <svg v-else-if="cityId === 'jp_fukuoka'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 6 V20" />
+      <path pathLength="1" d="M146 20 L136 152 M174 20 L184 152" />
+      <path pathLength="1" d="M146 20 H174" />
+      <path pathLength="1" d="M150 44 L170 76 M170 44 L150 76 M146 84 L174 116 M174 84 L146 116" />
+      <path pathLength="1" d="M124 152 H196" />
+    </svg>
+
+    <!-- 고베: 포트 타워 — 가운데가 잘록한 장구형 격자 -->
+    <svg v-else-if="cityId === 'jp_kobe'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M136 20 H184" />
+      <path pathLength="1" d="M140 20 C160 60 160 60 140 100 C132 124 132 136 128 152" />
+      <path pathLength="1" d="M180 20 C160 60 160 60 180 100 C188 124 188 136 192 152" />
+      <path pathLength="1" d="M143 44 H177 M152 72 H168 M146 104 H174 M138 128 H182" />
+      <path pathLength="1" d="M148 20 L170 44 M172 20 L150 44 M154 72 L168 100 M166 72 L152 100" />
+      <path pathLength="1" d="M116 152 H204" />
+    </svg>
+
+    <!-- 히로시마: 원폭 돔 — 뼈대만 남은 돔과 벽 -->
+    <svg v-else-if="cityId === 'jp_hiroshima'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M128 64 A32 30 0 0 1 192 64" />
+      <path pathLength="1" d="M136 62 A24 24 0 0 1 184 62" />
+      <path pathLength="1" d="M144 38 V64 M160 32 V64 M176 38 V64" />
+      <path pathLength="1" d="M128 64 H192" />
+      <path pathLength="1" d="M132 64 V152 M188 64 V152" />
+      <path pathLength="1" d="M132 96 H188 M132 124 H160" />
+      <path pathLength="1" d="M108 152 V112 L120 100 V152 M212 152 V120 L200 108 V152" />
+      <path pathLength="1" d="M96 152 H224" />
+    </svg>
+
+    <!-- 센다이: 다테 마사무네 투구 — 큰 초승달 장식 -->
+    <svg v-else-if="cityId === 'jp_sendai'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M116 60 C104 26 216 26 204 60 C196 42 124 42 116 60" />
+      <path pathLength="1" d="M112 108 A50 44 0 0 1 208 108" />
+      <path pathLength="1" d="M112 108 H208" />
+      <path pathLength="1" d="M120 108 L112 136 M148 108 L146 140 M172 108 L174 140 M200 108 L208 136" />
+      <path pathLength="1" d="M160 64 V84" />
+      <path pathLength="1" d="M136 150 Q160 158 184 150" />
+    </svg>
   </span>
 </template>
 
