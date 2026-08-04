@@ -130,12 +130,17 @@ watch(searchQuery, (newQuery) => {
   display: flex;
   align-items: center;
   gap: var(--s2);
-  background: rgba(17, 17, 17, 0.78);
+  background: linear-gradient(180deg, rgba(38, 38, 38, 0.92), rgba(12, 12, 12, 0.94));
   backdrop-filter: blur(10px) saturate(1.2);
   -webkit-backdrop-filter: blur(10px) saturate(1.2);
   border-radius: 10px;
+  /* 위쪽 하이라이트와 바깥 그림자로 유리의 두께감을 만든다 */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 6px 18px rgba(17, 17, 17, 0.18);
   color: var(--paper);
-  padding: 10px var(--s2);
+  padding: 11px var(--s2);
   font-size: 13px;
 }
 
@@ -146,11 +151,13 @@ watch(searchQuery, (newQuery) => {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 .status-text {
-  font-weight: 500;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 </style>
