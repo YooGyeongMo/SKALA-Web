@@ -9,7 +9,8 @@ import { ref, computed } from 'vue'
  */
 export const useConfigStore = defineStore('config', () => {
   // state: 현재 온도 단위 ('celsius' 또는 'fahrenheit')
-  const unit = ref('celsius')
+  // 새로고침해도 유지되도록 localStorage와 동기화한다 (강의 authStore 패턴)
+  const unit = ref(localStorage.getItem('weatherUnit') || 'celsius')
 
   // getters: 현재 단위에 맞는 기호
   const unitSymbol = computed(() => (unit.value === 'celsius' ? '℃' : '℉'))
@@ -17,6 +18,7 @@ export const useConfigStore = defineStore('config', () => {
   // actions: 두 단위를 토글한다
   function toggleUnit() {
     unit.value = unit.value === 'celsius' ? 'fahrenheit' : 'celsius'
+    localStorage.setItem('weatherUnit', unit.value)
   }
 
   return { unit, unitSymbol, toggleUnit }
