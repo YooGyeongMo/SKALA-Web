@@ -1,24 +1,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { findCityById } from '@/data/cities'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
-
-// 도시 코드별 상세 기상관측 Mock Data (API 연동 전 임시)
-const mockObservations = [
-  { id: 'city_01', name: '서울', temp: 28, status: '맑음', feels: 30, humidity: 42, wind: 2.4, rain: 0, dust: '보통', observedAt: '오늘 14:00' },
-  { id: 'city_02', name: '수원', temp: 24, status: '비', feels: 23, humidity: 88, wind: 4.1, rain: 80, dust: '좋음', observedAt: '오늘 14:00' },
-  { id: 'city_03', name: '부산', temp: 26, status: '구름', feels: 27, humidity: 65, wind: 5.8, rain: 20, dust: '보통', observedAt: '오늘 14:00' },
-  { id: 'city_04', name: '제주', temp: 18, status: '흐림', feels: 17, humidity: 74, wind: 7.2, rain: 40, dust: '좋음', observedAt: '오늘 14:00' },
-]
 
 const route = useRoute()
 const router = useRouter()
 const city = ref(null)
 
-// Mount 시점에 동적 경로 파라미터(:cityId)로 Mock Data에서 도시 객체를 선택한다
+// Mount 시점에 동적 경로 파라미터(:cityId)로 단일 출처에서 도시 객체를 선택한다
 onMounted(() => {
-  const { cityId } = route.params
-  city.value = mockObservations.find((item) => item.id === cityId) ?? null
+  city.value = findCityById(route.params.cityId)
 })
 
 const goBack = () => {
@@ -45,7 +37,7 @@ const gaugeColor = computed(() => {
     <!-- 존재하는 도시: 상세 관측 정보 -->
     <template v-if="city">
       <header class="detail-head">
-        <p class="detail-code">{{ city.id }} 기준 {{ city.observedAt }} 관측</p>
+        <p class="detail-code">{{ city.id }} 기준 {{ city.detail.observedAt }} 관측</p>
         <h1 class="detail-title">
           {{ city.name }} <span class="detail-status">{{ city.status }}</span>
         </h1>
@@ -74,23 +66,23 @@ const gaugeColor = computed(() => {
       <ul class="obs-grid">
         <li class="obs-item">
           <span class="obs-label">체감 온도</span>
-          <span class="obs-value">{{ city.feels }}°C</span>
+          <span class="obs-value">{{ city.detail.feels }}°C</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">습도</span>
-          <span class="obs-value">{{ city.humidity }}%</span>
+          <span class="obs-value">{{ city.detail.humidity }}%</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">바람</span>
-          <span class="obs-value">{{ city.wind }}m/s</span>
+          <span class="obs-value">{{ city.detail.wind }}m/s</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">강수 확률</span>
-          <span class="obs-value">{{ city.rain }}%</span>
+          <span class="obs-value">{{ city.detail.rain }}%</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">미세먼지</span>
-          <span class="obs-value">{{ city.dust }}</span>
+          <span class="obs-value">{{ city.detail.dust }}</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">날씨 상태</span>
