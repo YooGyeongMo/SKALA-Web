@@ -76,13 +76,26 @@ const emit = defineEmits(['select-card', 'click-detail'])
   bottom: 6px;
   width: 150px;
   color: var(--ink);
-  opacity: 0.05;
+  opacity: 0.11;
   transition: opacity 0.25s ease;
   pointer-events: none;
 }
 
 .weather-card:hover .card-landmark {
-  opacity: 0.11;
+  opacity: 0.24;
+}
+
+/* 호버하면 랜드마크 선이 처음부터 그려진다 (pathLength 1 기준) */
+.weather-card:hover .card-landmark :deep(path) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: landmark-draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes landmark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .card-main {
