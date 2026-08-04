@@ -14,8 +14,14 @@ onMounted(() => {
   city.value = findCityById(route.params.cityId)
 })
 
+// 아카이브 데모처럼 다른 화면에서 넘어왔다면 그 자리(스크롤 위치까지)로 되돌아간다.
+// 주소를 직접 열어 히스토리가 없을 때만 홈으로 보낸다.
 const goBack = () => {
-  router.push('/')
+  if (window.history.state?.back) {
+    router.back()
+  } else {
+    router.push('/')
+  }
 }
 
 // 기온 게이지 — 0~40도 범위를 비율로 환산한다
@@ -101,7 +107,7 @@ const gaugeColor = computed(() => {
       <p>해당 도시의 관측 정보를 찾을 수 없습니다.</p>
     </div>
 
-    <button class="btn-back" @click="goBack">← 대시보드로 돌아가기</button>
+    <button class="btn-back" @click="goBack">← 이전 화면으로 돌아가기</button>
   </div>
 </template>
 

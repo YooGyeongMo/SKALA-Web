@@ -37,7 +37,8 @@ defineProps({
 
       <!-- 우: 실습 프리뷰 -->
       <div class="lesson-preview">
-        <p class="section-label">Live</p>
+        <!-- 좌측 요구사항 텍스트와 달리, 이 영역은 실제로 동작하는 화면임을 표시 -->
+        <p class="section-label">실습 화면</p>
         <div class="preview-canvas">
           <slot name="preview"></slot>
         </div>

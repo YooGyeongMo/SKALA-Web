@@ -42,13 +42,20 @@ defineProps({
       <path pathLength="1" d="M34 148 H86 M132 156 H188 M234 148 H286" />
     </svg>
 
-    <!-- 제주: 한라산 — 분화구가 오목한 능선과 오름, 수평선 -->
+    <!-- 제주: 돌하르방 — 둥근 모자와 큰 눈, 뭉툭한 코, 배 위에 얹은 두 손 -->
     <svg v-else viewBox="0 0 320 180">
-      <path pathLength="1" d="M10 140 H310" />
-      <path pathLength="1" d="M36 140 C96 84 138 66 152 62 Q160 70 168 62 C182 66 224 84 284 140" />
-      <path pathLength="1" d="M56 140 Q72 124 88 140" />
-      <path pathLength="1" d="M236 140 Q256 114 276 140" />
-      <path pathLength="1" d="M96 100 H136 M204 92 H236" />
+      <path pathLength="1" d="M118 40 Q160 12 202 40" />
+      <path pathLength="1" d="M110 46 H210" />
+      <path pathLength="1" d="M126 46 C122 84 130 96 160 98 C190 96 198 84 194 46" />
+      <path pathLength="1" d="M137 63 a8 5.5 0 1 0 16 0 a8 5.5 0 1 0 -16 0" />
+      <path pathLength="1" d="M167 63 a8 5.5 0 1 0 16 0 a8 5.5 0 1 0 -16 0" />
+      <path pathLength="1" d="M155 62 C151 76 152 84 160 86 C168 84 169 76 165 62" />
+      <path pathLength="1" d="M148 92 Q160 96 172 92" />
+      <path pathLength="1" d="M120 98 C112 120 110 146 114 166" />
+      <path pathLength="1" d="M200 98 C208 120 210 146 206 166" />
+      <path pathLength="1" d="M120 114 C138 122 154 125 174 122" />
+      <path pathLength="1" d="M200 128 C182 137 164 140 144 137" />
+      <path pathLength="1" d="M104 166 H216 M110 175 H210" />
     </svg>
   </span>
 </template>
