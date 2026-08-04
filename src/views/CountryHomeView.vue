@@ -3,10 +3,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
 import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
+import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryOutline from '@/components/weather/CountryOutline.vue'
 
 const router = useRouter()
+const uiStore = useUiStore()
 
 // 나라 카드 목록 — 각 나라의 수도(첫 도시) 실황을 함께 보여준다
 const countryCards = ref(
@@ -26,7 +28,11 @@ const dataSource = ref('mock')
 
 // 5개국 수도 실황을 병렬로 받아온다. 실패하면 목데이터를 유지한다
 const loadCapitals = async () => {
-  if (!hasApiKey) return
+  if (!hasApiKey) {
+    // 키가 없으면 목데이터 그대로 — 인트로는 바로 해제한다
+    uiStore.markReady()
+    return
+  }
   isLoading.value = true
   try {
     const results = await Promise.all(
@@ -43,6 +49,8 @@ const loadCapitals = async () => {
     console.error('[Axios] 수도 실황 연동 실패, 목데이터로 표시합니다:', error)
   } finally {
     isLoading.value = false
+    // 성공이든 실패든 첫 로딩이 끝났음을 알려 인트로를 해제한다
+    uiStore.markReady()
   }
 }
 

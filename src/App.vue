@@ -2,8 +2,10 @@
 // App은 내비게이션 바(RouterLink)와 메인 콘텐츠 영역(RouterView)만 담당한다.
 // 실제 페이지 내용은 views/ 아래 페이지 컴포넌트가 맡는다.
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useUiStore } from '@/stores/uiStore'
 import UnitToggler from '@/components/weather/UnitToggler.vue'
+import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 
 // 실습이 Day 단위로 계속 늘어나므로 내비에는 기간을 표기하지 않는다
 const links = [
@@ -13,6 +15,8 @@ const links = [
 ]
 
 const route = useRoute()
+const router = useRouter()
+const uiStore = useUiStore()
 const linkEls = ref([])
 
 // 현재 경로에 해당하는 링크 밑으로 미끄러져 이동하는 선 인디케이터
@@ -36,8 +40,49 @@ const moveIndicator = async () => {
   indicator.value = { left: el.offsetLeft, width: el.offsetWidth, opacity: 1 }
 }
 
-// 첫 진입 인트로 오버레이 — 시퀀스가 끝나면 DOM에서 제거한다
-const showIntro = ref(true)
+// ── 첫 진입 인트로 = 로딩 화면 ────────────────────────────
+// loading: 워드마크와 선이 뜨고 해가 돌며 데이터를 기다린다
+// leaving: 데이터가 준비되면 위로 상승하며 본문에 자리를 넘긴다
+// done:    오버레이가 DOM에서 제거된 상태
+const introState = ref('loading')
+
+// 홈이 실황 로딩을 마치면 uiStore.dataReady가 켜진다.
+// 너무 오래 걸리면 6초 뒤 강제로 해제한다 (안전장치)
+const waitDataReady = () =>
+  new Promise((resolve) => {
+    if (uiStore.dataReady) return resolve()
+    const stop = watch(
+      () => uiStore.dataReady,
+      (ready) => {
+        if (ready) {
+          stop()
+          resolve()
+        }
+      },
+    )
+    setTimeout(() => {
+      stop()
+      resolve()
+    }, 6000)
+  })
+
+const runIntro = async () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    introState.value = 'done'
+    uiStore.markReady()
+    return
+  }
+  // 홈이 아닌 경로로 직접 들어온 경우에는 데이터 신호 없이 바로 준비 완료로 본다
+  router.isReady().then(() => {
+    if (route.path !== '/') uiStore.markReady()
+  })
+  // 최소 1.5초는 보여주고, 데이터가 준비되는 시점과 늦은 쪽에 맞춘다
+  await Promise.all([new Promise((r) => setTimeout(r, 1500)), waitDataReady()])
+  introState.value = 'leaving'
+  setTimeout(() => {
+    introState.value = 'done'
+  }, 950)
+}
 
 // 기본은 풀폭 헤더, 스크롤을 내리면 둥근 리퀴드 필로 변형된다
 const isScrolled = ref(false)
@@ -58,15 +103,7 @@ onMounted(() => {
   onScroll()
   window.addEventListener('resize', moveIndicator)
   window.addEventListener('scroll', onScroll, { passive: true })
-
-  // 모션을 줄인 사용자는 인트로를 건너뛰고, 아니면 시퀀스가 끝난 뒤 오버레이를 걷어낸다
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    showIntro.value = false
-  } else {
-    setTimeout(() => {
-      showIntro.value = false
-    }, 2600)
-  }
+  runIntro()
 })
 
 onBeforeUnmount(() => {
@@ -76,12 +113,25 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="app">
-    <!-- 첫 진입 인트로: 정중앙에서 선이 크게 그어지고 워드마크가 떠오른 뒤 위로 올라간다 -->
-    <div v-if="showIntro" class="intro" aria-hidden="true">
+  <div
+    class="app"
+    :class="{ pre: introState === 'loading', entered: introState !== 'loading' }"
+  >
+    <!-- 첫 진입 인트로 겸 로딩 화면: 선이 그어지고 워드마크가 뜬 뒤,
+         해가 돌며 데이터를 기다리다가 준비되면 위로 올라간다 -->
+    <div
+      v-if="introState !== 'done'"
+      class="intro"
+      :class="{ leaving: introState === 'leaving' }"
+      aria-hidden="true"
+    >
       <div class="intro-inner">
         <p class="intro-brand">SKALA WEATHER</p>
         <span class="intro-line"></span>
+        <div class="intro-sun">
+          <WeatherGlyph status="맑음" :size="44" />
+          <p class="intro-loading">실시간 날씨를 불러오는 중</p>
+        </div>
       </div>
     </div>
 
@@ -91,14 +141,14 @@ onBeforeUnmount(() => {
 
         <div class="nav-right">
           <nav class="nav-links">
-          <RouterLink
-            v-for="(link, i) in links"
-            :key="link.to"
-            :ref="(el) => setLinkEl(el, i)"
-            :to="link.to"
-          >
-            {{ link.label }}
-          </RouterLink>
+            <RouterLink
+              v-for="(link, i) in links"
+              :key="link.to"
+              :ref="(el) => setLinkEl(el, i)"
+              :to="link.to"
+            >
+              {{ link.label }}
+            </RouterLink>
 
             <!-- 활성 링크를 따라 미끄러지는 선 -->
             <span
@@ -120,7 +170,6 @@ onBeforeUnmount(() => {
     <main class="app-main">
       <RouterView />
     </main>
-
   </div>
 </template>
 
@@ -158,9 +207,7 @@ onBeforeUnmount(() => {
     box-shadow 0.35s ease;
 }
 
-/* ── 첫 진입 인트로 오버레이 ─────────────────────────
-   0.2s 선이 중앙에서 크게 그어짐 → 0.75s 워드마크 등장
-   → 1.5s 전체가 위로 상승하며 축소 → 1.9s 배경 걷힘 → 헤더와 본문 등장 */
+/* ── 첫 진입 인트로 오버레이 (로딩 화면) ───────────────── */
 .intro {
   position: fixed;
   inset: 0;
@@ -170,7 +217,6 @@ onBeforeUnmount(() => {
   justify-content: center;
   background: var(--paper);
   pointer-events: none;
-  animation: intro-bg-out 0.6s ease 1.9s forwards;
 }
 
 .intro-inner {
@@ -178,7 +224,6 @@ onBeforeUnmount(() => {
   flex-direction: column;
   align-items: center;
   gap: 26px;
-  animation: intro-ascend 0.8s cubic-bezier(0.4, 0, 0.2, 1) 1.5s forwards;
 }
 
 .intro-brand {
@@ -187,7 +232,7 @@ onBeforeUnmount(() => {
   letter-spacing: 0.18em;
   color: var(--ink);
   white-space: nowrap;
-  animation: rise-in 0.7s ease 0.75s backwards;
+  animation: rise-in 0.7s ease 0.55s backwards;
 }
 
 /* 정중앙에서 화면 폭 70%까지 길게 그어지는 선 */
@@ -197,7 +242,36 @@ onBeforeUnmount(() => {
   height: 2px;
   background: var(--ink);
   transform-origin: center;
-  animation: line-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+  animation: line-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.1s backwards;
+}
+
+/* 해 스피너 — 광선이 돌며 로딩 중임을 알린다 */
+.intro-sun {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: rise-in 0.5s ease 1s backwards;
+}
+
+.intro-sun :deep(.sun-rays) {
+  animation-duration: 2.4s;
+}
+
+.intro-loading {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+/* 데이터가 준비되면 전체가 위로 상승하며 배경이 걷힌다 */
+.intro.leaving .intro-inner {
+  animation: intro-ascend 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.intro.leaving {
+  animation: intro-bg-out 0.55s ease 0.3s forwards;
 }
 
 @keyframes intro-ascend {
@@ -213,7 +287,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 하단 잉크 선 — 인트로가 걷힌 뒤 중앙에서 양쪽으로 그어진다 */
+/* 하단 잉크 선 — 본문 등장 시 중앙에서 양쪽으로 그어진다 */
 .global-nav::after {
   content: '';
   position: absolute;
@@ -223,7 +297,6 @@ onBeforeUnmount(() => {
   height: 1px;
   background: var(--line-strong);
   transform-origin: center;
-  animation: line-draw 0.7s cubic-bezier(0.4, 0, 0.2, 1) 1.85s backwards;
   transition: opacity 0.35s ease;
 }
 
@@ -253,37 +326,58 @@ onBeforeUnmount(() => {
   box-shadow: 0 8px 24px rgba(17, 17, 17, 0.08);
 }
 
-/* 첫 진입 순차 등장 — 인트로 상승(1.5s~)에 맞춰 헤더가 넘겨받는다 */
-.brand {
-  animation: rise-in 0.5s ease 2.1s backwards;
+/* ── 본문 등장 시퀀스 ─────────────────────────────────
+   인트로가 상승을 시작하는 순간(entered) 헤더와 본문이 넘겨받는다.
+   로딩 중(pre)에는 모두 숨겨 둔다 */
+.app.pre .brand,
+.app.pre .nav-links a,
+.app.pre .nav-right :deep(.unit-toggler),
+.app.pre .app-main {
+  opacity: 0;
 }
 
-.nav-links a {
+.app.pre .nav-indicator {
+  visibility: hidden;
+}
+
+.app.pre .global-nav::after {
+  transform: scaleX(0);
+}
+
+.app.entered .global-nav::after {
+  animation: line-draw 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.05s backwards;
+}
+
+.app.entered .brand {
+  animation: rise-in 0.5s ease 0.3s backwards;
+}
+
+.app.entered .nav-links a {
   animation: rise-in 0.45s ease backwards;
 }
 
-.nav-links a:nth-child(1) {
-  animation-delay: 2.25s;
+.app.entered .nav-links a:nth-child(1) {
+  animation-delay: 0.45s;
 }
 
-.nav-links a:nth-child(2) {
-  animation-delay: 2.35s;
+.app.entered .nav-links a:nth-child(2) {
+  animation-delay: 0.55s;
 }
 
-.nav-links a:nth-child(3) {
-  animation-delay: 2.45s;
+.app.entered .nav-links a:nth-child(3) {
+  animation-delay: 0.65s;
 }
 
-.nav-right :deep(.unit-toggler) {
-  animation: rise-in 0.45s ease 2.55s backwards;
+.app.entered .nav-right :deep(.unit-toggler) {
+  animation: rise-in 0.45s ease 0.75s backwards;
 }
 
-.nav-indicator {
-  animation: fade-in 0.3s ease 2.6s backwards;
+.app.entered .nav-indicator {
+  animation: fade-in 0.3s ease 0.8s backwards;
 }
 
-.app-main {
-  animation: content-rise 0.7s ease 2.4s backwards;
+.app.entered .app-main {
+  animation: content-rise 0.7s ease 0.55s backwards;
 }
 
 @keyframes rise-in {
@@ -314,18 +408,20 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 모션을 줄이고 싶은 사용자에게는 인트로를 생략한다 */
+/* 모션을 줄이고 싶은 사용자에게는 인트로와 등장 모션을 생략한다 */
 @media (prefers-reduced-motion: reduce) {
   .intro,
   .intro-inner,
   .intro-brand,
   .intro-line,
+  .intro-sun,
   .global-nav::after,
-  .brand,
-  .nav-links a,
-  .nav-right :deep(.unit-toggler),
-  .nav-indicator,
-  .app-main {
+  .app.entered .global-nav::after,
+  .app.entered .brand,
+  .app.entered .nav-links a,
+  .app.entered .nav-right :deep(.unit-toggler),
+  .app.entered .nav-indicator,
+  .app.entered .app-main {
     animation: none;
   }
 }
