@@ -103,12 +103,15 @@ const showDetail = (cityName, status) => {
   color: var(--hot);
 }
 
-/* 상태바 — 카드와 성격이 다른 요소라 검정 스트립으로 분리 */
+/* 상태바 — 은은한 반투명 검정 글래스로 카드와 성격을 분리 */
 .status-bar {
   display: flex;
   align-items: center;
   gap: var(--s2);
-  background: var(--ink);
+  background: rgba(17, 17, 17, 0.78);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border-radius: 10px;
   color: var(--paper);
   padding: 10px var(--s2);
   font-size: 13px;

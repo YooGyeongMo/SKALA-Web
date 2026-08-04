@@ -125,11 +125,15 @@ watch(searchQuery, (newQuery) => {
   color: var(--hot);
 }
 
+/* 은은한 반투명 검정 글래스 — 배경 그라데이션이 살짝 비친다 */
 .status-bar {
   display: flex;
   align-items: center;
   gap: var(--s2);
-  background: var(--ink);
+  background: rgba(17, 17, 17, 0.78);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border-radius: 10px;
   color: var(--paper);
   padding: 10px var(--s2);
   font-size: 13px;
