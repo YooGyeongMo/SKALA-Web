@@ -36,6 +36,9 @@ const moveIndicator = async () => {
   indicator.value = { left: el.offsetLeft, width: el.offsetWidth, opacity: 1 }
 }
 
+// 첫 진입 인트로 오버레이 — 시퀀스가 끝나면 DOM에서 제거한다
+const showIntro = ref(true)
+
 // 기본은 풀폭 헤더, 스크롤을 내리면 둥근 리퀴드 필로 변형된다
 const isScrolled = ref(false)
 
@@ -55,6 +58,15 @@ onMounted(() => {
   onScroll()
   window.addEventListener('resize', moveIndicator)
   window.addEventListener('scroll', onScroll, { passive: true })
+
+  // 모션을 줄인 사용자는 인트로를 건너뛰고, 아니면 시퀀스가 끝난 뒤 오버레이를 걷어낸다
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    showIntro.value = false
+  } else {
+    setTimeout(() => {
+      showIntro.value = false
+    }, 2600)
+  }
 })
 
 onBeforeUnmount(() => {
@@ -65,6 +77,14 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="app">
+    <!-- 첫 진입 인트로: 정중앙에서 선이 크게 그어지고 워드마크가 떠오른 뒤 위로 올라간다 -->
+    <div v-if="showIntro" class="intro" aria-hidden="true">
+      <div class="intro-inner">
+        <p class="intro-brand">SKALA WEATHER</p>
+        <span class="intro-line"></span>
+      </div>
+    </div>
+
     <header class="nav-wrap">
       <div class="global-nav" :class="{ scrolled: isScrolled }">
         <RouterLink to="/" class="brand">SKALA WEATHER</RouterLink>
@@ -138,7 +158,62 @@ onBeforeUnmount(() => {
     box-shadow 0.35s ease;
 }
 
-/* 하단 잉크 선 — 첫 진입 때 중앙에서 양쪽으로 그어진다 */
+/* ── 첫 진입 인트로 오버레이 ─────────────────────────
+   0.2s 선이 중앙에서 크게 그어짐 → 0.75s 워드마크 등장
+   → 1.5s 전체가 위로 상승하며 축소 → 1.9s 배경 걷힘 → 헤더와 본문 등장 */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  pointer-events: none;
+  animation: intro-bg-out 0.6s ease 1.9s forwards;
+}
+
+.intro-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  animation: intro-ascend 0.8s cubic-bezier(0.4, 0, 0.2, 1) 1.5s forwards;
+}
+
+.intro-brand {
+  font-size: clamp(40px, 7vw, 88px);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+  white-space: nowrap;
+  animation: rise-in 0.7s ease 0.75s backwards;
+}
+
+/* 정중앙에서 화면 폭 70%까지 길게 그어지는 선 */
+.intro-line {
+  display: block;
+  width: min(70vw, 920px);
+  height: 2px;
+  background: var(--ink);
+  transform-origin: center;
+  animation: line-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+}
+
+@keyframes intro-ascend {
+  to {
+    transform: translateY(-42vh) scale(0.32);
+    opacity: 0;
+  }
+}
+
+@keyframes intro-bg-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* 하단 잉크 선 — 인트로가 걷힌 뒤 중앙에서 양쪽으로 그어진다 */
 .global-nav::after {
   content: '';
   position: absolute;
@@ -148,7 +223,7 @@ onBeforeUnmount(() => {
   height: 1px;
   background: var(--line-strong);
   transform-origin: center;
-  animation: line-draw 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.15s backwards;
+  animation: line-draw 0.7s cubic-bezier(0.4, 0, 0.2, 1) 1.85s backwards;
   transition: opacity 0.35s ease;
 }
 
@@ -178,9 +253,9 @@ onBeforeUnmount(() => {
   box-shadow: 0 8px 24px rgba(17, 17, 17, 0.08);
 }
 
-/* 첫 진입 순차 등장 — 선(0.15s) → 브랜드(0.55s) → 링크들(0.75s~) → 토글 → 본문 */
+/* 첫 진입 순차 등장 — 인트로 상승(1.5s~)에 맞춰 헤더가 넘겨받는다 */
 .brand {
-  animation: rise-in 0.5s ease 0.55s backwards;
+  animation: rise-in 0.5s ease 2.1s backwards;
 }
 
 .nav-links a {
@@ -188,27 +263,27 @@ onBeforeUnmount(() => {
 }
 
 .nav-links a:nth-child(1) {
-  animation-delay: 0.75s;
+  animation-delay: 2.25s;
 }
 
 .nav-links a:nth-child(2) {
-  animation-delay: 0.85s;
+  animation-delay: 2.35s;
 }
 
 .nav-links a:nth-child(3) {
-  animation-delay: 0.95s;
+  animation-delay: 2.45s;
 }
 
 .nav-right :deep(.unit-toggler) {
-  animation: rise-in 0.45s ease 1.05s backwards;
+  animation: rise-in 0.45s ease 2.55s backwards;
 }
 
 .nav-indicator {
-  animation: fade-in 0.3s ease 1.1s backwards;
+  animation: fade-in 0.3s ease 2.6s backwards;
 }
 
 .app-main {
-  animation: content-rise 0.65s ease 1.15s backwards;
+  animation: content-rise 0.7s ease 2.4s backwards;
 }
 
 @keyframes rise-in {
@@ -241,6 +316,10 @@ onBeforeUnmount(() => {
 
 /* 모션을 줄이고 싶은 사용자에게는 인트로를 생략한다 */
 @media (prefers-reduced-motion: reduce) {
+  .intro,
+  .intro-inner,
+  .intro-brand,
+  .intro-line,
   .global-nav::after,
   .brand,
   .nav-links a,

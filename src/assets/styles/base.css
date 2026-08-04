@@ -19,11 +19,12 @@ body {
   font-size: 15px;
   line-height: 1.6;
   color: var(--ink);
-  /* 가장자리에만 옅게 깔리는 파스텔 그라데이션 — 콘텐츠 패널은 흰색을 유지한다 */
+  /* 아주 연한 파스텔이 좌측에서 우측으로 흐르는 배경 — 콘텐츠 패널은 흰색을 유지한다 */
   background:
-    radial-gradient(900px 620px at 0% 100%, var(--grad-peach), transparent 60%),
-    radial-gradient(820px 520px at 100% 0%, var(--grad-sky), transparent 60%),
-    radial-gradient(700px 500px at 0% 0%, var(--grad-mint), transparent 60%),
+    radial-gradient(1000px 700px at 0% 0%, var(--grad-sky), transparent 62%),
+    radial-gradient(850px 620px at 0% 52%, var(--grad-mint), transparent 60%),
+    radial-gradient(950px 680px at 0% 100%, var(--grad-gold), transparent 62%),
+    radial-gradient(900px 700px at 100% 100%, var(--grad-peach), transparent 65%),
     var(--paper);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;

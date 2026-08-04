@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { findCityById } from '@/data/cities'
+import { findCityById, makeMockDetail } from '@/data/countries'
 import { hasApiKey, fetchCityWeather, mapMainToGlyph, formatObservedAt } from '@/api/openWeather'
 import { useConfigStore } from '@/stores/configStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
@@ -17,7 +17,10 @@ const isLoading = ref(false)
 // 키가 있으면 OpenWeather 실시간 관측값으로 교체한다 (실패 시 목데이터 유지)
 onMounted(async () => {
   const base = findCityById(route.params.cityId)
+  // 목데이터 형태로 먼저 그리고, 키가 있으면 실측값으로 교체한다
   city.value = base
+    ? { ...base, temp: base.mockTemp, status: base.mockStatus, detail: makeMockDetail(base.mockTemp) }
+    : null
   if (!base || !hasApiKey) return
 
   isLoading.value = true

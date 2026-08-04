@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import CountryHomeView from '@/views/CountryHomeView.vue'
 import WeatherHomeView from '@/views/WeatherHomeView.vue'
 
 const router = createRouter({
@@ -11,8 +12,14 @@ const router = createRouter({
     return { top: 0 }
   },
   routes: [
-    // 첫 화면(홈)은 즉시 로딩한다
-    { path: '/', name: 'home', component: WeatherHomeView },
+    // 첫 화면(홈)은 나라 선택 대시보드 — 즉시 로딩한다
+    { path: '/', name: 'home', component: CountryHomeView },
+    // 나라별 대표 도시 10곳 목록
+    {
+      path: '/country/:countryCode',
+      name: 'country-cities',
+      component: () => import('@/views/CityListView.vue'),
+    },
     // 나머지 페이지는 방문하는 시점에 코드가 로딩되도록 Lazy Loading 처리
     {
       path: '/lessons',
