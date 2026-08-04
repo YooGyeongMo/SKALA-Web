@@ -106,7 +106,9 @@ const lessons = [
             경로까지 각 라우트로 이동해 확인할 수 있습니다.
           </p>
           <div class="demo-links">
-            <RouterLink to="/" class="demo-link">홈 대시보드 /</RouterLink>
+            <RouterLink :to="{ path: '/', query: { from: 'archive' } }" class="demo-link"
+              >홈 대시보드 /</RouterLink
+            >
             <RouterLink to="/weather/city_01" class="demo-link">서울 상세 /weather/city_01</RouterLink>
             <RouterLink to="/weather/city_99" class="demo-link">없는 도시 /weather/city_99</RouterLink>
             <RouterLink to="/no-such-page" class="demo-link">404 확인 /no-such-page</RouterLink>

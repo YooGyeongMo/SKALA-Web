@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { cityList } from '@/data/cities'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
@@ -22,6 +22,15 @@ const goDetail = (cityId) => {
   router.push('/weather/' + cityId)
 }
 
+// 아카이브 데모 링크는 ?from=archive 를 달고 들어온다.
+// 히스토리 추측이 아니라 명시적인 상태(쿼리)로 판정하므로,
+// 내비로 온 일반 홈 방문에는 절대 버튼이 뜨지 않는다
+const cameFromArchive = computed(() => route.query.from === 'archive')
+
+const goBack = () => {
+  router.back()
+}
+
 // 최초 마운트 시 주소창의 ?search= 값을 읽어 검색 상태를 복원한다
 // 상세 페이지에 다녀오거나 링크를 공유해도 검색 결과가 유지된다
 onMounted(() => {
@@ -35,13 +44,18 @@ onMounted(() => {
 watch(searchQuery, (newQuery) => {
   router.replace({
     path: route.path,
-    query: { search: newQuery || undefined },
+    query: { ...route.query, search: newQuery || undefined },
   })
 })
 </script>
 
 <template>
   <div class="home">
+    <!-- 아카이브 데모로 들어온 경우에만 보이는 복귀 버튼 -->
+    <button v-if="cameFromArchive" class="btn-back" @click="goBack">
+      ← 이전 화면으로 돌아가기
+    </button>
+
     <header class="home-head">
       <h1 class="home-title">날씨 대시보드</h1>
       <p class="home-sub">지역별 실시간 날씨를 한눈에 확인하고, 상세보기를 누르면 관측 정보를 볼 수 있습니다.</p>
@@ -89,6 +103,24 @@ watch(searchQuery, (newQuery) => {
 
 .home-head {
   margin-bottom: var(--s4);
+}
+
+/* 상세/404와 같은 디자인의 검정 버튼 */
+.btn-back {
+  margin-bottom: var(--s3);
+  padding: 10px var(--s3);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-back:hover {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .home-title {
