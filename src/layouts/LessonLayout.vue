@@ -14,6 +14,11 @@ defineProps({
     type: String,
     default: '',
   },
+  // 값이 있으면 헤더 우측에 목차로 돌아가는 링크를 표시한다
+  tocHref: {
+    type: String,
+    default: '',
+  },
 })
 </script>
 
@@ -26,6 +31,8 @@ defineProps({
         <h2 class="lesson-title">{{ title }}</h2>
         <p v-if="subtitle" class="lesson-subtitle">{{ subtitle }}</p>
       </div>
+
+      <a v-if="tocHref" :href="tocHref" class="head-toc">↑ 목차</a>
     </header>
 
     <div class="lesson-body">
@@ -80,6 +87,25 @@ defineProps({
   margin-top: 4px;
   font-size: 13px;
   color: var(--muted);
+}
+
+/* 섹션에서 곧바로 목차로 올라가는 링크 */
+.head-toc {
+  margin-left: auto;
+  align-self: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  transition: all 0.15s;
+}
+
+.head-toc:hover {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--line-strong);
 }
 
 .lesson-body {
