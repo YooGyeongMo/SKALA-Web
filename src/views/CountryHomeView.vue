@@ -281,12 +281,6 @@ const goCountry = (code) => {
     forwards;
 }
 
-.country-card:hover .country-emblem :deep(path),
-.country-card:hover .country-emblem :deep(rect),
-.country-card:hover .country-emblem :deep(circle) {
-  animation: emblem-draw 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
 .country-card:hover .country-emblem :deep(.f) {
   fill-opacity: 1;
 }
