@@ -152,16 +152,52 @@ const STAR = 'M0 -1 L0.588 0.809 L-0.951 -0.309 L0.951 -0.309 L-0.588 0.809 Z'
   transition: fill 0.7s ease;
 }
 
-/* colored — 처음부터 색이 채워진 상태 (도시 목록 헤더 등) */
+/* colored — 처음부터 진한 국기색으로 채워진 상태 (도시 목록 헤더 등) */
 .emblem.colored .f {
   fill-opacity: 1;
 }
 
+.emblem.colored .lobe-red {
+  fill: rgb(199, 59, 75);
+}
+
+.emblem.colored .lobe-blue {
+  fill: rgb(42, 92, 168);
+}
+
+.emblem.colored .disc {
+  fill: rgb(192, 69, 69);
+}
+
+.emblem.colored .field {
+  fill: rgb(190, 45, 55);
+}
+
+.emblem.colored .b1 {
+  fill: rgb(43, 43, 43);
+}
+
+.emblem.colored .b2 {
+  fill: rgb(178, 58, 58);
+}
+
+.emblem.colored .b3 {
+  fill: rgb(224, 177, 62);
+}
+
+.emblem.colored .canton {
+  fill: rgb(51, 81, 142);
+}
+
+.emblem.colored .stripe {
+  fill: rgb(184, 74, 74);
+}
+
 .emblem.colored .star {
-  fill: rgba(224, 177, 62, 0.95);
+  fill: rgb(224, 177, 62);
 }
 
 .emblem.colored .cstar {
-  fill: rgba(255, 255, 255, 0.95);
+  fill: rgb(255, 255, 255);
 }
 </style>
