@@ -42,11 +42,13 @@ const showArchiveReturn = ref(false)
 
 const updateArchiveReturn = async () => {
   await nextTick()
-  showArchiveReturn.value =
-    window.history.state?.back === '/lessons' && route.path !== '/lessons'
+  // 목차 앵커를 거치면 이전 경로가 /lessons#lesson-04 처럼 해시가 붙으므로
+  // 엄격 비교가 아니라 경로 앞부분으로 판정한다
+  const backPath = window.history.state?.back ?? ''
+  showArchiveReturn.value = backPath.startsWith('/lessons') && route.path !== '/lessons'
 }
 
-watch(() => route.fullPath, updateArchiveReturn)
+watch(() => route.fullPath, updateArchiveReturn, { immediate: true })
 
 const returnToArchive = () => {
   // 단순하게 이전 화면으로 돌아간다.
