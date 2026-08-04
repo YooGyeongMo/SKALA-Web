@@ -29,7 +29,7 @@ const goDetail = (cityId) => {
   <div class="home">
     <header class="home-head">
       <h1 class="home-title">날씨 대시보드</h1>
-      <p class="home-sub">지역별 실시간 날씨 현황 · 카드의 상세보기로 관측 정보 확인</p>
+      <p class="home-sub">지역별 실시간 날씨를 한눈에 확인하고, 상세보기를 누르면 관측 정보를 볼 수 있습니다.</p>
     </header>
 
     <BaseDashboardCard>
