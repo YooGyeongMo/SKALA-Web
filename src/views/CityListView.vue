@@ -28,6 +28,9 @@ const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
+// 로딩 동안 스켈레톤을 보여주고, 완료 후 카드가 차례로 등장한다
+const loaded = ref(!hasApiKey || !country)
+
 // 도시 10곳의 실황을 병렬로 받아온다
 const loadCities = async () => {
   if (!country || !hasApiKey) return
@@ -45,6 +48,7 @@ const loadCities = async () => {
     console.error('[Axios] 도시 실황 연동 실패, 목데이터로 표시합니다:', error)
   } finally {
     isLoading.value = false
+    loaded.value = true
   }
 }
 
@@ -77,6 +81,11 @@ const goHome = () => {
         </p>
       </header>
 
+      <div class="status-bar">
+        <span class="status-label">Status</span>
+        <span class="status-text">{{ selectedCityInfo }}</span>
+      </div>
+
       <BaseDashboardCard>
         <SearchBar :current-query="searchQuery" @update-query="(val) => (searchQuery = val)" />
       </BaseDashboardCard>
@@ -84,28 +93,33 @@ const goHome = () => {
       <BaseDashboardCard>
         <template #header>도시별 날씨 현황</template>
 
+        <div v-if="!loaded" class="sk-list">
+          <div v-for="n in 6" :key="n" class="sk-row">
+            <span class="sk sk-line w30"></span>
+            <span class="sk sk-line w52"></span>
+          </div>
+        </div>
+
+        <div v-else class="city-grid">
         <WeatherCard
-          v-for="item in filteredWeatherList"
+          v-for="(item, i) in filteredWeatherList"
           :key="item.id"
           :city-item="item"
+          :style="{ '--i': i }"
           @select-card="(msg) => (selectedCityInfo = msg)"
         >
           <template #actions="{ city }">
             <button class="btn-detail" @click="goDetail(city.id)">상세보기</button>
           </template>
         </WeatherCard>
+        </div>
 
-        <p v-if="filteredWeatherList.length === 0" class="empty-result">
+        <p v-if="loaded && filteredWeatherList.length === 0" class="empty-result">
           검색 결과와 일치하는 도시가 없습니다.
         </p>
 
         <template #footer>총 {{ filteredWeatherList.length }}개 도시 표시 중</template>
       </BaseDashboardCard>
-
-      <div class="status-bar">
-        <span class="status-label">Status</span>
-        <span class="status-text">{{ selectedCityInfo }}</span>
-      </div>
     </template>
 
     <div v-else class="cities-empty">
@@ -117,9 +131,74 @@ const goHome = () => {
 
 <style scoped>
 .cities {
-  max-width: 640px;
+  max-width: 960px;
   margin: 0 auto;
   padding: var(--s6) var(--s3);
+}
+
+/* 도시 카드를 가로 그리드로 — 좁은 화면에서는 자동으로 1열이 된다 */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--s1);
+}
+
+.city-grid :deep(.weather-card) {
+  margin-bottom: 0;
+  animation: card-rise 0.45s ease backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* 스켈레톤 */
+.sk-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--s1);
+}
+
+.sk-row {
+  display: grid;
+  gap: 10px;
+  padding: var(--s2);
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.sk {
+  display: block;
+  height: 13px;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 17, 17, 0.05) 25%,
+    rgba(17, 17, 17, 0.1) 45%,
+    rgba(17, 17, 17, 0.05) 65%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.w30 {
+  width: 30%;
+}
+
+.w52 {
+  width: 52%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 .cities-head {
@@ -198,6 +277,7 @@ const goHome = () => {
   display: flex;
   align-items: center;
   gap: var(--s2);
+  margin-bottom: var(--s2);
   background: linear-gradient(180deg, rgba(38, 38, 38, 0.92), rgba(12, 12, 12, 0.94));
   backdrop-filter: blur(10px) saturate(1.2);
   -webkit-backdrop-filter: blur(10px) saturate(1.2);

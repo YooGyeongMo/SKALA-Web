@@ -21,15 +21,22 @@ const city = ref(null)
 
 const isLoading = ref(false)
 
+// 키가 있으면 목데이터를 깜빡이는 대신 스켈레톤을 보여주고, 실측값으로 바로 그린다
+const showSkeleton = ref(hasApiKey)
+
 // Mount 시점에 동적 경로 파라미터(:cityId)로 단일 출처에서 도시 객체를 선택하고,
-// 키가 있으면 OpenWeather 실시간 관측값으로 교체한다 (실패 시 목데이터 유지)
+// 키가 있으면 OpenWeather 실시간 관측값으로 교체한다 (실패 시 목데이터 폴백)
 onMounted(async () => {
   const base = findCityById(route.params.cityId)
-  // 목데이터 형태로 먼저 그리고, 키가 있으면 실측값으로 교체한다
-  city.value = base
-    ? { ...base, temp: base.mockTemp, status: base.mockStatus, detail: makeMockDetail(base.mockTemp) }
-    : null
-  if (!base || !hasApiKey) return
+  if (!base) {
+    city.value = null
+    showSkeleton.value = false
+    return
+  }
+  if (!hasApiKey) {
+    city.value = { ...base, temp: base.mockTemp, status: base.mockStatus, detail: makeMockDetail(base.mockTemp) }
+    return
+  }
 
   isLoading.value = true
   try {
@@ -55,8 +62,10 @@ onMounted(async () => {
     console.log('[Axios] 상세 페이지 실시간 데이터 동기화 완료:', city.value)
   } catch (error) {
     console.error('[Axios] 상세 정보 연동 실패, 목데이터로 표시합니다:', error)
+    city.value = { ...base, temp: base.mockTemp, status: base.mockStatus, detail: makeMockDetail(base.mockTemp) }
   } finally {
     isLoading.value = false
+    showSkeleton.value = false
   }
 })
 
@@ -166,6 +175,16 @@ const gaugeColor = computed(() => {
         </li>
       </ul>
     </template>
+
+    <!-- 로딩 중 스켈레톤 -->
+    <div v-else-if="showSkeleton" class="detail-sk">
+      <span class="sk w26"></span>
+      <span class="sk w44 tall"></span>
+      <span class="sk w60 taller"></span>
+      <div class="sk-grid">
+        <span v-for="n in 9" :key="n" class="sk block"></span>
+      </div>
+    </div>
 
     <!-- 존재하지 않는 도시 코드로 접근한 경우 -->
     <div v-else class="detail-empty">
@@ -305,6 +324,66 @@ const gaugeColor = computed(() => {
   font-size: 20px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+/* 스켈레톤 */
+.detail-sk {
+  display: grid;
+  gap: 14px;
+  margin-bottom: var(--s4);
+}
+
+.sk {
+  display: block;
+  height: 13px;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 17, 17, 0.05) 25%,
+    rgba(17, 17, 17, 0.1) 45%,
+    rgba(17, 17, 17, 0.05) 65%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.sk.w26 {
+  width: 26%;
+}
+
+.sk.w44 {
+  width: 44%;
+}
+
+.sk.w60 {
+  width: 60%;
+}
+
+.sk.tall {
+  height: 30px;
+}
+
+.sk.taller {
+  height: 56px;
+}
+
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s1);
+  margin-top: var(--s2);
+}
+
+.sk.block {
+  height: 74px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 .detail-empty {
