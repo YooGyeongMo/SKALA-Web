@@ -34,8 +34,10 @@ const countryCards = ref(
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
-// 키가 있으면 목데이터를 깜빡이는 대신 스켈레톤을 보여주고, 완료 후 한 번에 등장시킨다
-const loaded = ref(!hasApiKey)
+// 스켈레톤은 데이터 완료 여부와 무관하게 최소 2초는 보여준다 (목데이터일 때도)
+const fetchDone = ref(!hasApiKey)
+const minDone = ref(false)
+const loaded = computed(() => fetchDone.value && minDone.value)
 
 // 5개국 수도 실황을 병렬로 받아온다. 실패하면 목데이터를 유지한다
 const loadCapitals = async () => {
@@ -61,7 +63,7 @@ const loadCapitals = async () => {
     console.error('[Axios] 수도 실황 연동 실패, 목데이터로 표시합니다:', error)
   } finally {
     isLoading.value = false
-    loaded.value = true
+    fetchDone.value = true
     // 성공이든 실패든 첫 로딩이 끝났음을 알려 인트로를 해제한다
     uiStore.markReady()
   }
@@ -75,17 +77,24 @@ let clockTimer = null
 const myPlace = ref('')
 
 const loadMyPlace = () => {
+  // 우선 브라우저 타임존에서 도시명을 뽑아 폴백으로 보여준다 (예: Asia/Seoul → Seoul)
+  const tzCity = Intl.DateTimeFormat().resolvedOptions().timeZone?.split('/').pop()
+  if (tzCity) myPlace.value = tzCity.replaceAll('_', ' ')
+
   if (!hasApiKey || !navigator.geolocation) return
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       try {
         const data = await fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude)
-        myPlace.value = data.name
+        if (data.name) myPlace.value = data.name
       } catch (error) {
-        console.error('[Axios] 내 위치 조회 실패:', error)
+        console.error('[내 위치] 좌표 날씨 조회 실패, 타임존 폴백 유지:', error)
       }
     },
-    () => {}, // 거부하면 조용히 시계만 보여준다
+    (error) => {
+      console.warn('[내 위치] 위치 권한 거부 또는 실패, 타임존 폴백 유지:', error.message)
+    },
+    { timeout: 8000 },
   )
 }
 
@@ -95,6 +104,9 @@ const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
 onMounted(() => {
   loadCapitals()
   loadMyPlace()
+  setTimeout(() => {
+    minDone.value = true
+  }, 2000)
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
@@ -373,6 +385,14 @@ const goCountry = (code) => {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.country-card:hover .country-emblem :deep(.seq1) {
+  animation-delay: 0.25s;
+}
+
+.country-card:hover .country-emblem :deep(.seq2) {
+  animation-delay: 0.5s;
 }
 
 .country-card:hover .country-emblem :deep(.f) {
