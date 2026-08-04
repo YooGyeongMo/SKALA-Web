@@ -37,6 +37,18 @@ const router = createRouter({
       name: 'lessons-weather-detail',
       component: () => import('@/views/WeatherDetailView.vue'),
     },
+    // 05 스토어 데모 경로 — Day별로 자기 프리픽스를 갖고 깊어진다
+    // /lessons → /lessons/store/home → /lessons/store/weather/city_01
+    {
+      path: '/lessons/store/home',
+      name: 'lessons-store-home',
+      component: WeatherHomeView,
+    },
+    {
+      path: '/lessons/store/weather/:cityId',
+      name: 'lessons-store-weather-detail',
+      component: () => import('@/views/WeatherDetailView.vue'),
+    },
     {
       path: '/about',
       name: 'about',

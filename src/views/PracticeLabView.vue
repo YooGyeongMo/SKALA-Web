@@ -149,8 +149,8 @@ const lessons = [
             </span>
           </div>
           <div class="demo-links">
-            <RouterLink to="/lessons/home" class="demo-link">홈에서 단위 적용 확인 /lessons/home</RouterLink>
-            <RouterLink to="/lessons/weather/city_01" class="demo-link">상세에서 단위 적용 확인 /lessons/weather/city_01</RouterLink>
+            <RouterLink to="/lessons/store/home" class="demo-link">홈에서 단위 적용 확인 /lessons/store/home</RouterLink>
+            <RouterLink to="/lessons/store/weather/city_01" class="demo-link">상세에서 단위 적용 확인 /lessons/store/weather/city_01</RouterLink>
           </div>
         </div>
       </template>

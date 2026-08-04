@@ -19,8 +19,9 @@ const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
 const router = useRouter()
 const route = useRoute()
 const goDetail = (cityId) => {
-  // 데모 맥락에서는 상세로 들어가도 /lessons 프리픽스를 유지해 뎁스가 이어진다
-  const base = cameFromArchive.value ? '/lessons' : ''
+  // 데모 맥락(/lessons/home, /lessons/store/home)에서는 상세로 들어가도
+  // 현재 경로의 프리픽스를 그대로 유지해 뎁스가 이어진다
+  const base = route.path.endsWith('/home') ? route.path.slice(0, -'/home'.length) : ''
   router.push(base + '/weather/' + cityId)
 }
 
