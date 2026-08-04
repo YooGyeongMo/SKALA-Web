@@ -24,7 +24,7 @@ const displayTemp = computed(() => {
   if (configStore.unit === 'fahrenheit') {
     return Math.round((rawTemp * 9) / 5 + 32)
   }
-  return rawTemp
+  return Math.round(rawTemp) // 실시간 데이터는 소수점이 오므로 반올림해 표시한다
 })
 </script>
 

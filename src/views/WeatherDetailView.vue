@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCityById } from '@/data/cities'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph, formatObservedAt } from '@/api/openWeather'
 import { useConfigStore } from '@/stores/configStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CityLandmark from '@/components/weather/CityLandmark.vue'
@@ -10,9 +11,38 @@ const route = useRoute()
 const router = useRouter()
 const city = ref(null)
 
-// Mount 시점에 동적 경로 파라미터(:cityId)로 단일 출처에서 도시 객체를 선택한다
-onMounted(() => {
-  city.value = findCityById(route.params.cityId)
+const isLoading = ref(false)
+
+// Mount 시점에 동적 경로 파라미터(:cityId)로 단일 출처에서 도시 객체를 선택하고,
+// 키가 있으면 OpenWeather 실시간 관측값으로 교체한다 (실패 시 목데이터 유지)
+onMounted(async () => {
+  const base = findCityById(route.params.cityId)
+  city.value = base
+  if (!base || !hasApiKey) return
+
+  isLoading.value = true
+  try {
+    const raw = await fetchCityWeather(base.english)
+    city.value = {
+      ...base,
+      temp: raw.main.temp,
+      status: raw.weather[0].description,
+      glyph: mapMainToGlyph(raw.weather[0].main),
+      detail: {
+        feels: raw.main.feels_like,
+        humidity: raw.main.humidity,
+        wind: raw.wind.speed,
+        clouds: raw.clouds.all,
+        pressure: raw.main.pressure,
+        observedAt: formatObservedAt(raw.dt),
+      },
+    }
+    console.log('[Axios] 상세 페이지 실시간 데이터 동기화 완료:', city.value)
+  } catch (error) {
+    console.error('[Axios] 상세 정보 연동 실패, 목데이터로 표시합니다:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
 
 // 아카이브 데모처럼 다른 화면에서 넘어왔다면 그 자리(스크롤 위치까지)로 되돌아간다.
@@ -28,7 +58,7 @@ const goBack = () => {
 // 전역 단위 설정 — 원본은 섭씨로 두고 표시할 때만 변환한다
 const configStore = useConfigStore()
 const toDisplay = (celsius) =>
-  configStore.unit === 'fahrenheit' ? Math.round((celsius * 9) / 5 + 32) : celsius
+  configStore.unit === 'fahrenheit' ? Math.round((celsius * 9) / 5 + 32) : Math.round(celsius)
 
 const displayTemp = computed(() => (city.value ? toDisplay(city.value.temp) : 0))
 const displayFeels = computed(() => (city.value ? toDisplay(city.value.detail.feels) : 0))
@@ -62,7 +92,7 @@ const gaugeColor = computed(() => {
         </h1>
 
         <div class="temp-row">
-          <WeatherGlyph :status="city.status" :size="56" />
+          <WeatherGlyph :status="city.glyph || city.status" :size="56" />
           <p class="detail-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
         </div>
 
@@ -96,12 +126,12 @@ const gaugeColor = computed(() => {
           <span class="obs-value">{{ city.detail.wind }}m/s</span>
         </li>
         <li class="obs-item">
-          <span class="obs-label">강수 확률</span>
-          <span class="obs-value">{{ city.detail.rain }}%</span>
+          <span class="obs-label">구름량</span>
+          <span class="obs-value">{{ city.detail.clouds }}%</span>
         </li>
         <li class="obs-item">
-          <span class="obs-label">미세먼지</span>
-          <span class="obs-value">{{ city.detail.dust }}</span>
+          <span class="obs-label">기압</span>
+          <span class="obs-value">{{ city.detail.pressure }}hPa</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">날씨 상태</span>
