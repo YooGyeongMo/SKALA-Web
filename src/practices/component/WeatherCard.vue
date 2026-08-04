@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useConfigStore } from '@/stores/configStore'
+import { withIGa } from '@/utils/korean'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CityLandmark from '@/components/weather/CityLandmark.vue'
 import TierMark from '@/components/weather/TierMark.vue'
@@ -29,7 +30,10 @@ const displayTemp = computed(() => {
 </script>
 
 <template>
-  <article class="weather-card" @click="emit('select-card', `${cityItem.name}이 선택되었습니다.`)">
+  <article
+    class="weather-card"
+    @click="emit('select-card', `${withIGa(cityItem.name)} 선택되었습니다.`)"
+  >
     <!-- 도시 랜드마크가 카드 배경에 아주 옅게 깔리고, 호버하면 살짝 드러난다 -->
     <CityLandmark :city-id="cityItem.id" class="card-landmark" />
 
