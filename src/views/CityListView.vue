@@ -66,6 +66,12 @@ const loadCities = async () => {
 const now = ref(Date.now())
 let timeTimer = null
 
+// 헤더에 보여줄 나라 현지 시간 — 수도(첫 도시) 기준
+const headTime = computed(() => {
+  const tz = weatherList.value[0]?.tz ?? 0
+  return tzClock(now.value, tz)
+})
+
 const displayList = computed(() =>
   filteredWeatherList.value.map((c) => ({ ...c, localTime: tzClock(now.value, c.tz) })),
 )
@@ -106,6 +112,9 @@ const goHome = () => {
     <template v-if="country">
       <header class="cities-head">
         <CountryEmblem :country-code="country.code" class="head-emblem colored" />
+        <p class="head-time">
+          {{ headTime.slice(0, 2) }}<i class="tick">:</i>{{ headTime.slice(3) }}
+        </p>
         <p class="head-en">{{ country.english }}</p>
         <h1 class="head-title">{{ country.name }} 대표 도시</h1>
         <p class="data-source" :class="dataSource">
@@ -261,8 +270,31 @@ const goHome = () => {
   right: 0;
   top: -18px;
   width: 92px;
-  opacity: 0.55;
   pointer-events: none;
+}
+
+/* 나라 현지 시간 — 국기 아래, 콜론이 깜빡인다 */
+.head-time {
+  position: absolute;
+  right: 0;
+  top: 54px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.head-time .tick {
+  font-style: normal;
+  animation: colon-blink 1s steps(1) infinite;
+}
+
+@keyframes colon-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .head-en {
