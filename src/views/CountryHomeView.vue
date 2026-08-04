@@ -165,7 +165,8 @@ const goCountry = (code) => {
 
 .country-card:hover {
   border-color: var(--line-strong);
-  box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.08);
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px rgba(17, 17, 17, 0.12);
 }
 
 /* 국기 엠블럼 — 카드별 시차는 --emblem-delay 변수로 준다 */
