@@ -313,30 +313,35 @@ const goCountry = (code) => {
   box-shadow: 0 14px 28px rgba(17, 17, 17, 0.12);
 }
 
-/* 국기 엠블럼 — 밑그림이 카드별 시차로 그려지고,
-   호버하면 선을 다시 그리며 국기색이 차오른다 */
+/* 국기 엠블럼 — 은은한 밑그림으로 서 있다가,
+   호버하면 알파가 진해지며 선이 다시 그려지고 국기색이 차오른다 */
 .country-emblem {
   width: 112px;
   justify-self: end;
+  opacity: 0.5;
+  transition: opacity 0.35s ease;
 }
 
-.country-emblem :deep(path),
-.country-emblem :deep(rect),
-.country-emblem :deep(circle) {
+.country-card:hover .country-emblem {
+  opacity: 1;
+}
+
+.country-card:hover .country-emblem :deep(.line) {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: emblem-draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--emblem-delay, 0s) + 0.1s)
-    forwards;
-}
-
-.country-card:hover .country-emblem :deep(path),
-.country-card:hover .country-emblem :deep(rect),
-.country-card:hover .country-emblem :deep(circle) {
   animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .country-card:hover .country-emblem :deep(.f) {
   fill-opacity: 1;
+}
+
+.country-card:hover .country-emblem :deep(.star) {
+  fill: rgba(224, 177, 62, 0.95);
+}
+
+.country-card:hover .country-emblem :deep(.cstar) {
+  fill: rgba(255, 255, 255, 0.95);
 }
 
 @keyframes emblem-draw {
@@ -345,21 +350,6 @@ const goCountry = (code) => {
   }
 }
 
-.country-card:nth-child(1) .country-emblem {
-  --emblem-delay: 0s;
-}
-.country-card:nth-child(2) .country-emblem {
-  --emblem-delay: 0.12s;
-}
-.country-card:nth-child(3) .country-emblem {
-  --emblem-delay: 0.24s;
-}
-.country-card:nth-child(4) .country-emblem {
-  --emblem-delay: 0.36s;
-}
-.country-card:nth-child(5) .country-emblem {
-  --emblem-delay: 0.48s;
-}
 
 .country-meta {
   display: grid;
