@@ -65,9 +65,15 @@ const STAR = 'M0 -1 L0.588 0.809 L-0.951 -0.309 L0.951 -0.309 L-0.588 0.809 Z'
       <rect class="f stripe" x="16" y="58" width="88" height="7" />
       <rect class="f stripe" x="16" y="72" width="88" height="7" />
       <rect class="f stripe" x="16" y="84" width="88" height="6" />
-      <g transform="translate(26 41)"><path class="star cstar" :d="STAR" transform="scale(5)" /></g>
-      <g transform="translate(40 49)"><path class="star cstar" :d="STAR" transform="scale(5)" /></g>
-      <g transform="translate(33 36)"><path class="star cstar" :d="STAR" transform="scale(4.2)" /></g>
+      <!-- 실제 캔톤처럼 3-2-3으로 정렬된 작은 별들 -->
+      <g transform="translate(23 36)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(33 36)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(43 36)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(28 44)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(38 44)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(23 52)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(33 52)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
+      <g transform="translate(43 52)"><path class="star cstar" :d="STAR" transform="scale(2.4)" /></g>
       <rect class="line" pathLength="1" x="15" y="29" width="90" height="62" rx="8" />
     </svg>
   </span>
