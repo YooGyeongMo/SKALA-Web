@@ -63,7 +63,7 @@ const goHome = () => {
   <div class="cities">
     <template v-if="country">
       <header class="cities-head">
-        <CountryEmblem :country-code="country.code" class="head-emblem" />
+        <CountryEmblem :country-code="country.code" class="head-emblem colored" />
         <p class="head-en">{{ country.english }}</p>
         <h1 class="head-title">{{ country.name }} 대표 도시</h1>
         <p class="data-source" :class="dataSource">
