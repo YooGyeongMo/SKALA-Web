@@ -2,7 +2,7 @@
 
 SKALA Full-Stack Engineering — Vue.js 실습 저장소.
 Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router, Day 5 Pinia, Day 6 Axios를 얹어,
-날씨 대시보드(`/`) · 상세 페이지(`/weather/:cityId`) · 소개(`/about`) · 실습 아카이브(`/lessons`)로 구성했습니다.
+나라 선택 홈(`/`) · 나라별 도시 목록(`/country/:countryCode`) · 상세(`/weather/:cityId`) · 소개(`/about`) · 실습 아카이브(`/lessons`)로 구성했습니다. 한국, 중국, 일본, 독일, 미국 5개국의 대표 도시 50곳을 실시간으로 보여줍니다.
 
 ## 실행 방법
 
@@ -40,7 +40,9 @@ src/
 ├── api/
 │   └── openWeather.js       # Axios 인스턴스와 OpenWeather 조회 함수, 글리프 매핑
 ├── views/                   # 페이지 단위 컴포넌트
-│   ├── WeatherHomeView.vue      # / — 메인 날씨 대시보드 (WeatherParent 대체)
+│   ├── CountryHomeView.vue      # / — 나라 선택 대시보드 (수도 실황과 윤곽 드로잉)
+│   ├── CityListView.vue         # /country/:countryCode — 나라별 대표 도시 10곳
+│   ├── WeatherHomeView.vue      # /lessons/*/home — 과제 원형(4개 도시) 데모 보존
 │   ├── WeatherDetailView.vue    # /weather/:cityId — 동적 매칭 상세 관측 페이지
 │   ├── WeatherAboutView.vue     # /about — 서비스 소개
 │   ├── NotFoundView.vue         # Catch-all — 404 안내
