@@ -116,7 +116,11 @@ export const makeMockDetail = (temp) => ({
   feels: temp + 2,
   humidity: 60,
   wind: 3.2,
+  windDir: '북서',
   clouds: 40,
   pressure: 1010,
+  visibility: '10km',
+  sunrise: '오전 5:30',
+  sunset: '오후 7:40',
   observedAt: '오늘 14:00',
 })
