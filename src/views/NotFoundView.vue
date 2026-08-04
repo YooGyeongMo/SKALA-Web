@@ -1,8 +1,18 @@
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 // Catch-all 라우트로 들어온 잘못된 경로를 그대로 보여준다
 const route = useRoute()
+const router = useRouter()
+
+// 이전 화면으로 돌아간다. 주소를 직접 열어 히스토리가 없으면 홈으로 보낸다
+const goBack = () => {
+  if (window.history.state?.back) {
+    router.back()
+  } else {
+    router.push('/')
+  }
+}
 </script>
 
 <template>
@@ -12,7 +22,7 @@ const route = useRoute()
     <p class="nf-path">
       요청 경로: <code>{{ route.fullPath }}</code>
     </p>
-    <RouterLink to="/" class="btn-home">← 메인 대시보드로 돌아가기</RouterLink>
+    <button class="btn-home" @click="goBack">← 이전 화면으로 돌아가기</button>
   </div>
 </template>
 
@@ -54,6 +64,7 @@ const route = useRoute()
 }
 
 .btn-home {
+  cursor: pointer;
   display: inline-block;
   padding: 10px var(--s3);
   font-size: 13px;

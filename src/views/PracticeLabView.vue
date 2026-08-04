@@ -96,7 +96,7 @@ const lessons = [
           <li>지연 로딩과 Catch-all 404 처리</li>
           <li>튜닝: 검색어 <code>?search=</code> 상태 복원</li>
         </ul>
-        <p class="spec-note">이 실습의 결과물은 사이트 전체입니다. 아래 데모로 직접 확인해 보세요</p>
+        <p class="spec-note">이 실습의 결과물은 사이트 전체입니다. 옆 데모로 직접 확인해 보세요</p>
       </template>
       <template #preview>
         <div class="router-demo">
@@ -106,17 +106,15 @@ const lessons = [
             경로까지 각 라우트로 이동해 확인할 수 있습니다.
           </p>
           <div class="demo-links">
-            <RouterLink to="/" class="demo-link">홈 대시보드 /</RouterLink>
-            <RouterLink to="/weather/city_01" class="demo-link">서울 상세 /weather/city_01</RouterLink>
-            <RouterLink to="/weather/city_99" class="demo-link">없는 도시 /weather/city_99</RouterLink>
-            <RouterLink to="/no-such-page" class="demo-link">404 확인 /no-such-page</RouterLink>
+            <RouterLink to="/lessons/home" class="demo-link">홈 대시보드 /lessons/home</RouterLink>
+            <RouterLink to="/lessons/weather/city_01" class="demo-link">서울 상세 /lessons/weather/city_01</RouterLink>
+            <RouterLink to="/lessons/weather/city_99" class="demo-link">없는 도시 /lessons/weather/city_99</RouterLink>
+            <RouterLink to="/lessons/no-such-page" class="demo-link">404 확인 /lessons/no-such-page</RouterLink>
           </div>
         </div>
       </template>
     </LessonLayout>
 
-    <!-- 어느 섹션에서든 목차로 바로 돌아가는 플로팅 버튼 -->
-    <a href="#archive-top" class="btn-top" aria-label="목차로 돌아가기">↑ 목차</a>
   </div>
 </template>
 
@@ -254,30 +252,6 @@ const lessons = [
   color: var(--paper);
 }
 
-/* 목차로 돌아가는 플로팅 글래스 버튼 */
-.btn-top {
-  position: fixed;
-  right: var(--s3);
-  bottom: var(--s3);
-  z-index: 90;
-  padding: 10px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px) saturate(1.3);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  border: 1px solid rgba(17, 17, 17, 0.1);
-  border-radius: 999px;
-  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.08);
-  transition: all 0.2s ease;
-}
-
-.btn-top:hover {
-  background: var(--ink);
-  color: var(--paper);
-}
 
 @media (max-width: 720px) {
   .toc {
