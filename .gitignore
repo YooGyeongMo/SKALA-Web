@@ -9,6 +9,8 @@ dist-ssr/
 *.local
 .env
 .env.*
+# 견본 파일은 예외 — 값이 비어 있어 노출될 키가 없다
+!.env.example
 
 # 로그
 logs/
