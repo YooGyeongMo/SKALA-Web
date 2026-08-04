@@ -35,7 +35,7 @@ const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
-// 로딩 동안 스켈레톤을 보여주고(최소 2초), 완료 후 카드가 차례로 등장한다
+// 로딩 동안 스켈레톤을 보여주고(최소 1.3초), 완료 후 카드가 차례로 등장한다
 const fetchDone = ref(!hasApiKey || !country)
 const minDone = ref(false)
 const loaded = computed(() => fetchDone.value && minDone.value)
@@ -82,7 +82,7 @@ onMounted(() => {
   loadCities()
   setTimeout(() => {
     minDone.value = true
-  }, 2000)
+  }, 1300)
   timeTimer = setInterval(() => {
     now.value = Date.now()
   }, 30000)

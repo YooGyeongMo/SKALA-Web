@@ -35,7 +35,7 @@ const countryCards = ref(
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
-// 스켈레톤은 데이터 완료 여부와 무관하게 최소 2초는 보여준다 (목데이터일 때도)
+// 스켈레톤은 데이터 완료 여부와 무관하게 최소 1.3초는 보여준다 (목데이터일 때도)
 const fetchDone = ref(!hasApiKey)
 const minDone = ref(false)
 const loaded = computed(() => fetchDone.value && minDone.value)
@@ -107,7 +107,7 @@ onMounted(() => {
   loadMyPlace()
   setTimeout(() => {
     minDone.value = true
-  }, 2000)
+  }, 1300)
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
@@ -225,7 +225,7 @@ const goCountry = (code) => {
   margin-top: 3px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--muted);
 }
 
 /* 위치 핀 — 은은한 파랑 */
