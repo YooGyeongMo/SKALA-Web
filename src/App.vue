@@ -2,7 +2,7 @@
 // App은 내비게이션 바(RouterLink)와 메인 콘텐츠 영역(RouterView)만 담당한다.
 // 실제 페이지 내용은 views/ 아래 페이지 컴포넌트가 맡는다.
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 // 실습이 Day 단위로 계속 늘어나므로 내비에는 기간을 표기하지 않는다
 const links = [
@@ -33,27 +33,6 @@ const moveIndicator = async () => {
     return
   }
   indicator.value = { left: el.offsetLeft, width: el.offsetWidth, opacity: 1 }
-}
-
-// 실습 아카이브에서 데모 링크로 넘어온 경우,
-// 어느 페이지에 있든 한 번에 아카이브(떠났던 스크롤 위치)로 되돌아가는 칩을 띄운다
-const router = useRouter()
-const showArchiveReturn = ref(false)
-
-const updateArchiveReturn = async () => {
-  await nextTick()
-  // 목차 앵커를 거치면 이전 경로가 /lessons#lesson-04 처럼 해시가 붙으므로
-  // 엄격 비교가 아니라 경로 앞부분으로 판정한다
-  const backPath = window.history.state?.back ?? ''
-  showArchiveReturn.value = backPath.startsWith('/lessons') && route.path !== '/lessons'
-}
-
-watch(() => route.fullPath, updateArchiveReturn, { immediate: true })
-
-const returnToArchive = () => {
-  // 단순하게 이전 화면으로 돌아간다.
-  // 스크롤 위치는 scrollBehavior의 savedPosition이 복원해 준다.
-  router.back()
 }
 
 // 기본은 풀폭 헤더, 스크롤을 내리면 둥근 리퀴드 필로 변형된다
@@ -116,10 +95,6 @@ onBeforeUnmount(() => {
       <RouterView />
     </main>
 
-    <!-- 아카이브에서 온 방문에만 나타나는 복귀 칩 -->
-    <button v-if="showArchiveReturn" class="archive-return" @click="returnToArchive">
-      ← 이전 화면으로
-    </button>
   </div>
 </template>
 
@@ -202,31 +177,6 @@ onBeforeUnmount(() => {
 .nav-links a.router-link-exact-active {
   color: var(--ink);
   font-weight: 700;
-}
-
-/* 아카이브 복귀 칩 — 글래스 톤, 우하단 고정 */
-.archive-return {
-  position: fixed;
-  right: var(--s3);
-  bottom: var(--s3);
-  z-index: 90;
-  padding: 10px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(12px) saturate(1.3);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  border: 1px solid rgba(17, 17, 17, 0.12);
-  border-radius: 999px;
-  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.1);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.archive-return:hover {
-  background: var(--ink);
-  color: var(--paper);
 }
 
 /* 활성 링크를 따라 좌우로 미끄러지는 검정 선 */
