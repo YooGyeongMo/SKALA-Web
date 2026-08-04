@@ -9,6 +9,7 @@
       <RouterLink to="/" class="brand">SKALA<span class="dot">·</span>WEATHER</RouterLink>
       <nav class="nav-links">
         <RouterLink to="/">홈</RouterLink>
+        <RouterLink to="/about">소개</RouterLink>
         <RouterLink to="/lessons">Day 1–3 실습</RouterLink>
       </nav>
     </header>

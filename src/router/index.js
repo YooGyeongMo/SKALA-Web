@@ -18,6 +18,17 @@ const router = createRouter({
       name: 'weather-detail',
       component: () => import('@/views/WeatherDetailView.vue'),
     },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('@/views/WeatherAboutView.vue'),
+    },
+    // Catch-all Route — 위 규칙에 걸리지 않는 모든 경로는 404 페이지로
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue'),
+    },
   ],
 })
 

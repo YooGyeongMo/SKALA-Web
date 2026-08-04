@@ -1,0 +1,87 @@
+<template>
+  <div class="about">
+    <header class="about-head">
+      <p class="section-label">About</p>
+      <h1 class="about-title">SKALA Weather</h1>
+    </header>
+
+    <div class="about-body">
+      <p>
+        SKALA Weather는 Vue 3 실습으로 만든 지역별 날씨 대시보드입니다. 도시별 현재 기온과 날씨
+        상태를 카드로 보여주고, 상세 페이지에서 체감 온도·습도·바람 같은 관측 정보를 확인할 수
+        있습니다.
+      </p>
+      <p>
+        Day 1–3에서 만든 대시보드 컴포넌트(BaseDashboardCard · SearchBar · WeatherCard)를 그대로
+        재사용하고, Day 4에서 Vue Router로 페이지 전환(내비게이션, 동적 경로 매칭, Lazy Loading,
+        Catch-all)을 얹었습니다.
+      </p>
+      <ul class="about-stack">
+        <li>Vue 3 · Composition API</li>
+        <li>Vue Router — 동적 매칭 / Lazy Loading</li>
+        <li>컴포넌트 재사용 — props · emits · slot</li>
+      </ul>
+    </div>
+
+    <!-- 메인 대시보드로 돌아가기 -->
+    <RouterLink to="/" class="btn-home">← 메인 대시보드로 돌아가기</RouterLink>
+  </div>
+</template>
+
+<style scoped>
+.about {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--s6) var(--s3);
+}
+
+.about-head {
+  border-bottom: 2px solid var(--line-strong);
+  padding-bottom: var(--s2);
+  margin-bottom: var(--s3);
+}
+
+.about-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-top: var(--s1);
+}
+
+.about-body p {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: var(--s2);
+}
+
+.about-stack {
+  list-style: none;
+  display: grid;
+  gap: var(--s1);
+  margin: var(--s3) 0 var(--s4) 0;
+  font-size: 13px;
+}
+
+.about-stack li {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 8px var(--s2);
+}
+
+.btn-home {
+  display: inline-block;
+  padding: 10px var(--s3);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--line-strong);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.btn-home:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+</style>
