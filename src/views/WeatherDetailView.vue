@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCityById } from '@/data/cities'
+import { useConfigStore } from '@/stores/configStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CityLandmark from '@/components/weather/CityLandmark.vue'
 
@@ -24,7 +25,15 @@ const goBack = () => {
   }
 }
 
-// 기온 게이지 — 0~40도 범위를 비율로 환산한다
+// 전역 단위 설정 — 원본은 섭씨로 두고 표시할 때만 변환한다
+const configStore = useConfigStore()
+const toDisplay = (celsius) =>
+  configStore.unit === 'fahrenheit' ? Math.round((celsius * 9) / 5 + 32) : celsius
+
+const displayTemp = computed(() => (city.value ? toDisplay(city.value.temp) : 0))
+const displayFeels = computed(() => (city.value ? toDisplay(city.value.detail.feels) : 0))
+
+// 기온 게이지 — 단위와 무관하게 섭씨 원본 기준 0~40도 비율로 환산한다
 const gaugePercent = computed(() => {
   if (!city.value) return 0
   return Math.min(100, Math.max(0, (city.value.temp / 40) * 100))
@@ -54,7 +63,7 @@ const gaugeColor = computed(() => {
 
         <div class="temp-row">
           <WeatherGlyph :status="city.status" :size="56" />
-          <p class="detail-temp">{{ city.temp }}°C</p>
+          <p class="detail-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
         </div>
 
         <!-- 기온 게이지: 0~40도 범위에서 현재 기온 위치를 보여준다 -->
@@ -76,7 +85,7 @@ const gaugeColor = computed(() => {
       <ul class="obs-grid">
         <li class="obs-item">
           <span class="obs-label">체감 온도</span>
-          <span class="obs-value">{{ city.detail.feels }}°C</span>
+          <span class="obs-value">{{ displayFeels }}{{ configStore.unitSymbol }}</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">습도</span>
