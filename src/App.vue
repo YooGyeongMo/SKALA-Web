@@ -14,7 +14,7 @@ const links = [
 const route = useRoute()
 const linkEls = ref([])
 
-// 현재 경로에 해당하는 링크 밑으로 미끄러져 이동하는 인디케이터
+// 현재 경로에 해당하는 링크 밑으로 미끄러져 이동하는 선 인디케이터
 const indicator = ref({ left: 0, width: 0, opacity: 0 })
 
 const setLinkEl = (el, index) => {
@@ -35,36 +35,50 @@ const moveIndicator = async () => {
   indicator.value = { left: el.offsetLeft, width: el.offsetWidth, opacity: 1 }
 }
 
+// 기본은 풀폭 헤더, 스크롤을 내리면 둥근 리퀴드 필로 변형된다
+const isScrolled = ref(false)
+
+const onScroll = () => {
+  isScrolled.value = window.scrollY > 60
+}
+
+// 형태가 바뀌면 링크 위치도 바뀌므로, 변형이 끝난 뒤 인디케이터를 다시 잰다
+watch(isScrolled, () => {
+  setTimeout(moveIndicator, 380)
+})
+
 watch(() => route.path, moveIndicator)
 
 onMounted(() => {
   moveIndicator()
+  onScroll()
   window.addEventListener('resize', moveIndicator)
+  window.addEventListener('scroll', onScroll, { passive: true })
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', moveIndicator)
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 
 <template>
   <div class="app">
-    <!-- 스크롤을 따라 떠 있는 글래스 내비 — 배경 그라데이션이 블러로 비쳐 보인다 -->
     <header class="nav-wrap">
-      <div class="global-nav">
-        <RouterLink to="/" class="brand">SKALA<span class="dot">·</span>WEATHER</RouterLink>
+      <div class="global-nav" :class="{ scrolled: isScrolled }">
+        <RouterLink to="/" class="brand">SKALA WEATHER</RouterLink>
 
         <nav class="nav-links">
-        <RouterLink
-          v-for="(link, i) in links"
-          :key="link.to"
-          :ref="(el) => setLinkEl(el, i)"
-          :to="link.to"
-        >
-          {{ link.label }}
-        </RouterLink>
+          <RouterLink
+            v-for="(link, i) in links"
+            :key="link.to"
+            :ref="(el) => setLinkEl(el, i)"
+            :to="link.to"
+          >
+            {{ link.label }}
+          </RouterLink>
 
-          <!-- 슬라이딩 인디케이터 — 활성 링크 아래로 이동한다 -->
+          <!-- 활성 링크를 따라 미끄러지는 선 -->
           <span
             class="nav-indicator"
             :style="{
@@ -86,29 +100,49 @@ onBeforeUnmount(() => {
 <style scoped>
 .nav-wrap {
   position: sticky;
-  top: 14px;
+  top: 0;
   z-index: 100;
   display: flex;
   justify-content: center;
-  padding: var(--s2) var(--s2) 0 var(--s2);
 }
 
-.app-main {
-  margin-top: var(--s2);
-}
-
-/* 리퀴드 글래스 필 — 반투명 흰색 + 블러, 아래 콘텐츠가 은은히 비친다 */
+/* 기본 상태: 풀폭 헤더 — 하단에 가는 잉크 선 하나 */
 .global-nav {
   display: flex;
   align-items: center;
-  gap: var(--s6);
-  padding: 12px 14px 12px 28px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1600px;
+  margin-top: 0;
+  padding: 18px 32px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid transparent;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  box-shadow: none;
+  transition:
+    max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* 스크롤 상태: 가장자리가 둥글게 말리며 리퀴드 글래스 필로 */
+.global-nav.scrolled {
+  max-width: 640px;
+  margin-top: 12px;
+  padding: 11px 26px;
   background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-color: rgba(17, 17, 17, 0.08);
   border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.08);
 }
 
 .brand {
@@ -117,49 +151,40 @@ onBeforeUnmount(() => {
   letter-spacing: 0.16em;
   color: var(--ink);
   text-decoration: none;
-}
-
-.brand .dot {
-  color: var(--muted);
-  margin: 0 2px;
+  white-space: nowrap;
 }
 
 .nav-links {
   position: relative;
   display: flex;
-  gap: 4px;
+  gap: var(--s3);
+  padding-bottom: 5px;
 }
 
 .nav-links a {
-  position: relative;
-  z-index: 1;
-  padding: 9px 18px;
-  border-radius: 999px;
+  padding: 2px;
   font-size: 14px;
   font-weight: 500;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.25s ease;
+  transition: color 0.2s ease;
 }
 
 .nav-links a:hover {
   color: var(--ink);
 }
 
-/* 활성 링크는 잉크 필 위에 올라가므로 글자가 흰색으로 반전된다 */
 .nav-links a.router-link-exact-active {
-  color: var(--paper);
+  color: var(--ink);
   font-weight: 700;
 }
 
-/* 밑줄이 아니라 항목 영역 전체를 덮으며 미끄러지는 잉크 필 */
+/* 활성 링크를 따라 좌우로 미끄러지는 검정 선 */
 .nav-indicator {
   position: absolute;
-  top: 0;
   bottom: 0;
-  z-index: 0;
+  height: 2px;
   background: var(--ink);
-  border-radius: 999px;
   transition:
     left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
