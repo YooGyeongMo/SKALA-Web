@@ -13,6 +13,7 @@ import { tzClock, MOCK_TZ } from '@/utils/time'
 import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
+import { MapPin } from 'lucide-vue-next'
 
 const router = useRouter()
 const uiStore = useUiStore()
@@ -130,7 +131,9 @@ const goCountry = (code) => {
           <span class="clock-colon">:</span>
           <span class="clock-digits">{{ minutes }}</span>
         </div>
-        <p v-if="myPlace" class="clock-place">내 위치 {{ myPlace }}</p>
+        <p v-if="myPlace" class="clock-place">
+          <MapPin class="place-pin" :size="14" :stroke-width="2.2" />{{ myPlace }}
+        </p>
       </div>
       <h1 class="world-title">세계 날씨 대시보드</h1>
       <p class="world-sub">나라를 고르면 대표 도시 10곳의 실시간 날씨를 볼 수 있습니다.</p>
@@ -170,7 +173,10 @@ const goCountry = (code) => {
             <WeatherGlyph :status="card.glyph || card.status" :size="22" />
             <span class="capital-temp">{{ Math.round(card.temp) }}°</span>
             <span class="capital-name">{{ card.capital }}</span>
-            <span class="capital-time">{{ tzClock(now.getTime(), card.tz) }}</span>
+            <span class="capital-time">
+              {{ tzClock(now.getTime(), card.tz).slice(0, 2)
+              }}<i class="tick">:</i>{{ tzClock(now.getTime(), card.tz).slice(3) }}
+            </span>
           </div>
         </div>
         <span class="country-cta">대표 도시 10곳 →</span>
@@ -212,9 +218,19 @@ const goCountry = (code) => {
 }
 
 .clock-place {
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* 위치 핀 — 은은한 파랑 */
+.place-pin {
+  color: rgba(42, 92, 168, 0.65);
 }
 
 .clock-colon {
@@ -457,6 +473,11 @@ const goCountry = (code) => {
   font-size: 12.5px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+.capital-time .tick {
+  font-style: normal;
+  animation: colon-blink 1s steps(1) infinite;
 }
 
 .country-cta {
