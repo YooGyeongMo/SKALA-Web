@@ -362,6 +362,191 @@ defineProps({
       <path pathLength="1" d="M160 64 V84" />
       <path pathLength="1" d="M136 150 Q160 158 184 150" />
     </svg>
+
+    <!-- 뮌헨: 프라우엔키르헤 — 양파 돔을 얹은 쌍둥이 탑 -->
+    <svg v-else-if="cityId === 'de_munich'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M120 44 C132 24 148 24 158 44 L154 52 H124 Z" />
+      <path pathLength="1" d="M162 44 C174 24 190 24 200 44 L196 52 H166 Z" />
+      <path pathLength="1" d="M126 52 V152 M152 52 V152" />
+      <path pathLength="1" d="M168 52 V152 M194 52 V152" />
+      <path pathLength="1" d="M132 84 a7 9 0 1 0 14 0 a7 9 0 1 0 -14 0 M174 84 a7 9 0 1 0 14 0 a7 9 0 1 0 -14 0" />
+      <path pathLength="1" d="M112 152 H208" />
+    </svg>
+
+    <!-- 함부르크: 엘프필하모니 — 벽돌 기단 위 물결 지붕 -->
+    <svg v-else-if="cityId === 'de_hamburg'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M84 84 C104 64 124 92 144 72 C164 52 184 84 204 64 C224 48 236 72 236 72" />
+      <path pathLength="1" d="M84 84 V100 M236 72 V100" />
+      <path pathLength="1" d="M84 100 H236" />
+      <path pathLength="1" d="M84 100 V152 H236 V100" />
+      <path pathLength="1" d="M100 116 H220 M100 132 H220" />
+      <path pathLength="1" d="M64 162 Q90 154 116 162 M180 166 Q210 158 240 166" />
+    </svg>
+
+    <!-- 프랑크푸르트: 마인해튼 — 은행 타워 스카이라인 -->
+    <svg v-else-if="cityId === 'de_frankfurt'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M96 152 V72 H124 V152" />
+      <path pathLength="1" d="M134 152 V40 L150 26 L166 40 V152" />
+      <path pathLength="1" d="M150 26 V12" />
+      <path pathLength="1" d="M176 152 V56 H206 V88 H196 V152" />
+      <path pathLength="1" d="M104 92 H116 M142 64 H158 M184 72 H198" />
+      <path pathLength="1" d="M80 152 H240" />
+    </svg>
+
+    <!-- 쾰른: 쾰른 대성당 — 하늘을 찌르는 쌍둥이 첨탑 -->
+    <svg v-else-if="cityId === 'de_cologne'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M118 152 V72 L134 16 L150 72 V152" />
+      <path pathLength="1" d="M170 152 V72 L186 16 L202 72 V152" />
+      <path pathLength="1" d="M126 92 L142 108 M142 92 L126 108 M178 92 L194 108 M194 92 L178 108" />
+      <path pathLength="1" d="M150 96 H170 M150 120 A10 12 0 0 1 170 120" />
+      <path pathLength="1" d="M150 120 V152 M170 120 V152" />
+      <path pathLength="1" d="M106 152 H214" />
+    </svg>
+
+    <!-- 슈투트가르트: TV 타워 — 세계 최초의 콘크리트 전파탑 -->
+    <svg v-else-if="cityId === 'de_stuttgart'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 6 V30" />
+      <path pathLength="1" d="M144 38 C148 30 172 30 176 38 C172 46 148 46 144 38" />
+      <path pathLength="1" d="M146 46 H174 M148 54 H172" />
+      <path pathLength="1" d="M156 54 C154 92 152 120 148 152 M164 54 C166 92 168 120 172 152" />
+      <path pathLength="1" d="M132 152 H188" />
+      <path pathLength="1" d="M100 160 Q130 150 160 158 Q196 166 224 158" />
+    </svg>
+
+    <!-- 뒤셀도르프: 게리 하우스 — 서로 기대어 휘어진 세 동 -->
+    <svg v-else-if="cityId === 'de_dusseldorf'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M84 152 V72 C84 60 100 60 102 72 L108 152" />
+      <path pathLength="1" d="M120 152 L114 64 C118 44 146 44 148 64 L142 152" />
+      <path pathLength="1" d="M156 152 L150 76 C156 58 182 62 180 80 C172 104 176 128 180 152" />
+      <path pathLength="1" d="M92 96 L102 98 M124 88 L138 88 M158 100 L172 102" />
+      <path pathLength="1" d="M70 152 H196" />
+      <path pathLength="1" d="M212 160 Q244 152 276 160" />
+    </svg>
+
+    <!-- 라이프치히: 전승기념비 — 육중한 사다리꼴 비석 -->
+    <svg v-else-if="cityId === 'de_leipzig'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M150 16 L160 8 L170 16 V32 H150 Z" />
+      <path pathLength="1" d="M138 32 H182 L192 72 H128 Z" />
+      <path pathLength="1" d="M120 72 H200 L212 140 H108 Z" />
+      <path pathLength="1" d="M148 140 V104 A12 14 0 0 1 172 104 V140" />
+      <path pathLength="1" d="M136 92 V116 M184 92 V116" />
+      <path pathLength="1" d="M96 140 H224 M104 154 H216" />
+    </svg>
+
+    <!-- 드레스덴: 프라우엔키르헤 — 종 모양 돔과 랜턴 -->
+    <svg v-else-if="cityId === 'de_dresden'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 8 V20 M154 14 H166" />
+      <path pathLength="1" d="M152 20 H168 V36 H152 Z" />
+      <path pathLength="1" d="M128 92 C128 56 144 36 160 36 C176 36 192 56 192 92" />
+      <path pathLength="1" d="M120 92 H200" />
+      <path pathLength="1" d="M126 92 V152 M194 92 V152" />
+      <path pathLength="1" d="M146 152 V120 A14 14 0 0 1 174 120 V152" />
+      <path pathLength="1" d="M104 152 V116 L114 104 V152 M216 152 V116 L206 104 V152" />
+      <path pathLength="1" d="M92 152 H228" />
+    </svg>
+
+    <!-- 뉘른베르크: 카이저성 — 원뿔 지붕의 진벨탑과 성벽 -->
+    <svg v-else-if="cityId === 'de_nuremberg'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M132 60 L156 24 L180 60" />
+      <path pathLength="1" d="M156 24 V12 M156 12 L166 16 L156 20" />
+      <path pathLength="1" d="M138 60 V128 M174 60 V128" />
+      <path pathLength="1" d="M138 84 H174" />
+      <path pathLength="1" d="M60 128 H260" />
+      <path pathLength="1" d="M60 128 V152 M260 128 V152 M60 152 H260" />
+      <path pathLength="1" d="M76 128 V116 H92 V128 M124 128 V116 H140 V128 M188 128 V116 H204 V128 M232 128 V116 H248 V128" />
+    </svg>
+
+    <!-- 로스앤젤레스: 야자수 해변 — 두 그루 야자수와 해 -->
+    <svg v-else-if="cityId === 'us_la'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M232 40 a15 15 0 1 0 30 0 a15 15 0 1 0 -30 0" />
+      <path pathLength="1" d="M96 152 C100 116 94 92 102 64" />
+      <path pathLength="1" d="M102 64 C86 62 76 52 68 54 C78 42 94 44 102 50 C98 38 108 30 118 34 C128 28 140 36 140 46 C130 44 122 46 114 52 C122 56 126 64 122 70 C114 66 108 64 102 64" />
+      <path pathLength="1" d="M170 152 C168 128 172 112 168 92" />
+      <path pathLength="1" d="M168 92 C156 90 148 82 142 84 C150 74 162 76 168 80 C166 70 174 64 182 66 C190 62 200 68 198 76 C190 74 184 78 178 82 C186 86 188 92 184 96 C178 92 172 92 168 92" />
+      <path pathLength="1" d="M56 152 H240 M80 164 Q160 156 244 164" />
+    </svg>
+
+    <!-- 시카고: 클라우드 게이트 — 매끈한 콩 조형물 -->
+    <svg v-else-if="cityId === 'us_chicago'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M92 128 C84 84 124 56 160 56 C196 56 236 84 228 128 Z" />
+      <path pathLength="1" d="M124 128 C122 106 138 96 160 96 C182 96 198 106 196 128" />
+      <path pathLength="1" d="M116 80 C132 70 150 66 160 66 M204 84 C196 76 186 72 178 70" />
+      <path pathLength="1" d="M72 128 H248 M88 142 H232" />
+    </svg>
+
+    <!-- 휴스턴: 새턴 V — 우주로 향한 로켓 -->
+    <svg v-else-if="cityId === 'us_houston'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 10 C170 22 174 34 174 50 V118 H146 V50 C146 34 150 22 160 10" />
+      <path pathLength="1" d="M146 60 H174 M146 96 H174" />
+      <path pathLength="1" d="M146 108 L126 140 V148 H140 M174 108 L194 140 V148 H180" />
+      <path pathLength="1" d="M150 118 V140 M170 118 V140" />
+      <path pathLength="1" d="M150 148 C148 158 152 166 160 172 C168 166 172 158 170 148" />
+      <path pathLength="1" d="M108 156 Q120 148 132 154 M188 154 Q200 148 212 156" />
+    </svg>
+
+    <!-- 마이애미: 비스케인 만 — 파도 위 요트 -->
+    <svg v-else-if="cityId === 'us_miami'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M156 28 V108" />
+      <path pathLength="1" d="M156 28 C196 52 208 84 210 104 L162 104" />
+      <path pathLength="1" d="M150 44 C122 64 112 88 110 102 L148 102" />
+      <path pathLength="1" d="M96 118 H224 L206 140 H116 Z" />
+      <path pathLength="1" d="M56 152 Q84 142 112 152 T168 152 M184 158 Q212 148 240 158" />
+      <path pathLength="1" d="M244 44 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0" />
+    </svg>
+
+    <!-- 시애틀: 스페이스 니들 — 원반 전망대와 가는 다리 -->
+    <svg v-else-if="cityId === 'us_seattle'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 8 V26" />
+      <path pathLength="1" d="M126 40 C140 28 180 28 194 40 C180 52 140 52 126 40" />
+      <path pathLength="1" d="M134 50 L120 60 M186 50 L200 60" />
+      <path pathLength="1" d="M148 52 C152 96 144 124 132 152 M172 52 C168 96 176 124 188 152" />
+      <path pathLength="1" d="M152 84 H168 M148 116 H172" />
+      <path pathLength="1" d="M116 152 H204" />
+    </svg>
+
+    <!-- 샌프란시스코: 금문교 — 붉은 현수교의 두 탑 -->
+    <svg v-else-if="cityId === 'us_sf'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M12 116 H308" />
+      <path pathLength="1" d="M96 116 V36 M112 116 V36 M96 52 H112 M96 80 H112" />
+      <path pathLength="1" d="M208 116 V36 M224 116 V36 M208 52 H224 M208 80 H224" />
+      <path pathLength="1" d="M112 40 C140 88 180 88 208 40" />
+      <path pathLength="1" d="M12 82 C40 58 70 44 96 40 M224 40 C250 44 280 58 308 82" />
+      <path pathLength="1" d="M130 74 V116 M160 84 V116 M190 74 V116" />
+      <path pathLength="1" d="M36 148 Q68 138 100 148 M200 152 Q240 142 280 152" />
+    </svg>
+
+    <!-- 라스베이거스: 웰컴 사인 — 다이아몬드 표지판과 별 -->
+    <svg v-else-if="cityId === 'us_lasvegas'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 22 L166 34 L179 34 L169 42 L173 55 L160 47 L147 55 L151 42 L141 34 L154 34 Z" />
+      <path pathLength="1" d="M104 84 L160 56 L216 84 L160 112 Z" />
+      <path pathLength="1" d="M126 82 H194 M118 92 H202" />
+      <path pathLength="1" d="M136 112 V152 M184 112 V152" />
+      <path pathLength="1" d="M120 152 H200" />
+      <path pathLength="1" d="M84 60 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M226 60 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0" />
+    </svg>
+
+    <!-- 보스턴: 컨스티튜션호 — 세 돛의 범선 -->
+    <svg v-else-if="cityId === 'us_boston'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M120 108 V32 M186 108 V44" />
+      <path pathLength="1" d="M120 32 C146 48 150 84 122 104" />
+      <path pathLength="1" d="M186 44 C208 58 210 86 188 102" />
+      <path pathLength="1" d="M120 40 L100 60 V96" />
+      <path pathLength="1" d="M84 118 H236 L214 142 H104 Z" />
+      <path pathLength="1" d="M96 124 H224" />
+      <path pathLength="1" d="M56 154 Q88 144 120 154 T184 154 M200 160 Q228 152 256 160" />
+    </svg>
+
+    <!-- 워싱턴: 국회의사당 — 드럼 위의 돔 -->
+    <svg v-else-if="cityId === 'us_dc'" viewBox="0 0 320 180">
+      <path pathLength="1" d="M160 12 V24 M155 18 H165" />
+      <path pathLength="1" d="M136 68 C136 44 148 32 160 32 C172 32 184 44 184 68" />
+      <path pathLength="1" d="M130 68 H190" />
+      <path pathLength="1" d="M136 68 V84 M148 68 V84 M160 68 V84 M172 68 V84 M184 68 V84" />
+      <path pathLength="1" d="M126 84 H194 V100 H126 Z" />
+      <path pathLength="1" d="M92 100 H228 V116 H92 Z" />
+      <path pathLength="1" d="M100 116 V148 M120 116 V148 M144 116 V148 M176 116 V148 M200 116 V148 M220 116 V148" />
+      <path pathLength="1" d="M84 148 H236 M92 160 H228" />
+    </svg>
   </span>
 </template>
 
