@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCityById } from '@/data/cities'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
+import CityLandmark from '@/components/weather/CityLandmark.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,6 +38,9 @@ const gaugeColor = computed(() => {
     <!-- 존재하는 도시: 상세 관측 정보 -->
     <template v-if="city">
       <header class="detail-head">
+        <!-- 도시 랜드마크가 낮은 알파로 헤더 뒤에 깔린다 -->
+        <CityLandmark :city-id="city.id" class="landmark-bg" />
+
         <p class="detail-code">{{ city.id }} 기준 {{ city.detail.observedAt }} 관측</p>
         <h1 class="detail-title">
           {{ city.name }} <span class="detail-status">{{ city.status }}</span>
@@ -109,9 +113,21 @@ const gaugeColor = computed(() => {
 }
 
 .detail-head {
+  position: relative;
   border-bottom: 2px solid var(--line-strong);
   padding-bottom: var(--s3);
   margin-bottom: var(--s3);
+}
+
+/* 랜드마크 라인 드로잉 — 잉크색을 낮은 알파로 */
+.landmark-bg {
+  position: absolute;
+  right: -8px;
+  bottom: var(--s3);
+  width: 300px;
+  color: var(--ink);
+  opacity: 0.08;
+  pointer-events: none;
 }
 
 .detail-code {

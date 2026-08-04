@@ -1,5 +1,6 @@
 <script setup>
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
+import CityLandmark from '@/components/weather/CityLandmark.vue'
 
 // 선택된 도시 객체를 부모로부터 단방향으로 전달받는다 (props)
 defineProps({
@@ -15,6 +16,9 @@ const emit = defineEmits(['select-card', 'click-detail'])
 
 <template>
   <article class="weather-card" @click="emit('select-card', `${cityItem.name}이 선택되었습니다.`)">
+    <!-- 도시 랜드마크가 카드 배경에 아주 옅게 깔리고, 호버하면 살짝 드러난다 -->
+    <CityLandmark :city-id="cityItem.id" class="card-landmark" />
+
     <div class="card-main">
       <h4 class="city-name">
         {{ cityItem.name }} <span class="city-status">{{ cityItem.status }}</span>
@@ -57,6 +61,21 @@ const emit = defineEmits(['select-card', 'click-detail'])
 .weather-card:hover {
   border-color: var(--line-strong);
   box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
+}
+
+.card-landmark {
+  position: absolute;
+  right: 96px;
+  bottom: 6px;
+  width: 150px;
+  color: var(--ink);
+  opacity: 0.05;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.weather-card:hover .card-landmark {
+  opacity: 0.11;
 }
 
 .card-main {
