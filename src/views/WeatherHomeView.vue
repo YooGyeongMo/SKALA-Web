@@ -57,7 +57,12 @@ const goDetail = (cityId) => {
 const cameFromArchive = computed(() => route.path.startsWith('/lessons/'))
 
 const goBack = () => {
-  router.back()
+  // 주소로 직접 진입해 히스토리가 없으면 실습 아카이브로 보낸다
+  if (window.history.state?.back) {
+    router.back()
+  } else {
+    router.push('/lessons')
+  }
 }
 
 // 최초 마운트 시 주소창의 ?search= 값을 읽어 검색 상태를 복원한다
