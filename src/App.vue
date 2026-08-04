@@ -180,6 +180,12 @@ onBeforeUnmount(() => {
   z-index: 100;
   display: flex;
   justify-content: center;
+  /* 필 모드에서 좌우 투명 영역이 아래 콘텐츠의 클릭을 가로채지 않게 한다 */
+  pointer-events: none;
+}
+
+.global-nav {
+  pointer-events: auto;
 }
 
 /* 기본 상태: 풀폭 헤더 — 배경은 투명하게 두고 하단에 가는 잉크 선 하나만 남긴다.
@@ -468,6 +474,40 @@ onBeforeUnmount(() => {
 .nav-links a.router-link-exact-active {
   color: var(--ink);
   font-weight: 700;
+}
+
+/* 모바일 — 브랜드·링크·토글을 한 줄에 눌러 담는다 */
+@media (max-width: 640px) {
+  .global-nav {
+    padding: 12px 16px;
+  }
+
+  .global-nav.scrolled {
+    max-width: calc(100% - 24px);
+    padding: 9px 16px;
+  }
+
+  .brand {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .nav-right {
+    gap: 12px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .nav-right :deep(.unit-toggler button) {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
 }
 
 /* 활성 링크를 따라 좌우로 미끄러지는 검정 선 */
