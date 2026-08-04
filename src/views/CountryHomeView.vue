@@ -244,6 +244,20 @@ const goCountry = (code) => {
   }
 }
 
+@media (max-width: 640px) {
+  .world-title {
+    font-size: 22px;
+  }
+
+  .clock {
+    font-size: 22px;
+  }
+
+  .clock-place {
+    font-size: 12px;
+  }
+}
+
 .world-title {
   font-size: 28px;
   font-weight: 800;
