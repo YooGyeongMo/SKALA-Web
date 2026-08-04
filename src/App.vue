@@ -76,8 +76,8 @@ const runIntro = async () => {
   router.isReady().then(() => {
     if (route.path !== '/') uiStore.markReady()
   })
-  // 최소 1.5초는 보여주고, 데이터가 준비되는 시점과 늦은 쪽에 맞춘다
-  await Promise.all([new Promise((r) => setTimeout(r, 1500)), waitDataReady()])
+  // 최소 2.3초는 보여주고, 데이터가 준비되는 시점과 늦은 쪽에 맞춘다
+  await Promise.all([new Promise((r) => setTimeout(r, 2300)), waitDataReady()])
   introState.value = 'leaving'
   setTimeout(() => {
     introState.value = 'done'
@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
         <p class="intro-brand">SKALA WEATHER</p>
         <span class="intro-line"></span>
         <div class="intro-sun">
-          <WeatherGlyph status="맑음" :size="44" />
+          <WeatherGlyph status="맑음" :size="76" />
           <p class="intro-loading">실시간 날씨를 불러오는 중</p>
         </div>
       </div>
@@ -255,7 +255,11 @@ onBeforeUnmount(() => {
 }
 
 .intro-sun :deep(.sun-rays) {
-  animation-duration: 2.4s;
+  animation-duration: 2.2s;
+}
+
+.intro-sun :deep(.glyph) {
+  filter: drop-shadow(0 4px 10px rgba(208, 138, 46, 0.25));
 }
 
 .intro-loading {

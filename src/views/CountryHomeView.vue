@@ -26,6 +26,9 @@ const countryCards = ref(
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
+// 키가 있으면 목데이터를 깜빡이는 대신 스켈레톤을 보여주고, 완료 후 한 번에 등장시킨다
+const loaded = ref(!hasApiKey)
+
 // 5개국 수도 실황을 병렬로 받아온다. 실패하면 목데이터를 유지한다
 const loadCapitals = async () => {
   if (!hasApiKey) {
@@ -49,6 +52,7 @@ const loadCapitals = async () => {
     console.error('[Axios] 수도 실황 연동 실패, 목데이터로 표시합니다:', error)
   } finally {
     isLoading.value = false
+    loaded.value = true
     // 성공이든 실패든 첫 로딩이 끝났음을 알려 인트로를 해제한다
     uiStore.markReady()
   }
@@ -77,7 +81,17 @@ const goCountry = (code) => {
       </p>
     </header>
 
-    <div class="country-grid">
+    <!-- 로딩 중에는 같은 톤의 스켈레톤이 자리를 지킨다 -->
+    <div v-if="!loaded" class="country-grid">
+      <div v-for="n in 5" :key="n" class="sk-card">
+        <span class="sk sk-emblem"></span>
+        <span class="sk sk-line w40"></span>
+        <span class="sk sk-line w62"></span>
+        <span class="sk sk-line w48"></span>
+      </div>
+    </div>
+
+    <div v-else class="country-grid">
       <button
         v-for="card in countryCards"
         :key="card.code"
@@ -150,6 +164,88 @@ const goCountry = (code) => {
   gap: var(--s2);
 }
 
+/* 스켈레톤 — 흰 패널 위에 옅은 잉크가 흐른다 */
+.sk-card {
+  display: grid;
+  gap: 12px;
+  padding: var(--s3);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--line-strong);
+}
+
+.sk {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 17, 17, 0.05) 25%,
+    rgba(17, 17, 17, 0.1) 45%,
+    rgba(17, 17, 17, 0.05) 65%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.sk-emblem {
+  width: 96px;
+  height: 96px;
+  justify-self: end;
+  border-radius: 8px;
+}
+
+.sk-line {
+  height: 13px;
+}
+
+.w40 {
+  width: 40%;
+}
+
+.w62 {
+  width: 62%;
+}
+
+.w48 {
+  width: 48%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* 로딩이 끝나면 카드가 차례로 떠오른다 */
+.country-card {
+  animation: card-rise 0.5s ease backwards;
+}
+
+.country-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.country-card:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.country-card:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.country-card:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.country-card:nth-child(5) {
+  animation-delay: 0.32s;
+}
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
 .country-card {
   position: relative;
   display: grid;
@@ -183,12 +279,6 @@ const goCountry = (code) => {
   stroke-dashoffset: 1;
   animation: emblem-draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--emblem-delay, 0s) + 0.1s)
     forwards;
-}
-
-.country-card:hover .country-emblem :deep(path),
-.country-card:hover .country-emblem :deep(rect),
-.country-card:hover .country-emblem :deep(circle) {
-  animation: emblem-draw 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .country-card:hover .country-emblem :deep(.f) {

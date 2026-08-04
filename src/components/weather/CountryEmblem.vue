@@ -83,7 +83,7 @@ const STAR = 'M0 -1 L0.588 0.809 L-0.951 -0.309 L0.951 -0.309 L-0.588 0.809 Z'
 /* 밑그림 — 모든 도형은 잉크 라인으로 서 있다 */
 .emblem :where(path, rect, circle) {
   fill: none;
-  stroke: rgba(17, 17, 17, 0.8);
+  stroke: rgba(17, 17, 17, 0.65);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -92,7 +92,7 @@ const STAR = 'M0 -1 L0.588 0.809 L-0.951 -0.309 L0.951 -0.309 L-0.588 0.809 Z'
 /* 채움 대상(.f) — 색은 여기서 정하고, 차오름은 fill-opacity로 제어한다 */
 .f {
   fill-opacity: 0;
-  transition: fill-opacity 0.45s ease;
+  transition: fill-opacity 0.8s ease;
 }
 
 .lobe-red {
