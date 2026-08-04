@@ -2,7 +2,14 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
+import {
+  hasApiKey,
+  fetchCityWeather,
+  fetchWeatherByCoords,
+  mapMainToGlyph,
+  normalizeDescription,
+} from '@/api/openWeather'
+import { tzClock, MOCK_TZ } from '@/utils/time'
 import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
@@ -20,6 +27,7 @@ const countryCards = ref(
     temp: country.cities[0].mockTemp,
     status: country.cities[0].mockStatus,
     glyph: null,
+    tz: MOCK_TZ[country.code],
   })),
 )
 
@@ -46,6 +54,7 @@ const loadCapitals = async () => {
       temp: results[i].main.temp,
       status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
+      tz: results[i].timezone,
     }))
     dataSource.value = 'live'
   } catch (error) {
@@ -62,11 +71,30 @@ const loadCapitals = async () => {
 const now = ref(new Date())
 let clockTimer = null
 
+// 위치 권한을 허용하면 내 위치의 도시명을 시계 옆에 보여준다
+const myPlace = ref('')
+
+const loadMyPlace = () => {
+  if (!hasApiKey || !navigator.geolocation) return
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      try {
+        const data = await fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude)
+        myPlace.value = data.name
+      } catch (error) {
+        console.error('[Axios] 내 위치 조회 실패:', error)
+      }
+    },
+    () => {}, // 거부하면 조용히 시계만 보여준다
+  )
+}
+
 const hours = computed(() => String(now.value.getHours()).padStart(2, '0'))
 const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
 
 onMounted(() => {
   loadCapitals()
+  loadMyPlace()
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
@@ -84,10 +112,13 @@ const goCountry = (code) => {
 <template>
   <div class="world">
     <header class="world-head">
-      <div class="clock" aria-label="현재 시각">
-        <span class="clock-digits">{{ hours }}</span>
-        <span class="clock-colon">:</span>
-        <span class="clock-digits">{{ minutes }}</span>
+      <div class="clock-wrap">
+        <div class="clock" aria-label="현재 시각">
+          <span class="clock-digits">{{ hours }}</span>
+          <span class="clock-colon">:</span>
+          <span class="clock-digits">{{ minutes }}</span>
+        </div>
+        <p v-if="myPlace" class="clock-place">내 위치 {{ myPlace }}</p>
       </div>
       <h1 class="world-title">세계 날씨 대시보드</h1>
       <p class="world-sub">나라를 고르면 대표 도시 10곳의 실시간 날씨를 볼 수 있습니다.</p>
@@ -127,6 +158,7 @@ const goCountry = (code) => {
             <WeatherGlyph :status="card.glyph || card.status" :size="22" />
             <span class="capital-temp">{{ Math.round(card.temp) }}°</span>
             <span class="capital-name">{{ card.capital }}</span>
+            <span class="capital-time">{{ tzClock(now.getTime(), card.tz) }}</span>
           </div>
         </div>
         <span class="country-cta">대표 도시 10곳 →</span>
@@ -147,19 +179,30 @@ const goCountry = (code) => {
   margin-bottom: var(--s4);
 }
 
-/* 24시간 시계 — 우측 상단, 콜론이 1초마다 깜빡인다 */
-.clock {
+/* 24시간 시계 — 우측 상단, 보조 회색, 콜론이 1초마다 깜빡인다 */
+.clock-wrap {
   position: absolute;
   right: 0;
   top: 0;
+  text-align: right;
+}
+
+.clock {
   display: flex;
+  justify-content: flex-end;
   align-items: baseline;
   font-family: var(--font-mono);
   font-size: 34px;
   font-weight: 300;
   letter-spacing: 0.04em;
-  color: var(--ink);
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+.clock-place {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--muted);
 }
 
 .clock-colon {
@@ -313,30 +356,35 @@ const goCountry = (code) => {
   box-shadow: 0 14px 28px rgba(17, 17, 17, 0.12);
 }
 
-/* 국기 엠블럼 — 밑그림이 카드별 시차로 그려지고,
-   호버하면 선을 다시 그리며 국기색이 차오른다 */
+/* 국기 엠블럼 — 은은한 밑그림으로 서 있다가,
+   호버하면 알파가 진해지며 선이 다시 그려지고 국기색이 차오른다 */
 .country-emblem {
   width: 112px;
   justify-self: end;
+  opacity: 0.5;
+  transition: opacity 0.35s ease;
 }
 
-.country-emblem :deep(path),
-.country-emblem :deep(rect),
-.country-emblem :deep(circle) {
+.country-card:hover .country-emblem {
+  opacity: 1;
+}
+
+.country-card:hover .country-emblem :deep(.line) {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: emblem-draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--emblem-delay, 0s) + 0.1s)
-    forwards;
-}
-
-.country-card:hover .country-emblem :deep(path),
-.country-card:hover .country-emblem :deep(rect),
-.country-card:hover .country-emblem :deep(circle) {
   animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .country-card:hover .country-emblem :deep(.f) {
   fill-opacity: 1;
+}
+
+.country-card:hover .country-emblem :deep(.star) {
+  fill: rgba(224, 177, 62, 0.95);
+}
+
+.country-card:hover .country-emblem :deep(.cstar) {
+  fill: rgba(255, 255, 255, 0.95);
 }
 
 @keyframes emblem-draw {
@@ -345,21 +393,6 @@ const goCountry = (code) => {
   }
 }
 
-.country-card:nth-child(1) .country-emblem {
-  --emblem-delay: 0s;
-}
-.country-card:nth-child(2) .country-emblem {
-  --emblem-delay: 0.12s;
-}
-.country-card:nth-child(3) .country-emblem {
-  --emblem-delay: 0.24s;
-}
-.country-card:nth-child(4) .country-emblem {
-  --emblem-delay: 0.36s;
-}
-.country-card:nth-child(5) .country-emblem {
-  --emblem-delay: 0.48s;
-}
 
 .country-meta {
   display: grid;
@@ -396,6 +429,14 @@ const goCountry = (code) => {
 .capital-name {
   font-size: 12px;
   color: var(--muted);
+}
+
+.capital-time {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .country-cta {

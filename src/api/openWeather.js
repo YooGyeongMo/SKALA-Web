@@ -39,6 +39,22 @@ export async function fetchCityWeather(englishName) {
 }
 
 /**
+ * 현재 좌표로 날씨를 조회한다. 내 위치의 도시명 표시에 쓴다.
+ */
+export async function fetchWeatherByCoords(lat, lon) {
+  const key = `@${lat.toFixed(2)},${lon.toFixed(2)}`
+  const hit = cache.get(key)
+  if (hit && Date.now() - hit.ts < CACHE_TTL) {
+    return hit.data
+  }
+  const { data } = await client.get('/weather', {
+    params: { lat, lon, appid: API_KEY, units: 'metric', lang: 'kr' },
+  })
+  cache.set(key, { data, ts: Date.now() })
+  return data
+}
+
+/**
  * OpenWeather의 대분류(weather[0].main)를 글리프용 상태로 매핑한다.
  * 표시는 한글 설명(description)을 쓰되, 아이콘은 4종으로 수렴시킨다.
  */

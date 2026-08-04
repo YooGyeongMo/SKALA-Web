@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCountryByCode } from '@/data/countries'
 import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
+import { tzClock, MOCK_TZ } from '@/utils/time'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
 import WeatherCard from '@/practices/component/WeatherCard.vue'
@@ -18,7 +19,13 @@ const country = findCountryByCode(route.params.countryCode)
 // 목데이터로 먼저 그리고, 키가 있으면 실측값으로 교체한다
 const weatherList = ref(
   country
-    ? country.cities.map((c) => ({ ...c, temp: c.mockTemp, status: c.mockStatus, glyph: null }))
+    ? country.cities.map((c) => ({
+        ...c,
+        temp: c.mockTemp,
+        status: c.mockStatus,
+        glyph: null,
+        tz: MOCK_TZ[country.code],
+      }))
     : [],
 )
 
@@ -42,6 +49,7 @@ const loadCities = async () => {
       temp: results[i].main.temp,
       status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
+      tz: results[i].timezone,
     }))
     dataSource.value = 'live'
   } catch (error) {
@@ -52,7 +60,32 @@ const loadCities = async () => {
   }
 }
 
-onMounted(loadCities)
+// 도시별 현지 시간 — 30초마다 갱신한다 (미국처럼 한 나라 안에서도 시간대가 갈린다)
+const now = ref(Date.now())
+let timeTimer = null
+
+const displayList = computed(() =>
+  filteredWeatherList.value.map((c) => ({ ...c, localTime: tzClock(now.value, c.tz) })),
+)
+
+// 카드를 클릭하면 선택 상태를 유지한다 (호버와 같은 강조)
+const selectedId = ref(null)
+
+const selectCity = (item, msg) => {
+  selectedId.value = item.id
+  selectedCityInfo.value = msg
+}
+
+onMounted(() => {
+  loadCities()
+  timeTimer = setInterval(() => {
+    now.value = Date.now()
+  }, 30000)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(timeTimer)
+})
 
 const goDetail = (cityId) => {
   router.push('/weather/' + cityId)
@@ -102,11 +135,12 @@ const goHome = () => {
 
         <div v-else class="city-grid">
         <WeatherCard
-          v-for="(item, i) in filteredWeatherList"
+          v-for="(item, i) in displayList"
           :key="item.id"
           :city-item="item"
           :style="{ '--i': i }"
-          @select-card="(msg) => (selectedCityInfo = msg)"
+          :class="{ selected: selectedId === item.id }"
+          @select-card="(msg) => selectCity(item, msg)"
         >
           <template #actions="{ city }">
             <button class="btn-detail" @click="goDetail(city.id)">상세보기</button>
@@ -147,6 +181,16 @@ const goHome = () => {
   margin-bottom: 0;
   animation: card-rise 0.45s ease backwards;
   animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+/* 선택된 카드 — 호버와 같은 강조가 유지된다 */
+.city-grid :deep(.weather-card.selected) {
+  border-color: var(--line-strong);
+  box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.08);
+}
+
+.city-grid :deep(.weather-card.selected .card-landmark) {
+  opacity: 0.24;
 }
 
 @keyframes card-rise {
