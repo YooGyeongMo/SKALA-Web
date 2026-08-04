@@ -106,7 +106,8 @@ onBeforeUnmount(() => {
   justify-content: center;
 }
 
-/* 기본 상태: 풀폭 헤더 — 하단에 가는 잉크 선 하나 */
+/* 기본 상태: 풀폭 헤더 — 배경은 투명하게 두고 하단에 가는 잉크 선 하나만 남긴다.
+   배경색을 깔면 그라데이션과 색이 달라 띠처럼 분리되어 보인다 */
 .global-nav {
   display: flex;
   align-items: center;
@@ -115,9 +116,7 @@ onBeforeUnmount(() => {
   max-width: 1600px;
   margin-top: 0;
   padding: 18px 32px;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: transparent;
   border: 1px solid transparent;
   border-bottom: 1px solid var(--line-strong);
   border-radius: 0;
