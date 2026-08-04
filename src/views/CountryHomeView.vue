@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
 import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
@@ -41,7 +41,7 @@ const loadCapitals = async () => {
     countryCards.value = countryCards.value.map((card, i) => ({
       ...card,
       temp: results[i].main.temp,
-      status: results[i].weather[0].description,
+      status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
     }))
     dataSource.value = 'live'
@@ -165,18 +165,40 @@ const goCountry = (code) => {
 
 .country-card:hover {
   border-color: var(--line-strong);
-  box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.08);
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px rgba(17, 17, 17, 0.12);
 }
 
-/* 국기 엠블럼 — 카드별 시차는 --emblem-delay 변수로 준다 */
+/* 국기 엠블럼 — 밑그림이 카드별 시차로 그려지고,
+   호버하면 선을 다시 그리며 국기색이 차오른다 */
 .country-emblem {
   width: 112px;
   justify-self: end;
-  transition: transform 0.25s ease;
 }
 
-.country-card:hover .country-emblem {
-  transform: scale(1.06);
+.country-emblem :deep(path),
+.country-emblem :deep(rect),
+.country-emblem :deep(circle) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: emblem-draw 1.1s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--emblem-delay, 0s) + 0.1s)
+    forwards;
+}
+
+.country-card:hover .country-emblem :deep(path),
+.country-card:hover .country-emblem :deep(rect),
+.country-card:hover .country-emblem :deep(circle) {
+  animation: emblem-draw 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.country-card:hover .country-emblem :deep(.f) {
+  fill-opacity: 1;
+}
+
+@keyframes emblem-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .country-card:nth-child(1) .country-emblem {

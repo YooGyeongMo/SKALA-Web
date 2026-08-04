@@ -24,6 +24,7 @@ body {
     radial-gradient(1000px 700px at 0% 0%, var(--grad-sky), transparent 62%),
     radial-gradient(850px 620px at 0% 52%, var(--grad-mint), transparent 60%),
     radial-gradient(950px 680px at 0% 100%, var(--grad-gold), transparent 62%),
+    radial-gradient(820px 620px at 100% 0%, var(--grad-lilac), transparent 62%),
     radial-gradient(900px 700px at 100% 100%, var(--grad-peach), transparent 65%),
     var(--paper);
   background-attachment: fixed;

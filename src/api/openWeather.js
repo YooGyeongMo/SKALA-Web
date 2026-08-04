@@ -47,6 +47,39 @@ const GLYPH_BY_MAIN = {
 export const mapMainToGlyph = (main) => GLYPH_BY_MAIN[main] ?? '구름'
 
 /**
+ * OpenWeather의 한국어 번역이 예스러운 표현이 많아 자연스럽게 정규화한다.
+ * (실 비 = light rain, 온흐림 = overcast clouds, 튼구름 = broken clouds)
+ * 목록에 없는 표현은 원문을 그대로 쓴다.
+ */
+const NATURAL_KO = {
+  '온흐림': '흐림',
+  '튼구름': '구름 많음',
+  '구름조금': '구름 조금',
+  '약간의 구름': '구름 조금',
+  '실 비': '가랑비',
+  '실비': '가랑비',
+  '보통 비': '비',
+  '약한 비': '약한 비',
+  '박무': '엷은 안개',
+  '연무': '연무',
+}
+
+export const normalizeDescription = (description) => NATURAL_KO[description] ?? description
+
+/**
+ * 풍향(도)을 8방위 한국어 표현으로 바꾼다. (0도 = 북)
+ */
+const WIND_DIRS = ['북', '북동', '동', '남동', '남', '남서', '서', '북서']
+
+export const windDirection = (deg) => WIND_DIRS[Math.round(deg / 45) % 8] ?? ''
+
+/**
+ * 가시거리(m)를 읽기 좋은 km 문구로 바꾼다.
+ */
+export const formatVisibility = (meters) =>
+  meters >= 1000 ? `${Math.round(meters / 100) / 10}km` : `${meters}m`
+
+/**
  * 관측 시각(dt, 초 단위)을 "오후 2:00" 형태의 시각 문구로 바꾼다.
  */
 export const formatObservedAt = (dtSeconds) =>

@@ -30,7 +30,7 @@
 
 <style scoped>
 .about {
-  max-width: 640px;
+  max-width: 760px;
   margin: 0 auto;
   padding: var(--s6) var(--s3);
 }
@@ -42,15 +42,15 @@
 }
 
 .about-title {
-  font-size: 32px;
+  font-size: 44px;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-top: var(--s1);
 }
 
 .about-body p {
-  font-size: 14px;
-  line-height: 1.8;
+  font-size: 16.5px;
+  line-height: 1.9;
   margin-bottom: var(--s2);
 }
 
@@ -59,19 +59,19 @@
   display: grid;
   gap: var(--s1);
   margin: var(--s3) 0 var(--s4) 0;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .about-stack li {
   border: 1px solid var(--line);
   background: var(--paper);
-  padding: 8px var(--s2);
+  padding: 12px var(--s2);
 }
 
 .btn-home {
   display: inline-block;
-  padding: 10px var(--s3);
-  font-size: 13px;
+  padding: 12px var(--s4);
+  font-size: 14px;
   font-weight: 600;
   background: var(--ink);
   color: var(--paper);

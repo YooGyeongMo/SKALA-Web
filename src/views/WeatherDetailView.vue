@@ -2,7 +2,15 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCityById, makeMockDetail } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph, formatObservedAt } from '@/api/openWeather'
+import {
+  hasApiKey,
+  fetchCityWeather,
+  mapMainToGlyph,
+  normalizeDescription,
+  windDirection,
+  formatVisibility,
+  formatObservedAt,
+} from '@/api/openWeather'
 import { useConfigStore } from '@/stores/configStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CityLandmark from '@/components/weather/CityLandmark.vue'
@@ -29,14 +37,18 @@ onMounted(async () => {
     city.value = {
       ...base,
       temp: raw.main.temp,
-      status: raw.weather[0].description,
+      status: normalizeDescription(raw.weather[0].description),
       glyph: mapMainToGlyph(raw.weather[0].main),
       detail: {
         feels: raw.main.feels_like,
         humidity: raw.main.humidity,
         wind: raw.wind.speed,
+        windDir: windDirection(raw.wind.deg),
         clouds: raw.clouds.all,
         pressure: raw.main.pressure,
+        visibility: formatVisibility(raw.visibility),
+        sunrise: formatObservedAt(raw.sys.sunrise),
+        sunset: formatObservedAt(raw.sys.sunset),
         observedAt: formatObservedAt(raw.dt),
       },
     }
@@ -126,7 +138,7 @@ const gaugeColor = computed(() => {
         </li>
         <li class="obs-item">
           <span class="obs-label">바람</span>
-          <span class="obs-value">{{ city.detail.wind }}m/s</span>
+          <span class="obs-value">{{ city.detail.wind }}m/s {{ city.detail.windDir }}</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">구름량</span>
@@ -135,6 +147,18 @@ const gaugeColor = computed(() => {
         <li class="obs-item">
           <span class="obs-label">기압</span>
           <span class="obs-value">{{ city.detail.pressure }}hPa</span>
+        </li>
+        <li class="obs-item">
+          <span class="obs-label">가시거리</span>
+          <span class="obs-value">{{ city.detail.visibility }}</span>
+        </li>
+        <li class="obs-item">
+          <span class="obs-label">일출</span>
+          <span class="obs-value">{{ city.detail.sunrise }}</span>
+        </li>
+        <li class="obs-item">
+          <span class="obs-label">일몰</span>
+          <span class="obs-value">{{ city.detail.sunset }}</span>
         </li>
         <li class="obs-item">
           <span class="obs-label">날씨 상태</span>

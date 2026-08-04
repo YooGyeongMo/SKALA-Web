@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCountryByCode } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
@@ -37,7 +37,7 @@ const loadCities = async () => {
     weatherList.value = country.cities.map((c, i) => ({
       ...c,
       temp: results[i].main.temp,
-      status: results[i].weather[0].description,
+      status: normalizeDescription(results[i].weather[0].description),
       glyph: mapMainToGlyph(results[i].weather[0].main),
     }))
     dataSource.value = 'live'
@@ -63,7 +63,7 @@ const goHome = () => {
   <div class="cities">
     <template v-if="country">
       <header class="cities-head">
-        <CountryEmblem :country-code="country.code" class="head-emblem" />
+        <CountryEmblem :country-code="country.code" class="head-emblem colored" />
         <p class="head-en">{{ country.english }}</p>
         <h1 class="head-title">{{ country.name }} 대표 도시</h1>
         <p class="data-source" :class="dataSource">
