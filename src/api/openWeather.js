@@ -47,12 +47,10 @@ const GLYPH_BY_MAIN = {
 export const mapMainToGlyph = (main) => GLYPH_BY_MAIN[main] ?? '구름'
 
 /**
- * 관측 시각(dt, 초 단위)을 "오후 2:00 관측" 형태의 문구로 바꾼다.
+ * 관측 시각(dt, 초 단위)을 "오후 2:00" 형태의 시각 문구로 바꾼다.
  */
-export const formatObservedAt = (dtSeconds) => {
-  const time = new Date(dtSeconds * 1000).toLocaleTimeString('ko-KR', {
+export const formatObservedAt = (dtSeconds) =>
+  new Date(dtSeconds * 1000).toLocaleTimeString('ko-KR', {
     hour: 'numeric',
     minute: '2-digit',
   })
-  return `${time} 관측`
-}
