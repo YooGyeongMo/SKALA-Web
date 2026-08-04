@@ -126,8 +126,21 @@ const gaugeColor = computed(() => {
   bottom: var(--s3);
   width: 300px;
   color: var(--ink);
-  opacity: 0.08;
+  opacity: 0.12;
   pointer-events: none;
+}
+
+/* 페이지에 들어오면 랜드마크가 한 번 그려진다 */
+.landmark-bg :deep(path) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: detail-draw 1.6s ease 0.2s forwards;
+}
+
+@keyframes detail-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .detail-code {
