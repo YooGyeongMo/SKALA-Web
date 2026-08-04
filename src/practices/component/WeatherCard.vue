@@ -38,7 +38,7 @@ const displayTemp = computed(() => {
         {{ cityItem.name }} <span class="city-status">{{ cityItem.status }}</span>
       </h4>
       <div class="temp-wrap">
-        <WeatherGlyph :status="cityItem.status" :size="30" />
+        <WeatherGlyph :status="cityItem.glyph || cityItem.status" :size="30" />
         <p class="city-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
       </div>
     </div>

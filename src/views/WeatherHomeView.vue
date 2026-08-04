@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { cityList } from '@/data/cities'
+import { hasApiKey, fetchCityWeather, mapMainToGlyph } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
 import SearchBar from '@/practices/component/SearchBar.vue'
@@ -11,6 +12,32 @@ import WeatherCard from '@/practices/component/WeatherCard.vue'
 // 부품 컴포넌트(BaseDashboardCard/SearchBar/WeatherCard)는 과제3 것을 그대로 재사용하고,
 // 데이터는 단일 출처(data/cities.js)에서 가져와 상세 페이지와 항상 같은 값을 보게 한다.
 const weatherList = ref([...cityList])
+
+// 실시간 연동 상태 — 로딩 여부와 현재 데이터 출처(live/mock)
+const isLoading = ref(false)
+const dataSource = ref('mock')
+
+// 4개 도시의 실시간 날씨를 병렬로 받아와 목데이터를 교체한다.
+// 키가 없거나 통신이 실패하면 목데이터를 그대로 유지한다 (폴백)
+const loadRealTimeWeather = async () => {
+  if (!hasApiKey) return
+  isLoading.value = true
+  try {
+    const results = await Promise.all(cityList.map((city) => fetchCityWeather(city.english)))
+    weatherList.value = cityList.map((city, i) => ({
+      ...city,
+      temp: results[i].main.temp,
+      status: results[i].weather[0].description,
+      glyph: mapMainToGlyph(results[i].weather[0].main),
+    }))
+    dataSource.value = 'live'
+    console.log('[Axios] 메인 대시보드 실시간 데이터 동기화 완료:', weatherList.value)
+  } catch (error) {
+    console.error('[Axios] 날씨 API 연동 실패, 목데이터로 표시합니다:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const selectedCityInfo = ref('카드를 클릭하거나 검색해 보세요.')
 const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
@@ -39,6 +66,8 @@ onMounted(() => {
   if (route.query.search) {
     searchQuery.value = route.query.search
   }
+  // 화면 장착 직후 실시간 데이터를 불러온다
+  loadRealTimeWeather()
 })
 
 // 타이핑할 때마다 검색어를 쿼리스트링에 반영한다
@@ -61,6 +90,15 @@ watch(searchQuery, (newQuery) => {
     <header class="home-head">
       <h1 class="home-title">날씨 대시보드</h1>
       <p class="home-sub">지역별 실시간 날씨를 한눈에 확인하고, 상세보기를 누르면 관측 정보를 볼 수 있습니다.</p>
+      <p class="data-source" :class="dataSource">
+        {{
+          isLoading
+            ? '실시간 날씨를 불러오는 중...'
+            : dataSource === 'live'
+              ? 'OpenWeather 실시간 관측 데이터'
+              : '목데이터 표시 중 (API 키 미설정 또는 통신 실패)'
+        }}
+      </p>
     </header>
 
     <BaseDashboardCard>
@@ -105,6 +143,28 @@ watch(searchQuery, (newQuery) => {
 
 .home-head {
   margin-bottom: var(--s4);
+}
+
+/* 데이터 출처 캡션 — 실시간이면 초록 점, 목데이터면 회색 점 */
+.data-source {
+  margin-top: var(--s1);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.data-source::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  margin-right: 6px;
+  vertical-align: 1px;
+}
+
+.data-source.live::before {
+  background: var(--ok);
 }
 
 /* 상세/404와 같은 디자인의 검정 버튼 */
