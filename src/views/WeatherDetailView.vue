@@ -63,10 +63,10 @@ const toDisplay = (celsius) =>
 const displayTemp = computed(() => (city.value ? toDisplay(city.value.temp) : 0))
 const displayFeels = computed(() => (city.value ? toDisplay(city.value.detail.feels) : 0))
 
-// 기온 게이지 — 단위와 무관하게 섭씨 원본 기준 0~40도 비율로 환산한다
+// 기온 게이지 — 단위와 무관하게 섭씨 원본 기준 0~50도 비율로 환산한다
 const gaugePercent = computed(() => {
   if (!city.value) return 0
-  return Math.min(100, Math.max(0, (city.value.temp / 40) * 100))
+  return Math.min(100, Math.max(0, (city.value.temp / 50) * 100))
 })
 
 // 기온 구간에 따라 게이지 색을 맞춘다
@@ -96,7 +96,7 @@ const gaugeColor = computed(() => {
           <p class="detail-temp">{{ displayTemp }}{{ configStore.unitSymbol }}</p>
         </div>
 
-        <!-- 기온 게이지: 0~40도 범위에서 현재 기온 위치를 보여준다 -->
+        <!-- 기온 게이지: 0~50도 범위에서 현재 기온 위치를 보여준다 -->
         <div class="temp-gauge">
           <div class="gauge-track">
             <div
@@ -106,8 +106,8 @@ const gaugeColor = computed(() => {
           </div>
           <div class="gauge-scale">
             <span>0°</span>
-            <span>20°</span>
-            <span>40°</span>
+            <span>25°</span>
+            <span>50°</span>
           </div>
         </div>
       </header>
