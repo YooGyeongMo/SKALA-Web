@@ -1,7 +1,7 @@
 # SKALA-Web
 
 SKALA Full-Stack Engineering — Vue.js 실습 저장소.
-Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router와 Day 5 Pinia를 얹어,
+Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router, Day 5 Pinia, Day 6 Axios를 얹어,
 날씨 대시보드(`/`) · 상세 페이지(`/weather/:cityId`) · 소개(`/about`) · 실습 아카이브(`/lessons`)로 구성했습니다.
 
 ## 실행 방법
@@ -10,6 +10,18 @@ Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router와 Da
 npm install
 npm run dev
 ```
+
+### OpenWeatherMap 키 설정 (선택)
+
+실시간 날씨 연동에는 OpenWeatherMap API 키가 필요합니다. 키가 없어도 목데이터로 동작합니다.
+
+```bash
+cp .env.example .env
+# .env 파일을 열어 VITE_OPENWEATHER_API_KEY 값에 발급받은 키를 입력
+```
+
+- 키 발급: https://openweathermap.org/ 가입 후 My API Keys에서 확인 (신규 키는 활성화까지 시간이 걸릴 수 있습니다)
+- .env는 커밋되지 않으므로 키가 저장소에 노출되지 않습니다
 
 - Node 20.19+ / 22.12+ 필요
 - 빌드: `npm run build` · 빌드 미리보기: `npm run preview`
@@ -25,6 +37,8 @@ src/
 │   └── index.js             # 라우트 규칙 정의 · Lazy Loading · Catch-all
 ├── stores/
 │   └── configStore.js       # Pinia 전역 상태 — 온도 단위(unit/unitSymbol/toggleUnit)
+├── api/
+│   └── openWeather.js       # Axios 인스턴스와 OpenWeather 조회 함수, 글리프 매핑
 ├── views/                   # 페이지 단위 컴포넌트
 │   ├── WeatherHomeView.vue      # / — 메인 날씨 대시보드 (WeatherParent 대체)
 │   ├── WeatherDetailView.vue    # /weather/:cityId — 동적 매칭 상세 관측 페이지
