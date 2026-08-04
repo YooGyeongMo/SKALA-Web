@@ -1,125 +1,72 @@
 <script setup>
-import LessonLayout from '@/layouts/LessonLayout.vue'
-import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
-import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
-import WeatherParent from '@/practices/component/WeatherParent.vue'
+// App은 내비게이션 바(RouterLink)와 메인 콘텐츠 영역(RouterView)만 담당한다.
+// 실제 페이지 내용은 views/ 아래 페이지 컴포넌트가 맡는다.
 </script>
 
 <template>
-  <div class="page">
-    <header class="page-head">
-      <h1 class="page-title">SKALA Vue 실습</h1>
-      <p class="page-sub">Day 1–3 · 날씨 대시보드</p>
+  <div class="app">
+    <header class="global-nav">
+      <RouterLink to="/" class="brand">SKALA<span class="dot">·</span>WEATHER</RouterLink>
+      <nav class="nav-links">
+        <RouterLink to="/">홈</RouterLink>
+        <RouterLink to="/about">소개</RouterLink>
+        <RouterLink to="/lessons">Day 1–3 실습</RouterLink>
+      </nav>
     </header>
 
-    <LessonLayout index="01" title="날씨 Mockup" subtitle="v-for · v-if · 바인딩 · 이벤트 수식어">
-      <template #spec>
-        <ul class="spec-list">
-          <li>배열 렌더링 — <code>v-for</code> + <code>:key</code></li>
-          <li>조건부 라벨 — <code>v-if</code> 25도 분기</li>
-          <li>한글 검색 — <code>:value</code> / <code>@input</code></li>
-          <li>카드 선택 상태바 + <code>@click.stop</code> 상세보기</li>
-        </ul>
-      </template>
-      <template #preview>
-        <WeatherMockup />
-      </template>
-    </LessonLayout>
-
-    <LessonLayout index="02" title="날씨 컴포지션" subtitle="computed · watch · watchEffect">
-      <template #spec>
-        <ul class="spec-list">
-          <li>반응형 상태 정의 — 1일차 동일</li>
-          <li>검색 필터 — <code>computed</code></li>
-          <li><code>watch</code> 상태바 추적 + <code>immediate</code></li>
-          <li><code>watchEffect</code> 검색어 추적</li>
-          <li>결과 3분기 — 원본 / 일치 / 없음 안내</li>
-          <li>튜닝 — <code>useWeatherSearch()</code> · <code>nextTick</code> · <code>onUpdated</code></li>
-        </ul>
-        <p class="spec-note">동작 로그는 브라우저 콘솔에서 확인</p>
-      </template>
-      <template #preview>
-        <WeatherComposition />
-      </template>
-    </LessonLayout>
-
-    <LessonLayout index="03" title="날씨 컴포넌트" subtitle="props · emits · slot · scoped">
-      <template #spec>
-        <ul class="spec-list">
-          <li>4개 컴포넌트 분리 — 기능 변경 없음</li>
-          <li>WeatherParent — 반응형 데이터 소유</li>
-          <li>BaseDashboardCard — 공통 디자인 + <code>slot</code></li>
-          <li>SearchBar — <code>props</code> / <code>update-query</code></li>
-          <li>WeatherCard — <code>select-card</code> / <code>click-detail</code></li>
-          <li>튜닝 — header/footer Named Slot · actions Scoped Slot</li>
-        </ul>
-        <p class="spec-note">각 컴포넌트 스타일은 style scoped로 분리</p>
-      </template>
-      <template #preview>
-        <WeatherParent />
-      </template>
-    </LessonLayout>
+    <main class="app-main">
+      <RouterView />
+    </main>
   </div>
 </template>
 
 <style scoped>
-.page {
+.global-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   max-width: 1040px;
   margin: 0 auto;
-  padding: var(--s6) var(--s3);
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--line-strong);
 }
 
-.page-head {
-  margin-bottom: var(--s6);
-}
-
-.page-title {
-  font-size: 28px;
+.brand {
+  font-size: 14px;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  text-decoration: none;
 }
 
-.page-sub {
-  margin-top: 4px;
-  font-size: 13px;
+.brand .dot {
   color: var(--muted);
+  margin: 0 2px;
 }
 
-.spec-list {
-  list-style: none;
-  display: grid;
-  gap: var(--s1);
+.nav-links {
+  display: flex;
+  gap: var(--s3);
+}
+
+.nav-links a {
   font-size: 13px;
-}
-
-.spec-list li {
-  padding-left: 14px;
-  position: relative;
-}
-
-/* 기하학 마커 — 작은 사각형 */
-.spec-list li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  width: 5px;
-  height: 5px;
-  background: var(--ink);
-}
-
-.spec-list code {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  background: var(--canvas);
-  border: 1px solid var(--line);
-  padding: 0 4px;
-}
-
-.spec-note {
-  font-size: 12px;
+  font-weight: 500;
   color: var(--muted);
-  border-top: 1px solid var(--line);
-  padding-top: var(--s1);
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.nav-links a:hover {
+  color: var(--ink);
+}
+
+/* 현재 경로와 정확히 일치하는 링크에 검정 언더라인 */
+.nav-links a.router-link-exact-active {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom-color: var(--ink);
 }
 </style>

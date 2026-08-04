@@ -1,7 +1,8 @@
 # SKALA-Web
 
 SKALA Full-Stack Engineering — Vue.js 실습 저장소.
-Day 1~3 강의 범위(Vue 문법 · Composition API · Component)의 날씨 실습 3개를 하나의 레슨 페이지로 구성했습니다.
+Day 1~3 실습(Vue 문법 · Composition API · Component)에 Day 4 Vue Router를 얹어,
+날씨 대시보드(`/`) · 상세 페이지(`/weather/:cityId`) · 소개(`/about`) · 실습 아카이브(`/lessons`)로 구성했습니다.
 
 ## 실행 방법
 
@@ -18,14 +19,22 @@ npm run dev
 
 ```
 src/
-├── main.js                  # 앱 엔트리 (main.css 로드)
-├── App.vue                  # 레슨 페이지 — 과제 01/02/03을 세로로 배치
+├── main.js                  # 앱 엔트리 — 라우터 인스턴스 전역 주입 (.use(router))
+├── App.vue                  # 내비게이션 바(RouterLink) + 메인 콘텐츠 영역(RouterView)
+├── router/
+│   └── index.js             # 라우트 규칙 정의 · Lazy Loading · Catch-all
+├── views/                   # 페이지 단위 컴포넌트
+│   ├── WeatherHomeView.vue      # / — 메인 날씨 대시보드 (WeatherParent 대체)
+│   ├── WeatherDetailView.vue    # /weather/:cityId — 동적 매칭 상세 관측 페이지
+│   ├── WeatherAboutView.vue     # /about — 서비스 소개
+│   ├── NotFoundView.vue         # Catch-all — 404 안내
+│   └── PracticeLabView.vue      # /lessons — Day 1–3 실습 아카이브
 ├── assets/
 │   └── main.css             # 디자인 토큰 + 리셋 (화이트 · 헤어라인 · 8px 그리드)
 ├── layouts/
-│   └── LessonLayout.vue     # 레슨 공통 틀 — 좌: 요구사항 / 우: 실습 화면(모눈 캔버스)
+│   └── LessonLayout.vue     # 레슨 공통 틀 — 좌: 요구사항 / 우: 실습 화면
 ├── composables/
-│   └── useWeatherSearch.js  # 검색어 + computed 필터 + watchEffect 추적 (과제2·3 공용)
+│   └── useWeatherSearch.js  # 검색어 + computed 필터 + watchEffect 추적 (과제2·3·홈 공용)
 └── practices/
     ├── mockup/
     │   └── WeatherMockup.vue        # 과제1 — Vue 기본 문법
@@ -66,6 +75,16 @@ src/
 
 - slot으로 전달한 자식(SearchBar, WeatherCard 커스텀 버튼)은 시각적으로 카드 안에 있지만 **부모 스코프에서 컴파일**되므로 부모의 상태·핸들러와 직접 바인딩된다
 
+### 04 Router 활용 — `router/` + `views/`
+
+| 구분 | 내용 |
+| ---- | ---- |
+| 요구사항 | 라우터 전역 주입 · Lazy Loading · Catch-all · 내비게이션 바(RouterLink)와 RouterView · WeatherHomeView가 WeatherParent 대체 · 상세보기 alert 제거 → `router.push('/weather/' + id)` · :cityId 동적 매칭으로 Mount 시점 Mock 선택 · About 페이지와 돌아가기 |
+| 구성 | 홈(`/`)은 즉시 로딩, 나머지 페이지는 `() => import()` Lazy Loading · 404는 `/:pathMatch(.*)*` Catch-all |
+
+- 상세보기 버튼은 WeatherCard의 **actions Scoped Slot**을 그대로 활용 — 과제3에서는 alert, 홈에서는 라우터 이동으로 부모가 용도를 갈아끼운다 (같은 부품, 다른 동작)
+- 존재하지 않는 도시 코드(`/weather/city_99`)는 상세 페이지 안에서 안내 처리, 정의되지 않은 경로는 404 페이지로
+
 ## 콘솔로 렌더링 흐름 관찰하기
 
 브라우저 개발자 도구 콘솔을 열고 화면을 조작하면 상태 변경 → 가상 DOM 비교 → 실제 DOM 패치의 순서가 로그로 보입니다.
@@ -95,4 +114,5 @@ src/
 | #3 과제1 날씨 Mockup | `feat/weather-mockup` | #4 |
 | #5 과제2 날씨 컴포지션 | `feat/weather-composition` | #6 |
 | #7 과제3 날씨 컴포넌트 | `feat/weather-component` | #8 |
-| #9 README 설계서 | `docs/readme-guide` | — |
+| #9 README 설계서 | `docs/readme-guide` | #10 |
+| #17 과제4 Router 활용 | `feat/weather-router` | — |
