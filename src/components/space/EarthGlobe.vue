@@ -91,13 +91,17 @@ onMounted(() => {
   renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: true, alpha: true })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setSize(w, h, false)
+  // 필름 톤매핑으로 대비를 살려 대륙 경계가 진하게 보이게 한다
+  renderer.toneMapping = THREE.ACESFilmicToneMapping
+  renderer.toneMappingExposure = 1.25
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100)
-  camera.position.set(0, 0.18, 2.15)
+  camera.position.set(0, 0.15, 2.5)
 
   const texture = new THREE.TextureLoader().load(earthTextureUrl)
   texture.colorSpace = THREE.SRGBColorSpace
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
 
   // 지구와 핀을 한 그룹으로 묶어 함께 자전시킨다
   globe = new THREE.Group()
@@ -149,13 +153,14 @@ onMounted(() => {
 
   // 한국이 정면에 오도록 초기 회전, 화면을 채우도록 살짝 내린다
   globe.rotation.y = -2.1
-  globe.position.y = -0.12
+  globe.position.y = -0.05
   scene.add(globe)
 
-  const sun = new THREE.DirectionalLight(0xffffff, 2.4)
+  const sun = new THREE.DirectionalLight(0xffffff, 3.0)
   sun.position.set(5, 2, 4)
   scene.add(sun)
-  scene.add(new THREE.AmbientLight(0x223355, 0.7))
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, 0.7))
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35))
 
   // 별 필드
   const starCount = 900
