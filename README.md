@@ -136,3 +136,15 @@ src/
 | #7 과제3 날씨 컴포넌트 | `feat/weather-component` | #8 |
 | #9 README 설계서 | `docs/readme-guide` | #10 |
 | #17 과제4 Router 활용 | `feat/weather-router` | — |
+
+## 라이선스
+
+이 저장소는 소스를 공개하고 있지만 오픈소스가 아닙니다. 열람과 개인 학습은
+자유롭게 하실 수 있지만, 복제와 재배포, 상업적 이용, 파생 저작물 공개는
+사전 서면 허락이 필요합니다. 자세한 내용은 [LICENSE](./LICENSE)를 참고하세요.
+
+## 기여
+
+기여를 원하시면 작업 전에 먼저 이슈로 제안해 주세요. 협의 없이 보낸 PR은
+닫힐 수 있습니다. 절차와 작업 규칙은 [CONTRIBUTING.md](./CONTRIBUTING.md)에
+정리되어 있습니다.
