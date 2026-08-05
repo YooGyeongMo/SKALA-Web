@@ -112,11 +112,13 @@ const goHome = () => {
     <template v-if="country">
       <header class="cities-head">
         <CountryEmblem :country-code="country.code" class="head-emblem colored" />
-        <p class="head-time">
-          {{ headTime.slice(0, 2) }}<i class="tick">:</i>{{ headTime.slice(3) }}
-        </p>
         <p class="head-en">{{ country.english }}</p>
-        <h1 class="head-title">{{ country.name }} 대표 도시</h1>
+        <h1 class="head-title">
+          {{ country.name }} 대표 도시
+          <span class="head-time">
+            {{ headTime.slice(0, 2) }}<i class="tick">:</i>{{ headTime.slice(3) }}
+          </span>
+        </h1>
         <p class="data-source" :class="dataSource">
           {{
             isLoading
@@ -273,17 +275,15 @@ const goHome = () => {
   pointer-events: none;
 }
 
-/* 나라 현지 시간 — 국기 아래, 콜론이 깜빡인다 */
+/* 나라 현지 시간 — 제목 옆에 작게, 콜론이 깜빡인다 */
 .head-time {
-  position: absolute;
-  right: 0;
-  top: 54px;
+  margin-left: 10px;
   font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 300;
+  font-size: 15px;
+  font-weight: 400;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  vertical-align: 2px;
 }
 
 .head-time .tick {
