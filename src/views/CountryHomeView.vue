@@ -159,8 +159,10 @@ const goCountry = (code) => {
 /* 풀블리드 히어로 */
 .world-hero {
   position: relative;
-  height: calc(100vh - 140px);
-  min-height: 540px;
+  margin-top: -64px;
+  height: calc(100vh - 76px);
+  min-height: 600px;
+  padding-top: 64px;
   background:
     radial-gradient(1100px 620px at 60% 44%, rgba(64, 110, 190, 0.22), transparent 62%),
     #05070d;
@@ -171,7 +173,7 @@ const goCountry = (code) => {
 .hero-copy {
   position: absolute;
   left: clamp(20px, 6vw, 72px);
-  top: clamp(28px, 6vh, 56px);
+  top: calc(64px + clamp(24px, 5vh, 48px));
   color: #fff;
   pointer-events: none;
 }
@@ -203,7 +205,7 @@ const goCountry = (code) => {
 .clock-wrap {
   position: absolute;
   right: clamp(20px, 5vw, 64px);
-  top: clamp(28px, 6vh, 56px);
+  top: calc(64px + clamp(24px, 5vh, 48px));
   text-align: right;
   pointer-events: none;
 }
@@ -231,9 +233,9 @@ const goCountry = (code) => {
   color: rgba(255, 255, 255, 0.78);
 }
 
-/* 위치 핀 — 은은한 파랑 */
+/* 위치 핀 — 다크 히어로 위에서 잘 보이는 흰색 */
 .place-pin {
-  color: rgba(42, 92, 168, 0.65);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .clock-colon {

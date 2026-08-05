@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import UnitToggler from '@/components/weather/UnitToggler.vue'
 
@@ -16,6 +16,7 @@ defineProps({
 // 실습이 Day 단위로 계속 늘어나므로 내비에는 기간을 표기하지 않는다
 const links = [
   { to: '/', label: '홈' },
+  { to: '/accessible', label: '홈 2' },
   { to: '/about', label: '소개' },
   { to: '/lessons', label: '실습 아카이브' },
   { to: '/troubleshooting', label: '트러블슈팅' },
@@ -23,6 +24,10 @@ const links = [
 
 const route = useRoute()
 const linkEls = ref([])
+
+// 홈은 다크 히어로가 내비 뒤까지 차오르므로 내비를 흰 타이포로 뒤집는다.
+// 스크롤로 필이 되면 흰 글래스라 원래 톤으로 돌아온다
+const onDark = computed(() => route.path === '/')
 
 // 현재 경로에 해당하는 링크 밑으로 미끄러져 이동하는 선 인디케이터
 const indicator = ref({ left: 0, width: 0, opacity: 0 })
@@ -73,7 +78,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <header class="nav-wrap" :class="stage">
+  <header class="nav-wrap" :class="[stage, { 'on-dark': onDark && !isScrolled }]">
     <div class="global-nav" :class="{ scrolled: isScrolled }">
       <RouterLink to="/" class="brand">SKALA WEATHER</RouterLink>
 
@@ -218,6 +223,10 @@ onBeforeUnmount(() => {
   animation-delay: 0.75s;
 }
 
+.nav-wrap.entered .nav-links a:nth-child(5) {
+  animation-delay: 0.85s;
+}
+
 .nav-wrap.entered :deep(.unit-toggler) {
   animation: rise-in 0.45s ease 0.85s backwards;
 }
@@ -302,6 +311,42 @@ onBeforeUnmount(() => {
     left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.2s ease;
+}
+
+/* 다크 히어로 위 — 흰 타이포로 반전 */
+.nav-wrap.on-dark .brand {
+  color: #fff;
+}
+
+.nav-wrap.on-dark .nav-links a {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.nav-wrap.on-dark .nav-links a:hover,
+.nav-wrap.on-dark .nav-links a.router-link-exact-active {
+  color: #fff;
+}
+
+.nav-wrap.on-dark .nav-indicator {
+  background: #fff;
+}
+
+.nav-wrap.on-dark .global-nav::after {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.nav-wrap.on-dark :deep(.unit-toggler) {
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.nav-wrap.on-dark :deep(.unit-toggler button) {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-wrap.on-dark :deep(.unit-toggler button.active) {
+  background: #fff;
+  color: #111;
 }
 
 /* 모바일 — 브랜드·링크·토글을 한 줄에 눌러 담는다 */
