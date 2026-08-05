@@ -1,16 +1,21 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import { findCityById, makeMockDetail } from '@/data/countries'
 import {
   hasApiKey,
   fetchCityWeather,
+  fetchForecast,
+  fetchAirQuality,
   mapMainToGlyph,
   normalizeDescription,
   windDirection,
   formatVisibility,
   formatObservedAt,
 } from '@/api/openWeather'
+import ForecastChart from '@/components/weather/ForecastChart.vue'
 import { useConfigStore } from '@/stores/configStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CityLandmark from '@/components/weather/CityLandmark.vue'
@@ -59,7 +64,10 @@ onMounted(async () => {
         observedAt: formatObservedAt(raw.dt),
       },
     }
+    coord.value = raw.coord
     console.log('[Axios] 상세 페이지 실시간 데이터 동기화 완료:', city.value)
+    initMap()
+    loadExtras(base, raw.timezone)
   } catch (error) {
     console.error('[Axios] 상세 정보 연동 실패, 목데이터로 표시합니다:', error)
     city.value = { ...base, temp: base.mockTemp, status: base.mockStatus, detail: makeMockDetail(base.mockTemp) }
@@ -71,6 +79,82 @@ onMounted(async () => {
 
 // 아카이브 데모처럼 다른 화면에서 넘어왔다면 그 자리(스크롤 위치까지)로 되돌아간다.
 // 주소를 직접 열어 히스토리가 없을 때만 홈으로 보낸다.
+// 확장 데이터 — 지도 좌표, 24시간 예보, 대기질
+const coord = ref(null)
+const forecast = ref([])
+const air = ref(null)
+const mapEl = ref(null)
+let map = null
+
+const AQI_LABEL = { 1: '좋음', 2: '보통', 3: '민감군 주의', 4: '나쁨', 5: '매우 나쁨' }
+const AQI_COLOR = {
+  1: 'var(--ok)',
+  2: 'var(--mild)',
+  3: 'var(--sun)',
+  4: 'var(--hot)',
+  5: 'var(--hot)',
+}
+
+const pmColor = (value, badAt) => (value >= badAt ? 'var(--hot)' : value >= badAt / 2 ? 'var(--sun)' : 'var(--ok)')
+
+// 미니멀 흑백 타일(CARTO Positron) 위에 잉크 점 하나
+const initMap = async () => {
+  await nextTick()
+  if (!mapEl.value || map) return
+  map = L.map(mapEl.value, {
+    center: [coord.value.lat, coord.value.lon],
+    zoom: 10,
+    zoomControl: false,
+    scrollWheelZoom: false,
+    dragging: false,
+    attributionControl: true,
+  })
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 19,
+  }).addTo(map)
+  L.circleMarker([coord.value.lat, coord.value.lon], {
+    radius: 7,
+    color: '#111111',
+    weight: 2,
+    fillColor: '#111111',
+    fillOpacity: 0.9,
+  }).addTo(map)
+}
+
+// 예보(3시간 간격 8구간)와 대기질을 함께 불러온다
+const loadExtras = async (base, tzOffset) => {
+  try {
+    const data = await fetchForecast(base.english)
+    forecast.value = data.list.map((slot) => ({
+      label: `${new Date((slot.dt + tzOffset) * 1000).getUTCHours()}시`,
+      temp: Math.round(slot.main.temp),
+      pop: Math.round((slot.pop ?? 0) * 100),
+    }))
+  } catch (error) {
+    console.error('[Axios] 예보 조회 실패:', error)
+  }
+  try {
+    if (coord.value) {
+      const data = await fetchAirQuality(coord.value.lat, coord.value.lon)
+      const row = data.list?.[0]
+      if (row) {
+        air.value = {
+          aqi: row.main.aqi,
+          pm25: Math.round(row.components.pm2_5),
+          pm10: Math.round(row.components.pm10),
+        }
+      }
+    }
+  } catch (error) {
+    console.error('[Axios] 대기질 조회 실패:', error)
+  }
+}
+
+onBeforeUnmount(() => {
+  map?.remove()
+})
+
 const goBack = () => {
   if (window.history.state?.back) {
     router.back()
@@ -175,6 +259,48 @@ const gaugeColor = computed(() => {
           <span class="obs-value">{{ city.status }}</span>
         </li>
       </ul>
+
+      <!-- 앞으로 24시간 — 기온 라인과 강수확률 바 -->
+      <section v-if="forecast.length" class="extra">
+        <p class="extra-title">앞으로 24시간</p>
+        <ForecastChart :points="forecast" />
+      </section>
+
+      <!-- 대기질 — Air Pollution API -->
+      <section v-if="air" class="extra">
+        <p class="extra-title">
+          대기질
+          <span class="aqi-badge" :style="{ color: AQI_COLOR[air.aqi] }">{{ AQI_LABEL[air.aqi] }}</span>
+        </p>
+        <div class="air-row">
+          <span class="air-label">미세먼지 PM10</span>
+          <el-progress
+            class="air-bar"
+            :percentage="Math.min(100, (air.pm10 / 150) * 100)"
+            :color="pmColor(air.pm10, 150)"
+            :stroke-width="6"
+            :show-text="false"
+          />
+          <span class="air-value">{{ air.pm10 }}㎍/㎥</span>
+        </div>
+        <div class="air-row">
+          <span class="air-label">초미세먼지 PM2.5</span>
+          <el-progress
+            class="air-bar"
+            :percentage="Math.min(100, (air.pm25 / 75) * 100)"
+            :color="pmColor(air.pm25, 75)"
+            :stroke-width="6"
+            :show-text="false"
+          />
+          <span class="air-value">{{ air.pm25 }}㎍/㎥</span>
+        </div>
+      </section>
+
+      <!-- 위치 — 미니멀 흑백 지도 -->
+      <section v-if="coord" class="extra">
+        <p class="extra-title">위치</p>
+        <div ref="mapEl" class="map"></div>
+      </section>
     </template>
 
     <!-- 로딩 중 스켈레톤 -->
@@ -325,6 +451,67 @@ const gaugeColor = computed(() => {
 /* 스켈레톤 */
 .detail-sk {
   margin-bottom: var(--s4);
+}
+
+/* 확장 섹션 공통 */
+.extra {
+  margin-bottom: var(--s4);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: var(--s2);
+}
+
+.extra-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding-bottom: var(--s1);
+  margin-bottom: var(--s2);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.aqi-badge {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.air-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 76px;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: 10px;
+}
+
+.air-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.air-value {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.air-bar :deep(.el-progress-bar__outer) {
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.air-bar :deep(.el-progress-bar__inner) {
+  border-radius: 0;
+}
+
+.map {
+  height: 240px;
+  border: 1px solid var(--line);
+}
+
+.map :deep(.leaflet-container) {
+  font-family: var(--font-sans);
 }
 
 .detail-empty {
