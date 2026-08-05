@@ -331,8 +331,9 @@ onBeforeUnmount(() => {
   background: #fff;
 }
 
+/* 다크 히어로에서는 헤더 밑 선을 긋지 않는다 — 화면 전체가 한 장의 우주가 되도록 */
 .nav-wrap.on-dark .global-nav::after {
-  background: rgba(255, 255, 255, 0.45);
+  background: transparent;
 }
 
 .nav-wrap.on-dark :deep(.unit-toggler) {
