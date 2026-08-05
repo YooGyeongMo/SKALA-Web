@@ -1,0 +1,16 @@
+/* Element Plus를 우리 디자인 토큰에 맞춘다 — 잉크 기조, 각진 모서리 */
+:root {
+  --el-color-primary: #111111;
+  --el-color-primary-light-3: #3a3a3a;
+  --el-color-primary-light-5: #6b6b6b;
+  --el-color-primary-light-7: #b3b3b3;
+  --el-color-primary-light-8: #d4d4d4;
+  --el-color-primary-light-9: #f0f0f0;
+  --el-color-primary-dark-2: #000000;
+  --el-border-radius-base: 2px;
+  --el-border-radius-small: 2px;
+  --el-font-family: var(--font-sans);
+  --el-text-color-primary: #111111;
+  --el-text-color-regular: #1a1a1a;
+  --el-border-color: #e2e2e2;
+}
