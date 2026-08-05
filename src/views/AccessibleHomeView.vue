@@ -34,7 +34,8 @@ onBeforeUnmount(() => {
 })
 
 const goCountry = (code) => {
-  router.push('/country/' + code)
+  // 접근성 동선은 /accessible 아래로 깊어진다 — 내비가 홈 2를 계속 가리킨다
+  router.push('/accessible/country/' + code)
 }
 </script>
 

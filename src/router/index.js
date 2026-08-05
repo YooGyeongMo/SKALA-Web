@@ -7,6 +7,8 @@ const router = createRouter({
   // 뒤로가기로 돌아오면 떠났던 스크롤 위치를 그대로 복원한다.
   // 아카이브 04에서 데모를 눌러 다녀와도 그 자리로 되돌아온다.
   scrollBehavior(to, from, savedPosition) {
+    // 소개 안에서 탭만 바꿀 때는 보던 자리를 그대로 둔다
+    if (to.path.startsWith('/about') && from.path.startsWith('/about')) return false
     if (savedPosition) return savedPosition
     if (to.hash) return { el: to.hash, behavior: 'smooth' }
     return { top: 0 }
@@ -25,6 +27,18 @@ const router = createRouter({
       path: '/country/:countryCode',
       name: 'country-cities',
       component: () => import('@/views/CityListView.vue'),
+    },
+    // 접근성 홈 동선 — 같은 화면이지만 /accessible 아래로 깊어지는 뎁스를 URL로 표현한다.
+    // 내비게이션이 현재 위치를 홈 2로 계속 가리킬 수 있다
+    {
+      path: '/accessible/country/:countryCode',
+      name: 'accessible-country-cities',
+      component: () => import('@/views/CityListView.vue'),
+    },
+    {
+      path: '/accessible/weather/:cityId',
+      name: 'accessible-weather-detail',
+      component: () => import('@/views/WeatherDetailView.vue'),
     },
     // 나머지 페이지는 방문하는 시점에 코드가 로딩되도록 Lazy Loading 처리
     {

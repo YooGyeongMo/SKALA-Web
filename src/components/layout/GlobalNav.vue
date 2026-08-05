@@ -37,9 +37,19 @@ const setLinkEl = (el, index) => {
   if (el) linkEls.value[index] = el.$el ?? el
 }
 
-// 하위 경로(/about/philosophy 등)에서도 상위 링크를 현재 위치로 인정한다
-const isCurrent = (link) =>
-  link.to === route.path || (link.to !== '/' && route.path.startsWith(link.to + '/'))
+// 하위 경로에서도 상위 링크를 현재 위치로 인정한다.
+// 지구본 홈 동선은 /country와 /weather로 깊어지고,
+// 접근성 홈 동선은 /accessible 아래로 깊어져 각자 자기 탭을 가리킨다
+const isCurrent = (link) => {
+  if (link.to === '/') {
+    return (
+      route.path === '/' ||
+      route.path.startsWith('/country/') ||
+      route.path.startsWith('/weather/')
+    )
+  }
+  return link.to === route.path || route.path.startsWith(link.to + '/')
+}
 
 const moveIndicator = async () => {
   await nextTick()

@@ -159,7 +159,8 @@ const goBack = () => {
   if (window.history.state?.back) {
     router.back()
   } else {
-    router.push('/')
+    // 직접 진입이면 자기 동선의 홈으로 돌아간다
+    router.push(route.path.startsWith('/accessible') ? '/accessible' : '/')
   }
 }
 
