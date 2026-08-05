@@ -64,6 +64,39 @@ export async function fetchWeatherByCoords(lat, lon) {
 }
 
 /**
+ * 5일 예보에서 앞 8구간(3시간 간격, 24시간)을 가져온다.
+ * 상세 페이지의 기온·강수확률 차트에 쓴다.
+ */
+export async function fetchForecast(englishName) {
+  const key = `f:${englishName}`
+  const hit = cache.get(key)
+  if (hit && Date.now() - hit.ts < CACHE_TTL) {
+    return hit.data
+  }
+  const { data } = await client.get('/forecast', {
+    params: { q: englishName, cnt: 8, appid: API_KEY, units: 'metric', lang: 'kr' },
+  })
+  cache.set(key, { data, ts: Date.now() })
+  return data
+}
+
+/**
+ * 좌표의 대기질(미세먼지)을 가져온다. aqi는 1(좋음)~5(매우 나쁨).
+ */
+export async function fetchAirQuality(lat, lon) {
+  const key = `a:${lat.toFixed(2)},${lon.toFixed(2)}`
+  const hit = cache.get(key)
+  if (hit && Date.now() - hit.ts < CACHE_TTL) {
+    return hit.data
+  }
+  const { data } = await client.get('/air_pollution', {
+    params: { lat, lon, appid: API_KEY },
+  })
+  cache.set(key, { data, ts: Date.now() })
+  return data
+}
+
+/**
  * 좌표를 행정구역 지명으로 바꾼다 (Reverse Geocoding).
  * 날씨 응답의 name은 관측 지점의 로마자 지명이라 어색할 때가 많아,
  * 한글 지명(local_names.ko)이 있는 이 API를 우선 사용한다.

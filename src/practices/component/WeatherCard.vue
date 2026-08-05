@@ -49,15 +49,21 @@ const displayTemp = computed(() => {
     </div>
 
     <!-- 구간 판정은 항상 섭씨 원본 기준 — 표시 단위와 무관하게 라벨이 유지된다 -->
-    <span v-if="cityItem.temp >= 25" class="chip hot">
+    <el-tag v-if="cityItem.temp >= 25" class="chip hot" type="danger" effect="light" size="small">
       <TierMark tier="hot" />더움 (25도 이상)
-    </span>
-    <span v-else-if="cityItem.temp >= 20" class="chip mild">
+    </el-tag>
+    <el-tag
+      v-else-if="cityItem.temp >= 20"
+      class="chip mild"
+      type="info"
+      effect="light"
+      size="small"
+    >
       <TierMark tier="mild" />보통 (20~24도)
-    </span>
-    <span v-else class="chip cool">
+    </el-tag>
+    <el-tag v-else class="chip cool" type="primary" effect="light" size="small">
       <TierMark tier="cool" />선선함 (20도 미만)
-    </span>
+    </el-tag>
 
     <!-- [튜닝] Scoped Slot: 상세보기 버튼 영역을 부모가 커스터마이징할 수 있다.
          :city로 현재 카드의 도시 데이터를 슬롯 밖(부모)에 넘겨준다.
@@ -156,14 +162,11 @@ const displayTemp = computed(() => {
   font-variant-numeric: tabular-nums;
 }
 
+/* el-tag 위에 기존 칩 색을 입힌다 (마커는 TierMark 글리프) */
 .chip {
-  display: inline-block;
   margin-top: var(--s1);
-  padding: 3px 10px;
-  font-size: 12px;
+  border: none;
 }
-
-/* 마커는 TierMark 글리프가 담당한다 (불꽃 / 반원 해 / 바람) */
 
 .chip.hot {
   background: var(--hot-bg);

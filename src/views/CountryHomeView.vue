@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
 import {
@@ -15,6 +15,9 @@ import { tzClock, MOCK_TZ } from '@/utils/time'
 import { useUiStore } from '@/stores/uiStore'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
+
+// three.js 지구본은 무거워서 비동기로만 불러온다
+const EarthGlobe = defineAsyncComponent(() => import('@/components/space/EarthGlobe.vue'))
 import { MapPin } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -167,6 +170,9 @@ const goCountry = (code) => {
       </p>
     </header>
 
+    <!-- 지구본 — 핀 호버로 실황, 클릭으로 나라 진입 -->
+    <EarthGlobe v-if="loaded" class="globe-panel" :countries="countryCards" @select="goCountry" />
+
     <!-- 로딩 중에는 같은 톤의 스켈레톤이 자리를 지킨다 -->
     <div v-if="!loaded" class="country-grid">
       <div v-for="n in 5" :key="n" class="sk-card">
@@ -314,6 +320,10 @@ const goCountry = (code) => {
 
 .data-source.live::before {
   background: var(--ok);
+}
+
+.globe-panel {
+  margin-bottom: var(--s2);
 }
 
 .country-grid {
