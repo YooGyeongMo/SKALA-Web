@@ -89,8 +89,8 @@ const selectedId = ref(null)
 const selectCity = (item, msg) => {
   selectedId.value = item.id
   selectedCityInfo.value = msg
-  // ElMessage 토스트로도 알려준다
-  ElMessage({ message: msg, type: 'success', duration: 1400, grouping: true })
+  // ElMessage 토스트로도 알려준다 — 아카이브 07 실습과 같은 기본 동작
+  ElMessage({ message: msg, type: 'success', duration: 1500 })
 }
 
 onMounted(() => {
