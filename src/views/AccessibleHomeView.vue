@@ -1,29 +1,27 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import { tzClock } from '@/utils/time'
 import { useCapitalWeather } from '@/composables/useCapitalWeather'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
 
-// 접근성 홈 — 3D 지구본 홈과 같은 데이터를 모션과 깜빡임 없이 제공한다.
-// 정적 시계(콜론 고정), 등장 애니메이션 없음, 강한 포커스 링, 시맨틱 목록 구조.
+// 홈 2 — 접근성 버전. 지구본 없이 나라 카드 그리드로 같은 데이터를 제공한다.
+// 카드의 엠블럼 드로잉, 현지 시간, 플로팅 등 기존 인터랙션은 그대로 유지한다.
 const router = useRouter()
 const { countryCards, isLoading, dataSource, loaded } = useCapitalWeather()
 
+// 24시간제 현재 시각 — 콜론이 1초 간격으로 깜빡인다
 const now = ref(new Date())
 let clockTimer = null
 
-const clockText = computed(
-  () =>
-    `${String(now.value.getHours()).padStart(2, '0')}:${String(now.value.getMinutes()).padStart(2, '0')}`,
-)
+const hours = computed(() => String(now.value.getHours()).padStart(2, '0'))
+const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
 
 onMounted(() => {
-  // 분 단위 갱신이면 충분하다 (깜빡임 없음)
   clockTimer = setInterval(() => {
     now.value = new Date()
-  }, 30000)
+  }, 1000)
 })
 
 onBeforeUnmount(() => {
@@ -36,92 +34,101 @@ const goCountry = (code) => {
 </script>
 
 <template>
-  <div class="a11y-home">
-    <header class="a11y-head">
-      <div>
-        <p class="section-label">Accessible Home</p>
-        <h1 class="a11y-title">세계 날씨 대시보드</h1>
-        <p class="a11y-sub">
-          모션과 깜빡임 없이 같은 데이터를 제공하는 접근성 화면입니다. 나라를 고르면 대표 도시
-          10곳의 실시간 날씨를 볼 수 있습니다.
-        </p>
-        <p class="data-source" :class="dataSource">
-          {{
-            isLoading
-              ? '수도 실황을 불러오는 중입니다'
-              : dataSource === 'live'
-                ? 'OpenWeather 실시간 관측 데이터'
-                : '목데이터 표시 중 (API 키 미설정 또는 통신 실패)'
-          }}
-        </p>
-      </div>
-
-      <div class="a11y-side">
-        <p class="a11y-clock" aria-label="현재 시각">{{ clockText }}</p>
+  <div class="world">
+    <header class="world-head">
+      <div class="clock-wrap">
+        <div class="clock" aria-label="현재 시각">
+          <span class="clock-digits">{{ hours }}</span>
+          <span class="clock-colon">:</span>
+          <span class="clock-digits">{{ minutes }}</span>
+        </div>
         <RouterLink to="/" class="switch-link">3D 지구본 버전으로 보기</RouterLink>
       </div>
+      <p class="section-label">Accessible Home</p>
+      <h1 class="world-title">세계 날씨 대시보드</h1>
+      <p class="world-sub">나라를 고르면 대표 도시 10곳의 실시간 날씨를 볼 수 있습니다.</p>
+      <p class="data-source" :class="dataSource">
+        {{
+          isLoading
+            ? '수도 실황을 불러오는 중...'
+            : dataSource === 'live'
+              ? 'OpenWeather 실시간 관측 데이터'
+              : '목데이터 표시 중 (API 키 미설정 또는 통신 실패)'
+        }}
+      </p>
     </header>
 
-    <el-skeleton v-if="!loaded" :rows="6" />
+    <!-- 로딩 중에는 같은 톤의 스켈레톤이 자리를 지킨다 -->
+    <div v-if="!loaded" class="country-grid">
+      <div v-for="n in 5" :key="n" class="sk-card">
+        <el-skeleton animated>
+          <template #template>
+            <div class="skt">
+              <el-skeleton-item variant="image" class="skt-emblem" />
+              <el-skeleton-item variant="text" style="width: 40%" />
+              <el-skeleton-item variant="text" style="width: 62%" />
+              <el-skeleton-item variant="text" style="width: 48%" />
+            </div>
+          </template>
+        </el-skeleton>
+      </div>
+    </div>
 
-    <ul v-else class="country-list">
-      <li v-for="card in countryCards" :key="card.code">
-        <button
-          class="country-row"
-          :aria-label="`${card.name} 대표 도시 10곳 보기, 수도 ${card.capital} 현재 ${Math.round(card.temp)}도 ${card.status}`"
-          @click="goCountry(card.code)"
-        >
-          <CountryEmblem :country-code="card.code" class="row-emblem colored" />
-          <span class="row-meta">
-            <span class="row-en">{{ card.english }}</span>
-            <span class="row-name">{{ card.name }}</span>
-          </span>
-          <span class="row-weather">
+    <div v-else class="country-grid">
+      <button
+        v-for="card in countryCards"
+        :key="card.code"
+        class="country-card"
+        @click="goCountry(card.code)"
+      >
+        <CountryEmblem :country-code="card.code" class="country-emblem" />
+        <div class="country-meta">
+          <p class="country-en">{{ card.english }}</p>
+          <h2 class="country-name">{{ card.name }}</h2>
+          <div class="capital-row">
             <WeatherGlyph :status="card.glyph || card.status" :size="22" />
-            <span class="row-temp">{{ Math.round(card.temp) }}°</span>
-            <span class="row-capital">{{ card.capital }} {{ card.status }}</span>
-          </span>
-          <span class="row-time">{{ tzClock(now.getTime(), card.tz) }}</span>
-          <span class="row-cta" aria-hidden="true">→</span>
-        </button>
-      </li>
-    </ul>
+            <span class="capital-temp">{{ Math.round(card.temp) }}°</span>
+            <span class="capital-name">{{ card.capital }}</span>
+            <span class="capital-time">
+              {{ tzClock(now.getTime(), card.tz).slice(0, 2)
+              }}<i class="tick">:</i>{{ tzClock(now.getTime(), card.tz).slice(3) }}
+            </span>
+          </div>
+        </div>
+        <span class="country-cta">대표 도시 10곳 →</span>
+      </button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.a11y-home {
-  max-width: 880px;
+.world {
+  max-width: 1040px;
   margin: 0 auto;
   padding: var(--s6) var(--s3);
 }
 
-.a11y-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--s3);
+.world-head {
+  position: relative;
   margin-bottom: var(--s4);
 }
 
-.a11y-title {
-  font-size: 30px;
+.world-title {
+  font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-top: var(--s1);
 }
 
-.a11y-sub {
-  margin-top: 6px;
-  max-width: 520px;
-  font-size: 14.5px;
-  line-height: 1.75;
-  color: var(--ink-2, #1a1a1a);
+.world-sub {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
 }
 
 .data-source {
   margin-top: var(--s1);
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--muted);
 }
 
@@ -140,18 +147,29 @@ const goCountry = (code) => {
   background: var(--ok);
 }
 
-.a11y-side {
+/* 24시간 시계 — 우측 상단, 콜론이 1초마다 깜빡인다 */
+.clock-wrap {
+  position: absolute;
+  right: 0;
+  top: 0;
   text-align: right;
-  flex-shrink: 0;
 }
 
-/* 정적 시계 — 콜론이 깜빡이지 않는다 */
-.a11y-clock {
+.clock {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
   font-family: var(--font-mono);
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 300;
+  letter-spacing: 0.04em;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+.clock-colon {
+  margin: 0 2px;
+  animation: colon-blink 1s steps(1) infinite;
 }
 
 .switch-link {
@@ -164,105 +182,200 @@ const goCountry = (code) => {
   text-underline-offset: 3px;
 }
 
-/* 시맨틱 목록 — 큰 클릭 영역, 강한 포커스 링 */
-.country-list {
-  list-style: none;
-  display: grid;
-  gap: var(--s1);
+@keyframes colon-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
-.country-row {
+.country-grid {
   display: grid;
-  grid-template-columns: 64px 1fr auto 64px 24px;
-  align-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--s2);
-  width: 100%;
-  padding: var(--s2);
+}
+
+/* 스켈레톤 — 흰 패널 위에 옅은 잉크가 흐른다 */
+.sk-card {
+  padding: var(--s3);
   background: var(--paper);
   border: 1px solid var(--line);
+  border-top: 2px solid var(--line-strong);
+}
+
+.skt {
+  display: grid;
+  gap: 12px;
+}
+
+.skt-emblem {
+  width: 96px;
+  height: 96px;
+  justify-self: end;
+}
+
+/* 로딩이 끝나면 카드가 차례로 떠오른다 */
+.country-card {
+  animation: card-rise 0.5s ease backwards;
+}
+
+.country-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.country-card:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.country-card:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.country-card:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.country-card:nth-child(5) {
+  animation-delay: 0.32s;
+}
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.country-card {
+  position: relative;
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s3);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--line-strong);
   text-align: left;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.country-row:hover {
+.country-card:hover {
   border-color: var(--line-strong);
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px rgba(17, 17, 17, 0.12);
 }
 
-.country-row:focus-visible {
+.country-card:focus-visible {
   outline: 3px solid var(--cool);
   outline-offset: 2px;
-  border-color: var(--line-strong);
 }
 
-.row-emblem {
-  width: 56px;
+/* 국기 엠블럼 — 은은한 밑그림으로 서 있다가,
+   호버하면 알파가 진해지며 선이 다시 그려지고 국기색이 차오른다 */
+.country-emblem {
+  width: 112px;
+  justify-self: end;
+  opacity: 0.5;
+  transition: opacity 0.35s ease;
 }
 
-.row-meta {
+.country-card:hover .country-emblem {
+  opacity: 1;
+}
+
+.country-card:hover .country-emblem :deep(.line) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.country-card:hover .country-emblem :deep(.seq1) {
+  animation-delay: 0.25s;
+}
+
+.country-card:hover .country-emblem :deep(.seq2) {
+  animation-delay: 0.5s;
+}
+
+.country-card:hover .country-emblem :deep(.f) {
+  fill-opacity: 1;
+}
+
+.country-card:hover .country-emblem :deep(.star) {
+  fill: rgba(224, 177, 62, 0.95);
+}
+
+.country-card:hover .country-emblem :deep(.cstar) {
+  fill: rgba(255, 255, 255, 0.95);
+}
+
+@keyframes emblem-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.country-meta {
   display: grid;
   gap: 2px;
 }
 
-.row-en {
-  font-size: 10.5px;
+.country-en {
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.row-name {
-  font-size: 18px;
+.country-name {
+  font-size: 22px;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-.row-weather {
+.capital-row {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-top: var(--s1);
 }
 
-.row-temp {
-  font-size: 19px;
-  font-weight: 400;
+.capital-temp {
+  font-size: 20px;
+  font-weight: 300;
   font-variant-numeric: tabular-nums;
 }
 
-.row-capital {
+.capital-name {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.capital-time {
+  margin-left: auto;
+  font-family: var(--font-mono);
   font-size: 12.5px;
   color: var(--muted);
-}
-
-.row-time {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--muted);
-  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.row-cta {
-  font-size: 16px;
+.capital-time .tick {
+  font-style: normal;
+  animation: colon-blink 1s steps(1) infinite;
+}
+
+.country-cta {
+  font-size: 12px;
+  font-weight: 600;
   color: var(--muted);
-  text-align: center;
+  border-top: 1px solid var(--line);
+  padding-top: var(--s1);
+  transition: color 0.15s;
+}
+
+.country-card:hover .country-cta {
+  color: var(--ink);
 }
 
 @media (max-width: 640px) {
-  .a11y-head {
-    flex-direction: column;
-  }
-
-  .a11y-side {
-    text-align: left;
-  }
-
-  .country-row {
-    grid-template-columns: 48px 1fr auto;
-  }
-
-  .row-time,
-  .row-cta {
-    display: none;
+  .clock {
+    font-size: 22px;
   }
 }
 </style>
