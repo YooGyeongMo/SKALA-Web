@@ -3,13 +3,18 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { tzClock } from '@/utils/time'
 import { useCapitalWeather } from '@/composables/useCapitalWeather'
+import { useMyPlace } from '@/composables/useMyPlace'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
+import { MapPin } from 'lucide-vue-next'
 
 // 홈 2 — 접근성 버전. 지구본 없이 나라 카드 그리드로 같은 데이터를 제공한다.
 // 카드의 엠블럼 드로잉, 현지 시간, 플로팅 등 기존 인터랙션은 그대로 유지한다.
 const router = useRouter()
 const { countryCards, isLoading, dataSource, loaded } = useCapitalWeather()
+
+// 위치 권한을 허용하면 내 위치의 도시명을 시계 아래에 보여준다
+const { myPlace } = useMyPlace()
 
 // 24시간제 현재 시각 — 콜론이 1초 간격으로 깜빡인다
 const now = ref(new Date())
@@ -42,6 +47,9 @@ const goCountry = (code) => {
           <span class="clock-colon">:</span>
           <span class="clock-digits">{{ minutes }}</span>
         </div>
+        <p v-if="myPlace" class="clock-place">
+          <MapPin class="place-pin" :size="14" :stroke-width="2.2" />{{ myPlace }}
+        </p>
         <RouterLink to="/" class="switch-link">3D 지구본 버전으로 보기</RouterLink>
       </div>
       <p class="section-label">Accessible Home</p>
@@ -170,6 +178,22 @@ const goCountry = (code) => {
 .clock-colon {
   margin: 0 2px;
   animation: colon-blink 1s steps(1) infinite;
+}
+
+/* 내 위치 — 파란 핀에 보조 색 텍스트 */
+.clock-place {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.place-pin {
+  color: var(--cool);
 }
 
 .switch-link {

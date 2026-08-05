@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { hasApiKey, fetchWeatherByCoords, fetchPlaceName } from '@/api/openWeather'
 import { useCapitalWeather } from '@/composables/useCapitalWeather'
+import { useMyPlace } from '@/composables/useMyPlace'
 import { MapPin } from 'lucide-vue-next'
 
 // three.js 지구본은 무거워서 비동기로만 불러온다
@@ -13,52 +13,17 @@ const router = useRouter()
 // 수도 실황 — 접근성 홈과 공유하는 컴포저블 (지구본 핀 카드에 쓴다)
 const { countryCards, isLoading, dataSource } = useCapitalWeather()
 
+// 위치 권한을 허용하면 내 위치의 도시명을 시계 옆에 보여준다
+const { myPlace } = useMyPlace()
+
 // 24시간제 현재 시각 — 콜론이 1초 간격으로 깜빡인다
 const now = ref(new Date())
 let clockTimer = null
-
-// 위치 권한을 허용하면 내 위치의 도시명을 시계 옆에 보여준다
-const myPlace = ref('')
-
-const loadMyPlace = () => {
-  // 우선 브라우저 타임존에서 도시명을 뽑아 폴백으로 보여준다 (예: Asia/Seoul → Seoul)
-  const tzCity = Intl.DateTimeFormat().resolvedOptions().timeZone?.split('/').pop()
-  if (tzCity) myPlace.value = tzCity.replaceAll('_', ' ')
-
-  if (!hasApiKey || !navigator.geolocation) return
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords
-      try {
-        // 1순위: 역지오코딩 한글 지명 (판교 → 성남시)
-        const place = await fetchPlaceName(latitude, longitude)
-        if (place) {
-          myPlace.value = place
-          return
-        }
-      } catch (error) {
-        console.warn('[내 위치] 역지오코딩 실패, 날씨 지점명으로 폴백:', error)
-      }
-      try {
-        // 2순위: 좌표 날씨 응답의 지점명
-        const data = await fetchWeatherByCoords(latitude, longitude)
-        if (data.name) myPlace.value = data.name
-      } catch (error) {
-        console.error('[내 위치] 좌표 날씨 조회 실패, 타임존 폴백 유지:', error)
-      }
-    },
-    (error) => {
-      console.warn('[내 위치] 위치 권한 거부 또는 실패, 타임존 폴백 유지:', error.message)
-    },
-    { timeout: 8000 },
-  )
-}
 
 const hours = computed(() => String(now.value.getHours()).padStart(2, '0'))
 const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
 
 onMounted(() => {
-  loadMyPlace()
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
