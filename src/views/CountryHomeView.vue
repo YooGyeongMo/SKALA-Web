@@ -6,6 +6,7 @@ import {
   hasApiKey,
   fetchCityWeather,
   fetchWeatherByCoords,
+  fetchPlaceName,
   mapMainToGlyph,
   normalizeDescription,
 } from '@/api/openWeather'
@@ -85,8 +86,20 @@ const loadMyPlace = () => {
   if (!hasApiKey || !navigator.geolocation) return
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
+      const { latitude, longitude } = pos.coords
       try {
-        const data = await fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude)
+        // 1순위: 역지오코딩 한글 지명 (판교 → 성남시)
+        const place = await fetchPlaceName(latitude, longitude)
+        if (place) {
+          myPlace.value = place
+          return
+        }
+      } catch (error) {
+        console.warn('[내 위치] 역지오코딩 실패, 날씨 지점명으로 폴백:', error)
+      }
+      try {
+        // 2순위: 좌표 날씨 응답의 지점명
+        const data = await fetchWeatherByCoords(latitude, longitude)
         if (data.name) myPlace.value = data.name
       } catch (error) {
         console.error('[내 위치] 좌표 날씨 조회 실패, 타임존 폴백 유지:', error)

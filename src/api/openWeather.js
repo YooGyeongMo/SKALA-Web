@@ -55,6 +55,25 @@ export async function fetchWeatherByCoords(lat, lon) {
 }
 
 /**
+ * 좌표를 행정구역 지명으로 바꾼다 (Reverse Geocoding).
+ * 날씨 응답의 name은 관측 지점의 로마자 지명이라 어색할 때가 많아,
+ * 한글 지명(local_names.ko)이 있는 이 API를 우선 사용한다.
+ */
+export async function fetchPlaceName(lat, lon) {
+  const key = `#${lat.toFixed(2)},${lon.toFixed(2)}`
+  const hit = cache.get(key)
+  if (hit && Date.now() - hit.ts < CACHE_TTL) {
+    return hit.data
+  }
+  const { data } = await client.get('https://api.openweathermap.org/geo/1.0/reverse', {
+    params: { lat, lon, limit: 1, appid: API_KEY },
+  })
+  const place = data[0] ? (data[0].local_names?.ko ?? data[0].name) : ''
+  cache.set(key, { data: place, ts: Date.now() })
+  return place
+}
+
+/**
  * OpenWeather의 대분류(weather[0].main)를 글리프용 상태로 매핑한다.
  * 표시는 한글 설명(description)을 쓰되, 아이콘은 4종으로 수렴시킨다.
  */
