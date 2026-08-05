@@ -109,12 +109,15 @@ onBeforeUnmount(() => {
   clearInterval(timeTimer)
 })
 
+// 접근성 홈에서 들어왔으면 /accessible 프리픽스를 이어가 뎁스를 유지한다
+const base = route.path.startsWith('/accessible') ? '/accessible' : ''
+
 const goDetail = (cityId) => {
-  router.push('/weather/' + cityId)
+  router.push(base + '/weather/' + cityId)
 }
 
 const goHome = () => {
-  router.push('/')
+  router.push(base || '/')
 }
 </script>
 
