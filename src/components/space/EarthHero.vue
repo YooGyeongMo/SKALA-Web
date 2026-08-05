@@ -37,6 +37,14 @@ const onResize = () => {
   renderer.setSize(w, h, false)
 }
 
+// 인디케이터를 누르면 히어로 바로 아래 본문으로 스르륵 내려간다
+const scrollToContent = () => {
+  const behavior = reduceMotion ? 'auto' : 'smooth'
+  const next = wrapEl.value?.nextElementSibling
+  if (next) next.scrollIntoView({ behavior })
+  else window.scrollTo({ top: wrapEl.value?.offsetHeight ?? 0, behavior })
+}
+
 onMounted(() => {
   const wrap = wrapEl.value
   const { clientWidth: w, clientHeight: h } = wrap
@@ -128,7 +136,10 @@ onBeforeUnmount(() => {
       <p class="hero-sub">지구 어디의 하늘이든, 한 화면에서.</p>
     </div>
 
-    <span class="hero-scroll">아래로 스크롤</span>
+    <!-- 둥근 스크롤 인디케이터 — 점이 아래로 흐르고, 누르면 본문으로 스르륵 내려간다 -->
+    <button type="button" class="scroll-orb" aria-label="아래로 스크롤" @click="scrollToContent">
+      <span class="orb-dot"></span>
+    </button>
   </section>
 </template>
 
@@ -181,26 +192,67 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.75);
 }
 
-.hero-scroll {
+/* 둥근 스크롤 인디케이터 — 마우스 휠처럼 점이 아래로 흐른다 */
+.scroll-orb {
   position: absolute;
-  right: clamp(20px, 5vw, 56px);
-  bottom: 28px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: rgba(255, 255, 255, 0.45);
-  writing-mode: vertical-rl;
-  animation: scroll-hint 2.4s ease-in-out infinite;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
 }
 
-@keyframes scroll-hint {
-  50% {
-    transform: translateY(8px);
-    opacity: 0.9;
+.scroll-orb:hover,
+.scroll-orb:focus-visible {
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.scroll-orb:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 3px;
+}
+
+.orb-dot {
+  display: block;
+  margin: 0 auto;
+  width: 4px;
+  height: 9px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.85);
+  animation: dot-flow 1.9s ease-in-out infinite;
+}
+
+@keyframes dot-flow {
+  0% {
+    transform: translateY(-9px);
+    opacity: 0;
+  }
+  35% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70%,
+  100% {
+    transform: translateY(10px);
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-scroll {
+  .orb-dot {
     animation: none;
   }
 }
