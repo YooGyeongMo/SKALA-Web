@@ -25,7 +25,6 @@ cp .env.example .env
 
 - Node 20.19+ / 22.12+ 필요
 - 빌드: `npm run build` · 빌드 미리보기: `npm run preview`
-- 라우터/Pinia 등 3일차 이후 스택은 사용하지 않았습니다 (강의 진도 기준)
 
 ## 폴더 구조
 
