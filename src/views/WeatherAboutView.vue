@@ -1,9 +1,13 @@
+<script setup>
+import EarthHero from '@/components/space/EarthHero.vue'
+</script>
+
 <template>
-  <div class="about">
-    <header class="about-head">
-      <p class="section-label">About</p>
-      <h1 class="about-title">SKALA Weather</h1>
-    </header>
+  <div class="about-page">
+    <!-- 우주에서 본 지구 — three.js 실시간 렌더링 히어로 -->
+    <EarthHero />
+
+    <div class="about">
 
     <div class="about-body">
       <p>
@@ -23,8 +27,9 @@
       </ul>
     </div>
 
-    <!-- 메인 대시보드로 돌아가기 -->
-    <RouterLink to="/" class="btn-home">← 메인 대시보드로 돌아가기</RouterLink>
+      <!-- 메인 대시보드로 돌아가기 -->
+      <RouterLink to="/" class="btn-home">← 메인 대시보드로 돌아가기</RouterLink>
+    </div>
   </div>
 </template>
 
@@ -33,19 +38,6 @@
   max-width: 760px;
   margin: 0 auto;
   padding: var(--s6) var(--s3);
-}
-
-.about-head {
-  border-bottom: 2px solid var(--line-strong);
-  padding-bottom: var(--s2);
-  margin-bottom: var(--s3);
-}
-
-.about-title {
-  font-size: 44px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-top: var(--s1);
 }
 
 .about-body p {
