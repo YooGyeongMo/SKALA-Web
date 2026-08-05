@@ -6,7 +6,7 @@ import { useCapitalWeather } from '@/composables/useCapitalWeather'
 import { useMyPlace } from '@/composables/useMyPlace'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
-import { MapPin } from 'lucide-vue-next'
+import { MapPin, MousePointer2 } from 'lucide-vue-next'
 
 // 홈 2 — 접근성 버전. 지구본 없이 나라 카드 그리드로 같은 데이터를 제공한다.
 // 카드의 엠블럼 드로잉, 현지 시간, 플로팅 등 기존 인터랙션은 그대로 유지한다.
@@ -66,6 +66,13 @@ const goCountry = (code) => {
       </p>
     </header>
 
+    <!-- 카드가 다 뜬 뒤에야 조용히 드러나는 안내 — 숨은 인터랙션을 슬쩍 알려준다.
+         자리는 항상 차지해서 등장할 때 그리드가 밀리지 않는다 -->
+    <p class="hover-guide" :class="{ shown: loaded }" :aria-hidden="!loaded">
+      <MousePointer2 class="guide-icon" :size="13" :stroke-width="2" />
+      카드에 마우스를 올리거나 키보드로 포커스를 주면 국기의 선이 그려지고 색이 차오릅니다
+    </p>
+
     <!-- 로딩 중에는 같은 톤의 스켈레톤이 자리를 지킨다 -->
     <div v-if="!loaded" class="country-grid">
       <div v-for="n in 5" :key="n" class="sk-card">
@@ -82,7 +89,7 @@ const goCountry = (code) => {
       </div>
     </div>
 
-    <div v-else class="country-grid">
+    <div v-if="loaded" class="country-grid">
       <button
         v-for="card in countryCards"
         :key="card.code"
@@ -212,6 +219,43 @@ const goCountry = (code) => {
   }
 }
 
+/* 호버 가이드 — 카드가 다 뜬 뒤 조용히 드러난다. 자리는 항상 지킨다 */
+.hover-guide {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--s2);
+  font-size: 12.5px;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.7s ease 0.5s;
+}
+
+.hover-guide.shown {
+  opacity: 1;
+}
+
+/* 포인터 아이콘이 살짝 눌렀다 떼듯 움직인다 */
+.hover-guide.shown .guide-icon {
+  animation: guide-nudge 2.6s ease-in-out infinite;
+}
+
+@keyframes guide-nudge {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(2px, 2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-guide.shown .guide-icon {
+    animation: none;
+  }
+}
+
 .country-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -298,33 +342,40 @@ const goCountry = (code) => {
   transition: opacity 0.35s ease;
 }
 
-.country-card:hover .country-emblem {
+.country-card:hover .country-emblem,
+.country-card:focus-visible .country-emblem {
   opacity: 1;
 }
 
-.country-card:hover .country-emblem :deep(.line) {
+.country-card:hover .country-emblem :deep(.line),
+.country-card:focus-visible .country-emblem :deep(.line) {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.country-card:hover .country-emblem :deep(.seq1) {
+.country-card:hover .country-emblem :deep(.seq1),
+.country-card:focus-visible .country-emblem :deep(.seq1) {
   animation-delay: 0.25s;
 }
 
-.country-card:hover .country-emblem :deep(.seq2) {
+.country-card:hover .country-emblem :deep(.seq2),
+.country-card:focus-visible .country-emblem :deep(.seq2) {
   animation-delay: 0.5s;
 }
 
-.country-card:hover .country-emblem :deep(.f) {
+.country-card:hover .country-emblem :deep(.f),
+.country-card:focus-visible .country-emblem :deep(.f) {
   fill-opacity: 1;
 }
 
-.country-card:hover .country-emblem :deep(.star) {
+.country-card:hover .country-emblem :deep(.star),
+.country-card:focus-visible .country-emblem :deep(.star) {
   fill: rgba(224, 177, 62, 0.95);
 }
 
-.country-card:hover .country-emblem :deep(.cstar) {
+.country-card:hover .country-emblem :deep(.cstar),
+.country-card:focus-visible .country-emblem :deep(.cstar) {
   fill: rgba(255, 255, 255, 0.95);
 }
 
