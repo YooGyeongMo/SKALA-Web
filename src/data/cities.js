@@ -44,6 +44,3 @@ export const cityList = [
     detail: { feels: 17, humidity: 74, wind: 7.2, clouds: 75, pressure: 1009, observedAt: '오늘 14:00' },
   },
 ]
-
-// 도시 코드로 단건 조회한다. 없는 코드는 null을 돌려준다.
-export const findCityById = (cityId) => cityList.find((city) => city.id === cityId) ?? null

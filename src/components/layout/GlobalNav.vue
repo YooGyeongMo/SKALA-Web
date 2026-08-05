@@ -41,6 +41,8 @@ const setLinkEl = (el, index) => {
 // 지구본 홈 동선은 /country와 /weather로 깊어지고,
 // 접근성 홈 동선은 /accessible 아래로 깊어져 각자 자기 탭을 가리킨다
 const isCurrent = (link) => {
+  // 404 화면에서는 경로가 무엇이든 어떤 탭도 현재 위치가 아니다
+  if (route.name === 'not-found') return false
   if (link.to === '/') {
     return (
       route.path === '/' ||
@@ -72,8 +74,11 @@ const onScroll = () => {
 }
 
 // 형태가 바뀌면 링크 위치도 바뀌므로, 변형이 끝난 뒤 인디케이터를 다시 잰다
+let indicatorTimer = null
+
 watch(isScrolled, () => {
-  setTimeout(moveIndicator, 380)
+  clearTimeout(indicatorTimer)
+  indicatorTimer = setTimeout(moveIndicator, 380)
 })
 
 watch(() => route.path, moveIndicator)
@@ -86,6 +91,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  clearTimeout(indicatorTimer)
   window.removeEventListener('resize', moveIndicator)
   window.removeEventListener('scroll', onScroll)
 })
