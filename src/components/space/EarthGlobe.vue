@@ -97,7 +97,7 @@ onMounted(() => {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100)
-  camera.position.set(0, 0.15, 2.5)
+  camera.position.set(0, 0.1, 3.15)
 
   const texture = new THREE.TextureLoader().load(earthTextureUrl)
   texture.colorSpace = THREE.SRGBColorSpace
@@ -153,7 +153,7 @@ onMounted(() => {
 
   // 한국이 정면에 오도록 초기 회전, 화면을 채우도록 살짝 내린다
   globe.rotation.y = -2.1
-  globe.position.y = -0.05
+  globe.position.y = -0.02
   scene.add(globe)
 
   const sun = new THREE.DirectionalLight(0xffffff, 3.0)
