@@ -141,12 +141,13 @@ const goHome = () => {
         </p>
       </header>
 
-      <el-alert class="status-glass" :closable="false">
-        <template #title>
-          <span class="status-label">Status</span>
-          <span class="status-text">{{ selectedCityInfo }}</span>
-        </template>
-      </el-alert>
+      <el-alert
+        class="status-alert"
+        :title="selectedCityInfo"
+        type="success"
+        show-icon
+        :closable="false"
+      />
 
       <el-card shadow="never" class="panel">
         <template #header>도시 검색</template>
@@ -341,42 +342,9 @@ const goHome = () => {
   border: 1px solid var(--line);
 }
 
-/* el-alert 위에 기존 글래스 스킨을 입힌다 */
-.status-glass {
+/* Element Plus 기본 알림 룩 */
+.status-alert {
   margin-bottom: var(--s2);
-  background: linear-gradient(180deg, rgba(38, 38, 38, 0.92), rgba(12, 12, 12, 0.94));
-  backdrop-filter: blur(10px) saturate(1.2);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  border-radius: 10px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
-    0 6px 18px rgba(17, 17, 17, 0.18);
-  padding: 5px var(--s2);
-}
-
-.status-glass :deep(.el-alert__title) {
-  display: flex;
-  align-items: center;
-  gap: var(--s2);
-  font-size: 13px;
-}
-
-.status-label {
-  flex-shrink: 0;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-}
-
-.status-text {
-  color: #ffffff;
-  font-weight: 700;
-  letter-spacing: -0.01em;
 }
 
 .cities-empty {

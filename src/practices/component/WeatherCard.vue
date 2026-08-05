@@ -49,19 +49,13 @@ const displayTemp = computed(() => {
     </div>
 
     <!-- 구간 판정은 항상 섭씨 원본 기준 — 표시 단위와 무관하게 라벨이 유지된다 -->
-    <el-tag v-if="cityItem.temp >= 25" class="chip hot" type="danger" effect="light" size="small">
+    <el-tag v-if="cityItem.temp >= 25" class="chip" type="danger" effect="light" round>
       <TierMark tier="hot" />더움 (25도 이상)
     </el-tag>
-    <el-tag
-      v-else-if="cityItem.temp >= 20"
-      class="chip mild"
-      type="info"
-      effect="light"
-      size="small"
-    >
+    <el-tag v-else-if="cityItem.temp >= 20" class="chip" type="warning" effect="light" round>
       <TierMark tier="mild" />보통 (20~24도)
     </el-tag>
-    <el-tag v-else class="chip cool" type="primary" effect="light" size="small">
+    <el-tag v-else class="chip" type="info" effect="light" round>
       <TierMark tier="cool" />선선함 (20도 미만)
     </el-tag>
 
@@ -162,25 +156,9 @@ const displayTemp = computed(() => {
   font-variant-numeric: tabular-nums;
 }
 
-/* el-tag 위에 기존 칩 색을 입힌다 (마커는 TierMark 글리프) */
+/* Element Plus 기본 룩을 그대로 쓴다 (마커는 TierMark 글리프) */
 .chip {
   margin-top: var(--s1);
-  border: none;
-}
-
-.chip.hot {
-  background: var(--hot-bg);
-  color: var(--hot);
-}
-
-.chip.mild {
-  background: var(--mild-bg);
-  color: var(--mild);
-}
-
-.chip.cool {
-  background: var(--cool-bg);
-  color: var(--cool);
 }
 
 .card-actions {
