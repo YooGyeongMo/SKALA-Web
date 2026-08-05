@@ -136,9 +136,11 @@ onBeforeUnmount(() => {
       <p class="hero-sub">지구 어디의 하늘이든, 한 화면에서.</p>
     </div>
 
-    <!-- 둥근 스크롤 인디케이터 — 점이 아래로 흐르고, 누르면 본문으로 스르륵 내려간다 -->
+    <!-- 둥근 스크롤 인디케이터 — 마우스 안에서 점이 아래로 흐르고, 누르면 본문으로 스르륵 내려간다 -->
     <button type="button" class="scroll-orb" aria-label="아래로 스크롤" @click="scrollToContent">
-      <span class="orb-dot"></span>
+      <span class="orb-mouse">
+        <span class="orb-dot"></span>
+      </span>
     </button>
   </section>
 </template>
@@ -192,7 +194,7 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* 둥근 스크롤 인디케이터 — 마우스 휠처럼 점이 아래로 흐른다 */
+/* 둥근 스크롤 인디케이터 — 원 안의 마우스에서 점이 아래로 흐른다 */
 .scroll-orb {
   position: absolute;
   left: 50%;
@@ -206,11 +208,23 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   cursor: pointer;
-  overflow: hidden;
+  display: grid;
+  place-items: center;
   transition:
     border-color 0.25s ease,
     background 0.25s ease,
     transform 0.25s ease;
+}
+
+/* 마우스 실루엣 — 둥근 몸통 안에서 휠 점이 구른다 */
+.orb-mouse {
+  display: flex;
+  justify-content: center;
+  width: 15px;
+  height: 23px;
+  padding-top: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 9px;
 }
 
 .scroll-orb:hover,
@@ -227,9 +241,8 @@ onBeforeUnmount(() => {
 
 .orb-dot {
   display: block;
-  margin: 0 auto;
-  width: 4px;
-  height: 9px;
+  width: 3px;
+  height: 6px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.85);
   animation: dot-flow 1.9s ease-in-out infinite;
@@ -237,16 +250,15 @@ onBeforeUnmount(() => {
 
 @keyframes dot-flow {
   0% {
-    transform: translateY(-9px);
+    transform: translateY(0);
     opacity: 0;
   }
-  35% {
-    transform: translateY(0);
+  30% {
     opacity: 1;
   }
   70%,
   100% {
-    transform: translateY(10px);
+    transform: translateY(8px);
     opacity: 0;
   }
 }

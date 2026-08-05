@@ -109,6 +109,8 @@ const initMap = async () => {
     dragging: false,
     attributionControl: true,
   })
+  // Leaflet 자기 표기는 떼고, 라이선스가 요구하는 데이터 출처만 남긴다
+  map.attributionControl.setPrefix(false)
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     maxZoom: 19,
