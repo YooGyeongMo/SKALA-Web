@@ -105,7 +105,11 @@ const onPointerLeave = () => {
 const onClick = () => {
   // 드래그로 돌린 손을 떼는 순간을 핀 클릭으로 오인하지 않는다
   if (dragMoved > 6) return
-  if (hovered.value) emit('select', hovered.value.code)
+  // 누르는 동안 호버 판정이 쉬므로, 클릭 시점의 포인터로 다시 판정한다
+  raycaster.setFromCamera(pointerNdc, camera)
+  const hit = raycaster.intersectObjects(pins)[0]
+  const code = hit?.object.userData.code
+  if (code) emit('select', code)
 }
 
 const onResize = () => {
