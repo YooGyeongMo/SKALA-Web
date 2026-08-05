@@ -170,10 +170,16 @@ const goCountry = (code) => {
     <!-- 로딩 중에는 같은 톤의 스켈레톤이 자리를 지킨다 -->
     <div v-if="!loaded" class="country-grid">
       <div v-for="n in 5" :key="n" class="sk-card">
-        <span class="sk sk-emblem"></span>
-        <span class="sk sk-line w40"></span>
-        <span class="sk sk-line w62"></span>
-        <span class="sk sk-line w48"></span>
+        <el-skeleton animated>
+          <template #template>
+            <div class="skt">
+              <el-skeleton-item variant="image" class="skt-emblem" />
+              <el-skeleton-item variant="text" style="width: 40%" />
+              <el-skeleton-item variant="text" style="width: 62%" />
+              <el-skeleton-item variant="text" style="width: 48%" />
+            </div>
+          </template>
+        </el-skeleton>
       </div>
     </div>
 
@@ -318,56 +324,21 @@ const goCountry = (code) => {
 
 /* 스켈레톤 — 흰 패널 위에 옅은 잉크가 흐른다 */
 .sk-card {
-  display: grid;
-  gap: 12px;
   padding: var(--s3);
   background: var(--paper);
   border: 1px solid var(--line);
   border-top: 2px solid var(--line-strong);
 }
 
-.sk {
-  display: block;
-  background: linear-gradient(
-    90deg,
-    rgba(17, 17, 17, 0.05) 25%,
-    rgba(17, 17, 17, 0.1) 45%,
-    rgba(17, 17, 17, 0.05) 65%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease infinite;
+.skt {
+  display: grid;
+  gap: 12px;
 }
 
-.sk-emblem {
+.skt-emblem {
   width: 96px;
   height: 96px;
   justify-self: end;
-  border-radius: 8px;
-}
-
-.sk-line {
-  height: 13px;
-}
-
-.w40 {
-  width: 40%;
-}
-
-.w62 {
-  width: 62%;
-}
-
-.w48 {
-  width: 48%;
-}
-
-@keyframes shimmer {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
 }
 
 /* 로딩이 끝나면 카드가 차례로 떠오른다 */

@@ -122,12 +122,13 @@ const gaugeColor = computed(() => {
 
         <!-- 기온 게이지: 0~50도 범위에서 현재 기온 위치를 보여준다 -->
         <div class="temp-gauge">
-          <div class="gauge-track">
-            <div
-              class="gauge-fill"
-              :style="{ width: gaugePercent + '%', background: gaugeColor }"
-            ></div>
-          </div>
+          <el-progress
+            class="gauge"
+            :percentage="gaugePercent"
+            :color="gaugeColor"
+            :stroke-width="6"
+            :show-text="false"
+          />
           <div class="gauge-scale">
             <span>0°</span>
             <span>25°</span>
@@ -177,14 +178,7 @@ const gaugeColor = computed(() => {
     </template>
 
     <!-- 로딩 중 스켈레톤 -->
-    <div v-else-if="showSkeleton" class="detail-sk">
-      <span class="sk w26"></span>
-      <span class="sk w44 tall"></span>
-      <span class="sk w60 taller"></span>
-      <div class="sk-grid">
-        <span v-for="n in 9" :key="n" class="sk block"></span>
-      </div>
-    </div>
+    <el-skeleton v-else-if="showSkeleton" class="detail-sk" animated :rows="7" />
 
     <!-- 존재하지 않는 도시 코드로 접근한 경우 -->
     <div v-else class="detail-empty">
@@ -192,7 +186,9 @@ const gaugeColor = computed(() => {
       <p>해당 도시의 관측 정보를 찾을 수 없습니다.</p>
     </div>
 
-    <button class="btn-back" @click="goBack">← 이전 화면으로 돌아가기</button>
+    <el-button type="primary" size="large" class="btn-back" @click="goBack">
+      ← 이전 화면으로 돌아가기
+    </el-button>
   </div>
 </template>
 
@@ -275,15 +271,15 @@ const gaugeColor = computed(() => {
   max-width: 320px;
 }
 
-.gauge-track {
-  height: 6px;
+/* el-progress를 기존 게이지 톤에 맞춘다 */
+.gauge :deep(.el-progress-bar__outer) {
   background: var(--canvas);
   border: 1px solid var(--line);
-  overflow: hidden;
+  border-radius: 0;
 }
 
-.gauge-fill {
-  height: 100%;
+.gauge :deep(.el-progress-bar__inner) {
+  border-radius: 0;
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -328,62 +324,7 @@ const gaugeColor = computed(() => {
 
 /* 스켈레톤 */
 .detail-sk {
-  display: grid;
-  gap: 14px;
   margin-bottom: var(--s4);
-}
-
-.sk {
-  display: block;
-  height: 13px;
-  background: linear-gradient(
-    90deg,
-    rgba(17, 17, 17, 0.05) 25%,
-    rgba(17, 17, 17, 0.1) 45%,
-    rgba(17, 17, 17, 0.05) 65%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease infinite;
-}
-
-.sk.w26 {
-  width: 26%;
-}
-
-.sk.w44 {
-  width: 44%;
-}
-
-.sk.w60 {
-  width: 60%;
-}
-
-.sk.tall {
-  height: 30px;
-}
-
-.sk.taller {
-  height: 56px;
-}
-
-.sk-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--s1);
-  margin-top: var(--s2);
-}
-
-.sk.block {
-  height: 74px;
-}
-
-@keyframes shimmer {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
 }
 
 .detail-empty {
@@ -402,19 +343,7 @@ const gaugeColor = computed(() => {
 }
 
 .btn-back {
-  padding: 10px var(--s3);
-  font-size: 13px;
   font-weight: 600;
-  background: var(--ink);
-  color: var(--paper);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.btn-back:hover {
-  background: var(--paper);
-  color: var(--ink);
 }
 
 @media (max-width: 560px) {

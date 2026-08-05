@@ -11,8 +11,6 @@ import {
 } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import { tzClock, MOCK_TZ } from '@/utils/time'
-import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
-import SearchBar from '@/practices/component/SearchBar.vue'
 import WeatherCard from '@/practices/component/WeatherCard.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
 
@@ -145,17 +143,20 @@ const goHome = () => {
         <span class="status-text">{{ selectedCityInfo }}</span>
       </div>
 
-      <BaseDashboardCard>
-        <SearchBar :current-query="searchQuery" @update-query="(val) => (searchQuery = val)" />
-      </BaseDashboardCard>
+      <el-card shadow="never" class="panel">
+        <template #header>도시 검색</template>
+        <el-input v-model="searchQuery" size="large" clearable placeholder="검색할 도시 이름 입력" />
+        <p class="search-echo">
+          검색 중인 도시: <strong>{{ searchQuery }}</strong>
+        </p>
+      </el-card>
 
-      <BaseDashboardCard>
+      <el-card shadow="never" class="panel">
         <template #header>도시별 날씨 현황</template>
 
-        <div v-if="!loaded" class="sk-list">
-          <div v-for="n in 6" :key="n" class="sk-row">
-            <span class="sk sk-line w30"></span>
-            <span class="sk sk-line w52"></span>
+        <div v-if="!loaded" class="city-grid">
+          <div v-for="n in 6" :key="n" class="sk-cell">
+            <el-skeleton animated :rows="2" />
           </div>
         </div>
 
@@ -169,17 +170,19 @@ const goHome = () => {
           @select-card="(msg) => selectCity(item, msg)"
         >
           <template #actions="{ city }">
-            <button class="btn-detail" @click="goDetail(city.id)">상세보기</button>
+            <el-button size="small" @click="goDetail(city.id)">상세보기</el-button>
           </template>
         </WeatherCard>
         </div>
 
-        <p v-if="loaded && filteredWeatherList.length === 0" class="empty-result">
-          검색 결과와 일치하는 도시가 없습니다.
-        </p>
+        <el-empty
+          v-if="loaded && filteredWeatherList.length === 0"
+          description="검색 결과와 일치하는 도시가 없습니다"
+          :image-size="60"
+        />
 
-        <template #footer>총 {{ filteredWeatherList.length }}개 도시 표시 중</template>
-      </BaseDashboardCard>
+        <div class="panel-footer">총 {{ filteredWeatherList.length }}개 도시 표시 중</div>
+      </el-card>
     </template>
 
     <div v-else class="cities-empty">
@@ -223,51 +226,6 @@ const goHome = () => {
   from {
     opacity: 0;
     transform: translateY(12px);
-  }
-}
-
-/* 스켈레톤 */
-.sk-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--s1);
-}
-
-.sk-row {
-  display: grid;
-  gap: 10px;
-  padding: var(--s2);
-  background: var(--paper);
-  border: 1px solid var(--line);
-}
-
-.sk {
-  display: block;
-  height: 13px;
-  background: linear-gradient(
-    90deg,
-    rgba(17, 17, 17, 0.05) 25%,
-    rgba(17, 17, 17, 0.1) 45%,
-    rgba(17, 17, 17, 0.05) 65%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease infinite;
-}
-
-.w30 {
-  width: 30%;
-}
-
-.w52 {
-  width: 52%;
-}
-
-@keyframes shimmer {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
   }
 }
 
@@ -342,26 +300,40 @@ const goHome = () => {
   background: var(--ok);
 }
 
-.btn-detail {
-  padding: 4px 12px;
-  font-size: 12px;
-  background: var(--paper);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-  transition: all 0.15s;
+/* 패널 — el-card를 기존 흰 패널 톤에 맞춘다 */
+.panel {
+  border-color: var(--line);
+  margin-bottom: var(--s2);
 }
 
-.btn-detail:hover {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-.empty-result {
-  border: 1px dashed var(--line);
-  padding: var(--s2);
-  text-align: center;
+.panel :deep(.el-card__header) {
   font-size: 13px;
-  color: var(--hot);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.search-echo {
+  margin-top: var(--s1);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.search-echo strong {
+  color: var(--ink);
+}
+
+.panel-footer {
+  margin-top: var(--s2);
+  padding-top: var(--s1);
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.sk-cell {
+  padding: var(--s2);
+  background: var(--paper);
+  border: 1px solid var(--line);
 }
 
 .status-bar {
