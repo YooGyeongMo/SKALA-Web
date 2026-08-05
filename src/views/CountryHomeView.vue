@@ -80,7 +80,7 @@ const goCountry = (code) => {
 
     <div class="hero-copy">
       <h1 class="world-title">세계 날씨 대시보드</h1>
-      <p class="world-sub">지구본의 핀을 올리면 실황이, 누르면 그 나라의 도시들이 열립니다.</p>
+      <p class="world-sub">지구본을 드래그로 돌려보고, 핀을 누르면 그 나라의 도시들이 열립니다.</p>
       <p class="data-source" :class="dataSource">
         {{
           isLoading

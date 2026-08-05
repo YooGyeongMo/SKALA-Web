@@ -28,6 +28,9 @@ const CAPITAL_COORDS = {
 const canvasEl = ref(null)
 const wrapEl = ref(null)
 
+// 텍스처가 실제로 도착한 뒤에만 캔버스를 드러낸다 (그 전엔 자리 표식)
+const ready = ref(false)
+
 // 호버 중인 나라와 카드의 화면 좌표
 const hovered = ref(null)
 const cardPos = ref({ x: 0, y: 0 })
@@ -44,6 +47,11 @@ let rings = []
 let elapsed = 0
 let rafId = 0
 let disposed = false
+
+// 드래그 회전 — 이동량으로 클릭과 구분하고, 놓으면 기본 자전으로 돌아간다
+let dragging = false
+let dragMoved = 0
+let lastPointer = { x: 0, y: 0 }
 
 const raycaster = new THREE.Raycaster()
 const pointerNdc = new THREE.Vector2(-2, -2)
@@ -65,6 +73,28 @@ const onPointerMove = (e) => {
   const rect = wrapEl.value.getBoundingClientRect()
   pointerNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
   pointerNdc.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1)
+
+  if (dragging && globe) {
+    const dx = e.clientX - lastPointer.x
+    const dy = e.clientY - lastPointer.y
+    globe.rotation.y += dx * 0.0045
+    globe.rotation.x = THREE.MathUtils.clamp(globe.rotation.x + dy * 0.003, -0.7, 0.7)
+    dragMoved += Math.abs(dx) + Math.abs(dy)
+    lastPointer = { x: e.clientX, y: e.clientY }
+  }
+}
+
+const onPointerDown = (e) => {
+  dragging = true
+  dragMoved = 0
+  lastPointer = { x: e.clientX, y: e.clientY }
+  // 포인터가 영역 밖으로 나가도 드래그가 이어지게 캡처한다
+  wrapEl.value.setPointerCapture?.(e.pointerId)
+}
+
+const onPointerUp = (e) => {
+  dragging = false
+  wrapEl.value.releasePointerCapture?.(e.pointerId)
 }
 
 const onPointerLeave = () => {
@@ -73,6 +103,8 @@ const onPointerLeave = () => {
 }
 
 const onClick = () => {
+  // 드래그로 돌린 손을 떼는 순간을 핀 클릭으로 오인하지 않는다
+  if (dragMoved > 6) return
   if (hovered.value) emit('select', hovered.value.code)
 }
 
@@ -97,9 +129,12 @@ onMounted(() => {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100)
-  camera.position.set(0, 0, 3.5)
+  // 극지방이 프레임 안에 들어오고 위쪽 내비 영역과도 겹치지 않는 거리
+  camera.position.set(0, 0, 3.95)
 
-  const texture = new THREE.TextureLoader().load(earthTextureUrl)
+  const texture = new THREE.TextureLoader().load(earthTextureUrl, () => {
+    ready.value = true
+  })
   texture.colorSpace = THREE.SRGBColorSpace
   texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
 
@@ -186,10 +221,15 @@ onMounted(() => {
   const animate = () => {
     if (disposed) return
 
-    // 호버 중에는 자전을 멈춰 카드가 흔들리지 않게 한다
-    if (!reduceMotion && !hovered.value) {
+    // 호버나 드래그 중에는 자전을 멈춰 손과 카드가 흔들리지 않게 한다
+    if (!reduceMotion && !hovered.value && !dragging) {
       globe.rotation.y += 0.0011
       stars.rotation.y += 0.00012
+    }
+
+    // 드래그를 놓으면 기울기가 서서히 기본 각도로 돌아온다
+    if (!dragging && Math.abs(globe.rotation.x) > 0.0005) {
+      globe.rotation.x += -globe.rotation.x * 0.04
     }
 
     // 광륜이 바깥으로 퍼지며 옅어진다
@@ -200,13 +240,16 @@ onMounted(() => {
       ring.material.opacity = 0.5 * (1 - phase)
     })
 
-    // 핀 호버 판정
-    raycaster.setFromCamera(pointerNdc, camera)
-    const hits = raycaster.intersectObjects(pins)
-    const hitCode = hits[0]?.object.userData.code ?? null
+    // 핀 호버 판정 — 드래그 중에는 판정을 쉬어 카드가 튀지 않게 한다
+    let hitCode = null
+    if (!dragging) {
+      raycaster.setFromCamera(pointerNdc, camera)
+      const hits = raycaster.intersectObjects(pins)
+      hitCode = hits[0]?.object.userData.code ?? null
+    }
     const country = props.countries.find((c) => c.code === hitCode) ?? null
     hovered.value = country
-    wrapEl.value.style.cursor = country ? 'pointer' : 'default'
+    wrapEl.value.style.cursor = dragging ? 'grabbing' : country ? 'pointer' : 'grab'
 
     // 핀 크기와 카드 위치 갱신
     pins.forEach((pin) => {
@@ -231,6 +274,9 @@ onMounted(() => {
 
   window.addEventListener('resize', onResize)
   wrap.addEventListener('pointermove', onPointerMove)
+  wrap.addEventListener('pointerdown', onPointerDown)
+  wrap.addEventListener('pointerup', onPointerUp)
+  wrap.addEventListener('pointercancel', onPointerUp)
   wrap.addEventListener('pointerleave', onPointerLeave)
   wrap.addEventListener('click', onClick)
 })
@@ -241,6 +287,9 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize)
   const wrap = wrapEl.value
   wrap?.removeEventListener('pointermove', onPointerMove)
+  wrap?.removeEventListener('pointerdown', onPointerDown)
+  wrap?.removeEventListener('pointerup', onPointerUp)
+  wrap?.removeEventListener('pointercancel', onPointerUp)
   wrap?.removeEventListener('pointerleave', onPointerLeave)
   wrap?.removeEventListener('click', onClick)
   scene?.traverse((obj) => {
@@ -254,9 +303,15 @@ onBeforeUnmount(() => {
 
 <template>
   <section ref="wrapEl" class="globe">
-    <canvas ref="canvasEl"></canvas>
+    <!-- 텍스처 로딩 동안 지구가 설 자리를 지키는 표식 -->
+    <div v-if="!ready" class="globe-loading" aria-hidden="true">
+      <span class="loading-orb"></span>
+      <span class="loading-text">지구를 불러오는 중</span>
+    </div>
 
-    <p class="globe-hint">핀을 올리면 실황이, 누르면 그 나라의 도시들이 열립니다</p>
+    <canvas ref="canvasEl" :class="{ ready }"></canvas>
+
+    <p class="globe-hint">드래그로 지구를 돌리고, 핀을 누르면 그 나라의 도시들이 열립니다</p>
 
     <!-- 호버 시 핀 위에 뜨는 리퀴드 글래스 카드 -->
     <Transition name="pop">
@@ -293,6 +348,50 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   display: block;
+  /* 텍스처가 도착하면 부드럽게 떠오른다 */
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.globe canvas.ready {
+  opacity: 1;
+}
+
+/* 로딩 표식 — 지구가 뜰 자리에 은은하게 숨쉬는 원 */
+.globe-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s2);
+}
+
+.loading-orb {
+  width: min(46vh, 60vw);
+  height: min(46vh, 60vw);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: radial-gradient(circle at 38% 32%, rgba(96, 140, 210, 0.2), rgba(20, 32, 56, 0.28) 70%);
+  animation: orb-breathe 1.8s ease-in-out infinite;
+}
+
+.loading-text {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
 }
 
 .globe-hint {

@@ -19,19 +19,23 @@ const glyphStates = ['맑음', '비', '구름', '흐림']
 
     <div class="about-body">
       <p>
-        SKALA Weather는 Vue 3 실습으로 만든 지역별 날씨 대시보드입니다. 도시별 현재 기온과 날씨
-        상태를 카드로 보여주고, 상세 페이지에서는 체감 온도, 습도, 바람 같은 관측 정보를 확인할
-        수 있습니다.
+        SKALA Weather는 Vue 3 실습으로 만든 세계 날씨 대시보드입니다. 3D 지구본이나 접근성 홈에서
+        나라를 고르면 대표 도시 10곳의 실시간 날씨가 열리고, 상세 페이지에서는 체감 온도, 습도,
+        바람 같은 관측 정보와 24시간 예보, 대기질, 미니멀 지도까지 확인할 수 있습니다.
       </p>
       <p>
-        Day 1부터 3까지 만든 대시보드 컴포넌트(BaseDashboardCard, SearchBar, WeatherCard)를
-        그대로 재사용했고, Day 4에서 Vue Router로 내비게이션과 동적 경로 매칭, 지연 로딩,
-        Catch-all까지 페이지 전환 구조를 얹었습니다.
+        Day 1부터 3까지 만든 대시보드 컴포넌트 위에, Day 4의 Vue Router 페이지 전환, Day 5의
+        Pinia 전역 상태, Day 6의 Axios와 OpenWeather 실시간 연동, Day 7의 Element Plus 통일까지
+        하루치 실습을 같은 저장소에 층층이 쌓아 올렸습니다. 이전 날의 화면은 실습 아카이브에서
+        당시 모습 그대로 열어볼 수 있고, 막혔던 과정은 트러블슈팅 게시판에 기록해 두었습니다.
       </p>
       <ul class="about-stack">
-        <li>Vue 3 기반 Composition API</li>
-        <li>Vue Router의 동적 매칭과 지연 로딩</li>
-        <li>props, emits, slot을 활용한 컴포넌트 재사용</li>
+        <li>Vue 3 Composition API와 props, emits, slot을 활용한 컴포넌트 재사용</li>
+        <li>Vue Router의 동적 매칭, 지연 로딩, Catch-all과 뎁스가 드러나는 경로 설계</li>
+        <li>Pinia 전역 상태로 온도 단위 전환, localStorage 지속</li>
+        <li>Axios 인스턴스와 OpenWeather 실시간 관측, 5분 메모리 캐시와 목데이터 폴백</li>
+        <li>Element Plus 잉크 프리셋과 캐시를 인지하는 스켈레톤 로딩</li>
+        <li>three.js 지구본과 SVG 라인 드로잉으로 그린 랜드마크 50곳, 국기 엠블럼</li>
       </ul>
     </div>
 
@@ -55,7 +59,7 @@ const glyphStates = ['맑음', '비', '구름', '흐림']
         <div class="ph-item">
           <h3 class="ph-head">2. 색은 데이터에만 쓴다</h3>
           <p class="ph-text">
-            바탕은 흰색과 잉크뿐입니다. 색이 등장하는 순간은 의미가 있을 때뿐 — 기온 구간의
+            바탕은 흰색과 잉크뿐입니다. 색이 등장하는 순간은 의미가 있을 때뿐입니다. 기온 구간의
             빨강과 파랑, 국기의 홍청과 골드처럼 데이터가 색을 가질 때만 화면에 색이 생깁니다.
           </p>
           <div class="ph-stage ph-row">
@@ -178,6 +182,27 @@ const glyphStates = ['맑음', '비', '구름', '흐림']
 
 .ph-emblem {
   width: 72px;
+}
+
+/* 국기 표본 — 호버하면 홈 카드에서처럼 선이 처음부터 다시 그려진다 */
+.ph-emblem:hover :deep(.line) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: emblem-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ph-emblem:hover :deep(.seq1) {
+  animation-delay: 0.25s;
+}
+
+.ph-emblem:hover :deep(.seq2) {
+  animation-delay: 0.5s;
+}
+
+@keyframes emblem-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .ph-glyph {
