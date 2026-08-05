@@ -197,7 +197,7 @@ const gaugeColor = computed(() => {
         <!-- 도시 랜드마크가 낮은 알파로 헤더 뒤에 깔린다 -->
         <CityLandmark :city-id="city.id" class="landmark-bg" />
 
-        <p class="detail-code">{{ city.id }} 기준 {{ city.detail.observedAt }} 관측</p>
+        <p class="detail-code">{{ city.english }} 기준 {{ city.detail.observedAt }} 관측</p>
         <h1 class="detail-title">
           {{ city.name }} <span class="detail-status">{{ city.status }}</span>
         </h1>
