@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { countries } from '@/data/countries'
 import {
   hasApiKey,
+  hasCachedCity,
   fetchCityWeather,
   fetchWeatherByCoords,
   fetchPlaceName,
@@ -36,9 +37,12 @@ const countryCards = ref(
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
-// 스켈레톤은 데이터 완료 여부와 무관하게 최소 1.3초는 보여준다 (목데이터일 때도)
+// 스켈레톤 원칙: 기다림이 실재할 때만 보여준다.
+// 캐시가 전부 따뜻하면(재방문) 스켈레톤 없이 즉시 렌더하고,
+// 첫 로딩이면 최소 1.3초와 실제 로딩 중 늦은 쪽까지 보여준다
+const cacheWarm = hasApiKey && countries.every((c) => hasCachedCity(c.cities[0].english))
 const fetchDone = ref(!hasApiKey)
-const minDone = ref(false)
+const minDone = ref(cacheWarm)
 const loaded = computed(() => fetchDone.value && minDone.value)
 
 // 5개국 수도 실황을 병렬로 받아온다. 실패하면 목데이터를 유지한다
@@ -118,9 +122,11 @@ const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
 onMounted(() => {
   loadCapitals()
   loadMyPlace()
-  setTimeout(() => {
-    minDone.value = true
-  }, 1300)
+  if (!cacheWarm) {
+    setTimeout(() => {
+      minDone.value = true
+    }, 1300)
+  }
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
