@@ -129,8 +129,8 @@ onMounted(() => {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100)
-  // 극지방이 프레임 안에 들어오고 위쪽 내비 영역과도 겹치지 않는 거리
-  camera.position.set(0, 0, 3.95)
+  // 극지방이 프레임 안에 들어오고 위쪽 내비 영역과 넉넉히 떨어지는 거리
+  camera.position.set(0, 0, 4.2)
 
   const texture = new THREE.TextureLoader().load(earthTextureUrl, () => {
     ready.value = true
