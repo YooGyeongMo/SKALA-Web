@@ -8,7 +8,9 @@ const rows = troubleshooting
 
 // Day 태그 색 — 잉크 기조를 해치지 않게 회색 계열로 통일
 const tagType = (tag) =>
-  ({ 반응형: 'danger', 라우팅: 'warning', 'SPA': 'warning', '로딩 UX': 'success' })[tag] ?? 'info'
+  ({ 반응형: 'danger', 라우팅: 'warning', SPA: 'warning', '로딩 UX': 'success', 성능: 'success', 구조: 'danger' })[
+    tag
+  ] ?? 'info'
 </script>
 
 <template>
@@ -17,7 +19,7 @@ const tagType = (tag) =>
       <p class="section-label">Troubleshooting</p>
       <h1 class="trouble-title">트러블슈팅 기록</h1>
       <p class="trouble-sub">
-        실습 중 실제로 만난 문제 {{ rows.length }}건 — 각 기록은 저장소의 이슈와 PR로 연결됩니다.
+        실습 중 실제로 만난 문제 {{ rows.length }}건입니다. 각 기록은 저장소의 이슈와 PR로 연결됩니다.
       </p>
     </header>
 
