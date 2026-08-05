@@ -130,7 +130,7 @@ const lessons = [
       <template #spec>
         <ul class="spec-list">
           <li>Pinia 전역 등록: <code>createPinia()</code></li>
-          <li>configStore — state: <code>unit</code></li>
+          <li>configStore의 state: <code>unit</code></li>
           <li>getters: <code>unitSymbol</code> (℃와 ℉)</li>
           <li>actions: <code>toggleUnit</code></li>
           <li>UnitToggler를 내비게이션 바 옆에 배치</li>

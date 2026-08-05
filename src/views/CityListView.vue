@@ -93,10 +93,12 @@ const selectCity = (item, msg) => {
   ElMessage({ message: msg, type: 'success', duration: 1500 })
 }
 
+let skeletonTimer = null
+
 onMounted(() => {
   loadCities()
   if (!cacheWarm) {
-    setTimeout(() => {
+    skeletonTimer = setTimeout(() => {
       minDone.value = true
     }, 1300)
   }
@@ -107,6 +109,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearInterval(timeTimer)
+  clearTimeout(skeletonTimer)
 })
 
 // 접근성 홈에서 들어왔으면 /accessible 프리픽스를 이어가 뎁스를 유지한다

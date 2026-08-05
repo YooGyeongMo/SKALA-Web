@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { countries } from '@/data/countries'
 import {
   hasApiKey,
@@ -70,13 +70,19 @@ export function useCapitalWeather() {
     }
   }
 
+  let skeletonTimer = null
+
   onMounted(() => {
     loadCapitals()
     if (!cacheWarm) {
-      setTimeout(() => {
+      skeletonTimer = setTimeout(() => {
         minDone.value = true
       }, 1300)
     }
+  })
+
+  onBeforeUnmount(() => {
+    clearTimeout(skeletonTimer)
   })
 
   return { countryCards, isLoading, dataSource, loaded }
