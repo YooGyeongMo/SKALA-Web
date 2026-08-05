@@ -1,82 +1,20 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
-import { useRouter } from 'vue-router'
-import { countries } from '@/data/countries'
-import {
-  hasApiKey,
-  hasCachedCity,
-  fetchCityWeather,
-  fetchWeatherByCoords,
-  fetchPlaceName,
-  mapMainToGlyph,
-  normalizeDescription,
-} from '@/api/openWeather'
-import { tzClock, MOCK_TZ } from '@/utils/time'
-import { useUiStore } from '@/stores/uiStore'
+import { useRouter, RouterLink } from 'vue-router'
+import { hasApiKey, fetchWeatherByCoords, fetchPlaceName } from '@/api/openWeather'
+import { tzClock } from '@/utils/time'
+import { useCapitalWeather } from '@/composables/useCapitalWeather'
 import WeatherGlyph from '@/components/weather/WeatherGlyph.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
+import { MapPin } from 'lucide-vue-next'
 
 // three.js 지구본은 무거워서 비동기로만 불러온다
 const EarthGlobe = defineAsyncComponent(() => import('@/components/space/EarthGlobe.vue'))
-import { MapPin } from 'lucide-vue-next'
 
 const router = useRouter()
-const uiStore = useUiStore()
 
-// 나라 카드 목록 — 각 나라의 수도(첫 도시) 실황을 함께 보여준다
-const countryCards = ref(
-  countries.map((country) => ({
-    code: country.code,
-    name: country.name,
-    english: country.english,
-    capital: country.cities[0].name,
-    temp: country.cities[0].mockTemp,
-    status: country.cities[0].mockStatus,
-    glyph: null,
-    tz: MOCK_TZ[country.code],
-  })),
-)
-
-const isLoading = ref(false)
-const dataSource = ref('mock')
-
-// 스켈레톤 원칙: 기다림이 실재할 때만 보여준다.
-// 캐시가 전부 따뜻하면(재방문) 스켈레톤 없이 즉시 렌더하고,
-// 첫 로딩이면 최소 1.3초와 실제 로딩 중 늦은 쪽까지 보여준다
-const cacheWarm = hasApiKey && countries.every((c) => hasCachedCity(c.cities[0].english))
-const fetchDone = ref(!hasApiKey)
-const minDone = ref(cacheWarm)
-const loaded = computed(() => fetchDone.value && minDone.value)
-
-// 5개국 수도 실황을 병렬로 받아온다. 실패하면 목데이터를 유지한다
-const loadCapitals = async () => {
-  if (!hasApiKey) {
-    // 키가 없으면 목데이터 그대로 — 인트로는 바로 해제한다
-    uiStore.markReady()
-    return
-  }
-  isLoading.value = true
-  try {
-    const results = await Promise.all(
-      countries.map((country) => fetchCityWeather(country.cities[0].english)),
-    )
-    countryCards.value = countryCards.value.map((card, i) => ({
-      ...card,
-      temp: results[i].main.temp,
-      status: normalizeDescription(results[i].weather[0].description),
-      glyph: mapMainToGlyph(results[i].weather[0].main),
-      tz: results[i].timezone,
-    }))
-    dataSource.value = 'live'
-  } catch (error) {
-    console.error('[Axios] 수도 실황 연동 실패, 목데이터로 표시합니다:', error)
-  } finally {
-    isLoading.value = false
-    fetchDone.value = true
-    // 성공이든 실패든 첫 로딩이 끝났음을 알려 인트로를 해제한다
-    uiStore.markReady()
-  }
-}
+// 수도 실황 — 접근성 홈과 공유하는 컴포저블
+const { countryCards, isLoading, dataSource, loaded } = useCapitalWeather()
 
 // 24시간제 현재 시각 — 콜론이 1초 간격으로 깜빡인다
 const now = ref(new Date())
@@ -123,13 +61,7 @@ const hours = computed(() => String(now.value.getHours()).padStart(2, '0'))
 const minutes = computed(() => String(now.value.getMinutes()).padStart(2, '0'))
 
 onMounted(() => {
-  loadCapitals()
   loadMyPlace()
-  if (!cacheWarm) {
-    setTimeout(() => {
-      minDone.value = true
-    }, 1300)
-  }
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
@@ -163,6 +95,8 @@ const goCountry = (code) => {
           }}
         </p>
       </div>
+
+      <RouterLink to="/accessible" class="a11y-link">접근성 버전으로 보기</RouterLink>
 
       <div class="clock-wrap">
         <div class="clock" aria-label="현재 시각">
@@ -246,6 +180,23 @@ const goCountry = (code) => {
   max-width: 1040px;
   margin: 0 auto;
   padding: var(--s4) var(--s3) var(--s6) var(--s3);
+}
+
+/* 접근성 버전 링크 — 히어로 우하단 */
+.a11y-link {
+  position: absolute;
+  right: clamp(20px, 5vw, 64px);
+  bottom: var(--s2);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.a11y-link:hover,
+.a11y-link:focus-visible {
+  color: #fff;
 }
 
 /* 24시간 시계 — 히어로 우측 상단, 콜론이 1초마다 깜빡인다 */

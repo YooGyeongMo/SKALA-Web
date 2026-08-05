@@ -14,6 +14,12 @@ const router = createRouter({
   routes: [
     // 첫 화면(홈)은 나라 선택 대시보드 — 즉시 로딩한다
     { path: '/', name: 'home', component: CountryHomeView },
+    // 접근성 홈 — 모션과 깜빡임 없이 같은 데이터를 제공한다
+    {
+      path: '/accessible',
+      name: 'accessible-home',
+      component: () => import('@/views/AccessibleHomeView.vue'),
+    },
     // 나라별 대표 도시 10곳 목록
     {
       path: '/country/:countryCode',
