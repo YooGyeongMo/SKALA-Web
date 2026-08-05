@@ -11,6 +11,7 @@ import {
 } from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import { tzClock, MOCK_TZ } from '@/utils/time'
+import { ElMessage } from 'element-plus'
 import WeatherCard from '@/practices/component/WeatherCard.vue'
 import CountryEmblem from '@/components/weather/CountryEmblem.vue'
 
@@ -88,6 +89,8 @@ const selectedId = ref(null)
 const selectCity = (item, msg) => {
   selectedId.value = item.id
   selectedCityInfo.value = msg
+  // ElMessage 토스트로도 알려준다
+  ElMessage({ message: msg, type: 'success', duration: 1400, grouping: true })
 }
 
 onMounted(() => {
@@ -138,10 +141,12 @@ const goHome = () => {
         </p>
       </header>
 
-      <div class="status-bar">
-        <span class="status-label">Status</span>
-        <span class="status-text">{{ selectedCityInfo }}</span>
-      </div>
+      <el-alert class="status-glass" :closable="false">
+        <template #title>
+          <span class="status-label">Status</span>
+          <span class="status-text">{{ selectedCityInfo }}</span>
+        </template>
+      </el-alert>
 
       <el-card shadow="never" class="panel">
         <template #header>도시 검색</template>
@@ -336,10 +341,8 @@ const goHome = () => {
   border: 1px solid var(--line);
 }
 
-.status-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--s2);
+/* el-alert 위에 기존 글래스 스킨을 입힌다 */
+.status-glass {
   margin-bottom: var(--s2);
   background: linear-gradient(180deg, rgba(38, 38, 38, 0.92), rgba(12, 12, 12, 0.94));
   backdrop-filter: blur(10px) saturate(1.2);
@@ -349,8 +352,13 @@ const goHome = () => {
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     inset 0 -1px 0 rgba(0, 0, 0, 0.4),
     0 6px 18px rgba(17, 17, 17, 0.18);
-  color: var(--paper);
-  padding: 11px var(--s2);
+  padding: 5px var(--s2);
+}
+
+.status-glass :deep(.el-alert__title) {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
   font-size: 13px;
 }
 
