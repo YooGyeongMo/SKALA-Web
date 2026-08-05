@@ -145,8 +145,25 @@ const goCountry = (code) => {
 </script>
 
 <template>
-  <div class="world">
-    <header class="world-head">
+  <div class="world-page">
+    <!-- 풀블리드 히어로 — 지구본이 화면을 채우고 그 위에 타이포가 올라간다 -->
+    <section class="world-hero">
+      <EarthGlobe :countries="countryCards" @select="goCountry" />
+
+      <div class="hero-copy">
+        <h1 class="world-title">세계 날씨 대시보드</h1>
+        <p class="world-sub">나라를 고르면 대표 도시 10곳의 실시간 날씨를 볼 수 있습니다.</p>
+        <p class="data-source" :class="dataSource">
+          {{
+            isLoading
+              ? '수도 실황을 불러오는 중...'
+              : dataSource === 'live'
+                ? 'OpenWeather 실시간 관측 데이터'
+                : '목데이터 표시 중 (API 키 미설정 또는 통신 실패)'
+          }}
+        </p>
+      </div>
+
       <div class="clock-wrap">
         <div class="clock" aria-label="현재 시각">
           <span class="clock-digits">{{ hours }}</span>
@@ -157,22 +174,9 @@ const goCountry = (code) => {
           <MapPin class="place-pin" :size="14" :stroke-width="2.2" />{{ myPlace }}
         </p>
       </div>
-      <h1 class="world-title">세계 날씨 대시보드</h1>
-      <p class="world-sub">나라를 고르면 대표 도시 10곳의 실시간 날씨를 볼 수 있습니다.</p>
-      <p class="data-source" :class="dataSource">
-        {{
-          isLoading
-            ? '수도 실황을 불러오는 중...'
-            : dataSource === 'live'
-              ? 'OpenWeather 실시간 관측 데이터'
-              : '목데이터 표시 중 (API 키 미설정 또는 통신 실패)'
-        }}
-      </p>
-    </header>
+    </section>
 
-    <!-- 지구본 — 핀 호버로 실황, 클릭으로 나라 진입 -->
-    <EarthGlobe v-if="loaded" class="globe-panel" :countries="countryCards" @select="goCountry" />
-
+    <div class="world">
     <!-- 로딩 중에는 같은 톤의 스켈레톤이 자리를 지킨다 -->
     <div v-if="!loaded" class="country-grid">
       <div v-for="n in 5" :key="n" class="sk-card">
@@ -213,27 +217,44 @@ const goCountry = (code) => {
         <span class="country-cta">대표 도시 10곳 →</span>
       </button>
     </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* 풀블리드 히어로 */
+.world-hero {
+  position: relative;
+  height: calc(100vh - 140px);
+  min-height: 540px;
+  background:
+    radial-gradient(1100px 620px at 60% 44%, rgba(64, 110, 190, 0.22), transparent 62%),
+    #05070d;
+  border-bottom: 1px solid var(--line-strong);
+  overflow: hidden;
+}
+
+.hero-copy {
+  position: absolute;
+  left: clamp(20px, 6vw, 72px);
+  top: clamp(28px, 6vh, 56px);
+  color: #fff;
+  pointer-events: none;
+}
+
 .world {
   max-width: 1040px;
   margin: 0 auto;
-  padding: var(--s6) var(--s3);
+  padding: var(--s4) var(--s3) var(--s6) var(--s3);
 }
 
-.world-head {
-  position: relative;
-  margin-bottom: var(--s4);
-}
-
-/* 24시간 시계 — 우측 상단, 보조 회색, 콜론이 1초마다 깜빡인다 */
+/* 24시간 시계 — 히어로 우측 상단, 콜론이 1초마다 깜빡인다 */
 .clock-wrap {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: clamp(20px, 5vw, 64px);
+  top: clamp(28px, 6vh, 56px);
   text-align: right;
+  pointer-events: none;
 }
 
 .clock {
@@ -244,7 +265,7 @@ const goCountry = (code) => {
   font-size: 34px;
   font-weight: 300;
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.55);
   font-variant-numeric: tabular-nums;
 }
 
@@ -256,7 +277,7 @@ const goCountry = (code) => {
   margin-top: 3px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* 위치 핀 — 은은한 파랑 */
@@ -276,8 +297,9 @@ const goCountry = (code) => {
 }
 
 @media (max-width: 640px) {
-  .world-title {
-    font-size: 22px;
+  .world-hero {
+    height: 66vh;
+    min-height: 460px;
   }
 
   .clock {
@@ -290,21 +312,21 @@ const goCountry = (code) => {
 }
 
 .world-title {
-  font-size: 28px;
+  font-size: clamp(28px, 3.4vw, 40px);
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .world-sub {
-  margin-top: 4px;
-  font-size: 13px;
-  color: var(--muted);
+  margin-top: 6px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .data-source {
-  margin-top: var(--s1);
+  margin-top: var(--s2);
   font-size: 11.5px;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .data-source::before {
@@ -320,10 +342,6 @@ const goCountry = (code) => {
 
 .data-source.live::before {
   background: var(--ok);
-}
-
-.globe-panel {
-  margin-bottom: var(--s2);
 }
 
 .country-grid {

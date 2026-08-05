@@ -31,6 +31,8 @@ const wrapEl = ref(null)
 // 호버 중인 나라와 카드의 화면 좌표
 const hovered = ref(null)
 const cardPos = ref({ x: 0, y: 0 })
+// 핀이 화면 위쪽이면 카드를 아래로 뒤집어 잘리지 않게 한다
+const cardBelow = ref(false)
 
 let renderer = null
 let scene = null
@@ -38,6 +40,8 @@ let camera = null
 let globe = null
 let stars = null
 let pins = []
+let rings = []
+let elapsed = 0
 let rafId = 0
 let disposed = false
 
@@ -90,7 +94,7 @@ onMounted(() => {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100)
-  camera.position.set(0, 0.25, 3)
+  camera.position.set(0, 0.18, 2.15)
 
   const texture = new THREE.TextureLoader().load(earthTextureUrl)
   texture.colorSpace = THREE.SRGBColorSpace
@@ -103,23 +107,49 @@ onMounted(() => {
   )
   globe.add(earth)
 
-  // 나라 핀 — 흰 점, 호버하면 커진다
-  const pinGeo = new THREE.SphereGeometry(0.02, 16, 16)
+  // 나라 핀 — 유리 구슬과 바깥으로 퍼지는 광륜
+  const pinGeo = new THREE.SphereGeometry(0.03, 24, 24)
+  const ringGeo = new THREE.RingGeometry(0.042, 0.052, 40)
   props.countries.forEach((country) => {
     const coords = CAPITAL_COORDS[country.code]
     if (!coords) return
+    const position = latLonToVector3(coords[0], coords[1], 1.02)
+
     const pin = new THREE.Mesh(
       pinGeo,
-      new THREE.MeshBasicMaterial({ color: 0xffffff }),
+      new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        roughness: 0.12,
+        metalness: 0,
+        transparent: true,
+        opacity: 0.92,
+        emissive: 0x99bbff,
+        emissiveIntensity: 0.35,
+      }),
     )
-    pin.position.copy(latLonToVector3(coords[0], coords[1], 1.015))
+    pin.position.copy(position)
     pin.userData.code = country.code
     globe.add(pin)
     pins.push(pin)
+
+    const ring = new THREE.Mesh(
+      ringGeo,
+      new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide,
+      }),
+    )
+    ring.position.copy(position)
+    ring.lookAt(0, 0, 0)
+    globe.add(ring)
+    rings.push(ring)
   })
 
-  // 한국이 정면에 오도록 초기 회전
+  // 한국이 정면에 오도록 초기 회전, 화면을 채우도록 살짝 내린다
   globe.rotation.y = -2.1
+  globe.position.y = -0.12
   scene.add(globe)
 
   const sun = new THREE.DirectionalLight(0xffffff, 2.4)
@@ -157,6 +187,14 @@ onMounted(() => {
       stars.rotation.y += 0.00012
     }
 
+    // 광륜이 바깥으로 퍼지며 옅어진다
+    elapsed += 0.016
+    const phase = (elapsed % 2) / 2
+    rings.forEach((ring) => {
+      ring.scale.setScalar(1 + phase * 1.4)
+      ring.material.opacity = 0.5 * (1 - phase)
+    })
+
     // 핀 호버 판정
     raycaster.setFromCamera(pointerNdc, camera)
     const hits = raycaster.intersectObjects(pins)
@@ -173,10 +211,11 @@ onMounted(() => {
         pin.getWorldPosition(worldPos)
         worldPos.project(camera)
         const rect = wrapEl.value.getBoundingClientRect()
-        cardPos.value = {
-          x: ((worldPos.x + 1) / 2) * rect.width,
-          y: ((1 - worldPos.y) / 2) * rect.height,
-        }
+        const x = ((worldPos.x + 1) / 2) * rect.width
+        const y = ((1 - worldPos.y) / 2) * rect.height
+        cardPos.value = { x, y }
+        // 위 공간이 모자라면 카드를 핀 아래로 뒤집는다
+        cardBelow.value = y < 190
       }
     })
 
@@ -219,6 +258,7 @@ onBeforeUnmount(() => {
       <div
         v-if="hovered"
         class="pin-card"
+        :class="{ below: cardBelow }"
         :style="{ left: cardPos.x + 'px', top: cardPos.y + 'px' }"
       >
         <p class="pin-en">{{ hovered.english }}</p>
@@ -235,13 +275,10 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* 부모(히어로)가 배경과 크기를 소유한다 — 캔버스는 꽉 채우기만 */
 .globe {
-  position: relative;
-  height: 440px;
-  background:
-    radial-gradient(700px 380px at 62% 40%, rgba(64, 110, 190, 0.2), transparent 60%),
-    #05070d;
-  border: 1px solid var(--line-strong);
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 
@@ -265,7 +302,7 @@ onBeforeUnmount(() => {
 /* 리퀴드 글래스 카드 — 핀 좌표 위에 뜬다 */
 .pin-card {
   position: absolute;
-  transform: translate(-50%, calc(-100% - 16px));
+  transform: translate(-50%, calc(-100% - 18px));
   min-width: 168px;
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.14);
@@ -318,6 +355,10 @@ onBeforeUnmount(() => {
   font-size: 11px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.8);
+}
+
+.pin-card.below {
+  transform: translate(-50%, 22px);
 }
 
 .pop-enter-active,
