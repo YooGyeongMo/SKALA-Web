@@ -22,7 +22,9 @@ const goBack = () => {
     <p class="nf-path">
       요청 경로: <code>{{ route.fullPath }}</code>
     </p>
-    <button class="btn-home" @click="goBack">← 이전 화면으로 돌아가기</button>
+    <el-button type="primary" size="large" class="btn-home" @click="goBack">
+      ← 이전 화면으로 돌아가기
+    </el-button>
   </div>
 </template>
 
@@ -64,20 +66,6 @@ const goBack = () => {
 }
 
 .btn-home {
-  cursor: pointer;
-  display: inline-block;
-  padding: 10px var(--s3);
-  font-size: 13px;
   font-weight: 600;
-  background: var(--ink);
-  color: var(--paper);
-  border: 1px solid var(--line-strong);
-  text-decoration: none;
-  transition: all 0.15s;
-}
-
-.btn-home:hover {
-  background: var(--paper);
-  color: var(--ink);
 }
 </style>
