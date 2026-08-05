@@ -157,12 +157,21 @@ onBeforeUnmount(() => {
   map?.remove()
 })
 
+// 직접 진입일 때 돌아갈 자기 동선의 홈 — 접근성, 아카이브 데모 프리픽스를 모두 보존한다
+const fallbackHome = () => {
+  const path = route.path
+  if (path.startsWith('/accessible')) return '/accessible'
+  if (path.startsWith('/lessons/store/')) return '/lessons/store/home'
+  if (path.startsWith('/lessons/api/')) return '/lessons/api/home'
+  if (path.startsWith('/lessons/')) return '/lessons/home'
+  return '/'
+}
+
 const goBack = () => {
   if (window.history.state?.back) {
     router.back()
   } else {
-    // 직접 진입이면 자기 동선의 홈으로 돌아간다
-    router.push(route.path.startsWith('/accessible') ? '/accessible' : '/')
+    router.push(fallbackHome())
   }
 }
 
