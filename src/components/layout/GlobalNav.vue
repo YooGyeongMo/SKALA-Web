@@ -37,9 +37,13 @@ const setLinkEl = (el, index) => {
   if (el) linkEls.value[index] = el.$el ?? el
 }
 
+// 하위 경로(/about/philosophy 등)에서도 상위 링크를 현재 위치로 인정한다
+const isCurrent = (link) =>
+  link.to === route.path || (link.to !== '/' && route.path.startsWith(link.to + '/'))
+
 const moveIndicator = async () => {
   await nextTick()
-  const activeIndex = links.findIndex((link) => link.to === route.path)
+  const activeIndex = links.findIndex(isCurrent)
   const el = linkEls.value[activeIndex]
 
   // 내비 항목이 없는 경로(상세 페이지, 404 등)에서는 부드럽게 사라진다
@@ -89,6 +93,7 @@ onBeforeUnmount(() => {
             :key="link.to"
             :ref="(el) => setLinkEl(el, i)"
             :to="link.to"
+            :class="{ current: isCurrent(link) }"
           >
             {{ link.label }}
           </RouterLink>
@@ -296,7 +301,7 @@ onBeforeUnmount(() => {
   color: var(--ink);
 }
 
-.nav-links a.router-link-exact-active {
+.nav-links a.current {
   color: var(--ink);
   font-weight: 700;
 }
@@ -323,7 +328,7 @@ onBeforeUnmount(() => {
 }
 
 .nav-wrap.on-dark .nav-links a:hover,
-.nav-wrap.on-dark .nav-links a.router-link-exact-active {
+.nav-wrap.on-dark .nav-links a.current {
   color: #fff;
 }
 

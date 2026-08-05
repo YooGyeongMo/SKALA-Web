@@ -73,10 +73,22 @@ const router = createRouter({
       name: 'lessons-api-weather-detail',
       component: () => import('@/views/WeatherDetailView.vue'),
     },
+    // 소개 — 부모는 히어로와 탭 레이아웃, 자식이 탭 내용을 채우는 중첩 라우트
     {
       path: '/about',
-      name: 'about',
       component: () => import('@/views/WeatherAboutView.vue'),
+      children: [
+        {
+          path: '',
+          name: 'about',
+          component: () => import('@/views/AboutIntroView.vue'),
+        },
+        {
+          path: 'philosophy',
+          name: 'about-philosophy',
+          component: () => import('@/views/AboutPhilosophyView.vue'),
+        },
+      ],
     },
     // 트러블슈팅 게시판 — 실습 중 만난 문제와 해결 기록
     {
