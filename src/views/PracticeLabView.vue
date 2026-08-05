@@ -20,6 +20,7 @@ const lessons = [
   { no: '05', anchor: '#lesson-05', title: 'Store 적용', desc: 'Pinia 전역 상태' },
   { no: '06', anchor: '#lesson-06', title: '데이터 연동', desc: 'Axios와 OpenWeather' },
   { no: '07', anchor: '#lesson-07', title: 'Element Plus', desc: 'UI 라이브러리 적용' },
+  { no: '08', anchor: '#lesson-08', title: '과제 확장', desc: '메뉴와 API 확장' },
 ]
 </script>
 
@@ -205,6 +206,36 @@ const lessons = [
       </template>
       <template #preview>
         <WeatherElement />
+      </template>
+    </LessonLayout>
+
+    <div id="lesson-08" class="lesson-anchor"></div>
+    <LessonLayout index="08" title="과제 확장" subtitle="메뉴 추가와 활용 API 확장" toc-href="#archive-top">
+      <template #spec>
+        <ul class="spec-list">
+          <li>메뉴 추가: 홈(3D 지구본), 홈 2(접근성 카드), 소개(디자인 철학 탭), 트러블슈팅 게시판</li>
+          <li>동선 확장: 나라 선택 → 대표 도시 10곳 → 상세의 3단 구조</li>
+          <li>API 추가: 24시간 예보 <code>forecast</code> (3시간 간격 차트)</li>
+          <li>API 추가: 대기질 <code>air_pollution</code> (AQI, PM10, PM2.5)</li>
+          <li>API 추가: 역지오코딩 <code>geo/1.0/reverse</code> (내 위치 한글 지명)</li>
+          <li>지도 확장: CARTO Positron 타일로 상세에 미니멀 지도</li>
+        </ul>
+        <p class="spec-note">기본 과제의 현재 날씨 API 하나에서 네 갈래로 넓혔고, 확장 결과물이 곧 이 사이트입니다</p>
+      </template>
+      <template #preview>
+        <div class="router-demo">
+          <p class="demo-title">확장 동선 바로가기</p>
+          <p class="demo-desc">
+            추가한 메뉴와 API는 아래 동선에서 그대로 확인할 수 있습니다. 상세 화면에 예보
+            차트, 대기질 게이지, 지도가 함께 있습니다.
+          </p>
+          <div class="demo-links">
+            <RouterLink to="/" class="demo-link">3D 지구본 홈 /</RouterLink>
+            <RouterLink to="/accessible" class="demo-link">접근성 홈 /accessible</RouterLink>
+            <RouterLink to="/country/kr" class="demo-link">나라 목록 /country/kr</RouterLink>
+            <RouterLink to="/troubleshooting" class="demo-link">트러블슈팅 /troubleshooting</RouterLink>
+          </div>
+        </div>
       </template>
     </LessonLayout>
   </div>
