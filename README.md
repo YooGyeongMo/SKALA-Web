@@ -1,7 +1,7 @@
 # SKALA-Web
 
 SKALA Full-Stack Engineering — Vue.js 실습 저장소.
-Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router, Day 5 Pinia, Day 6 Axios를 얹어,
+Day 1~3 실습(Vue 문법, Composition API, Component)에 Day 4 Vue Router, Day 5 Pinia, Day 6 Axios, Day 7 Element Plus를 얹어,
 나라 선택 홈(`/`) · 나라별 도시 목록(`/country/:countryCode`) · 상세(`/weather/:cityId`) · 소개(`/about`) · 실습 아카이브(`/lessons`)로 구성했습니다. 한국, 중국, 일본, 독일, 미국 5개국의 대표 도시 50곳을 실시간으로 보여줍니다.
 
 ## 실행 방법
@@ -38,7 +38,9 @@ src/
 ├── stores/
 │   └── configStore.js       # Pinia 전역 상태 — 온도 단위(unit/unitSymbol/toggleUnit)
 ├── api/
-│   └── openWeather.js       # Axios 인스턴스와 OpenWeather 조회 함수, 글리프 매핑
+│   └── openWeather.js       # Axios 인스턴스와 OpenWeather 조회 함수, 캐시, 글리프 매핑
+├── data/
+│   └── troubleshooting.js   # 트러블슈팅 기록 — 이슈·PR 연결 (게시판 데이터)
 ├── views/                   # 페이지 단위 컴포넌트
 │   ├── CountryHomeView.vue      # / — 나라 선택 대시보드 (수도 실황과 윤곽 드로잉)
 │   ├── CityListView.vue         # /country/:countryCode — 나라별 대표 도시 10곳

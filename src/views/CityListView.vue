@@ -2,7 +2,13 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { findCountryByCode } from '@/data/countries'
-import { hasApiKey, fetchCityWeather, mapMainToGlyph, normalizeDescription } from '@/api/openWeather'
+import {
+  hasApiKey,
+  hasCachedCity,
+  fetchCityWeather,
+  mapMainToGlyph,
+  normalizeDescription,
+} from '@/api/openWeather'
 import { useWeatherSearch } from '@/composables/useWeatherSearch'
 import { tzClock, MOCK_TZ } from '@/utils/time'
 import BaseDashboardCard from '@/practices/component/BaseDashboardCard.vue'
@@ -35,9 +41,11 @@ const { searchQuery, filteredWeatherList } = useWeatherSearch(weatherList)
 const isLoading = ref(false)
 const dataSource = ref('mock')
 
-// 로딩 동안 스켈레톤을 보여주고(최소 1.3초), 완료 후 카드가 차례로 등장한다
+// 스켈레톤 원칙: 캐시가 전부 따뜻하면 즉시 렌더, 첫 로딩이면 최소 1.3초
+const cacheWarm =
+  Boolean(country) && hasApiKey && country.cities.every((c) => hasCachedCity(c.english))
 const fetchDone = ref(!hasApiKey || !country)
-const minDone = ref(false)
+const minDone = ref(cacheWarm)
 const loaded = computed(() => fetchDone.value && minDone.value)
 
 // 도시 10곳의 실황을 병렬로 받아온다
@@ -86,9 +94,11 @@ const selectCity = (item, msg) => {
 
 onMounted(() => {
   loadCities()
-  setTimeout(() => {
-    minDone.value = true
-  }, 1300)
+  if (!cacheWarm) {
+    setTimeout(() => {
+      minDone.value = true
+    }, 1300)
+  }
   timeTimer = setInterval(() => {
     now.value = Date.now()
   }, 30000)

@@ -12,6 +12,7 @@ const links = [
   { to: '/', label: '홈' },
   { to: '/about', label: '소개' },
   { to: '/lessons', label: '실습 아카이브' },
+  { to: '/troubleshooting', label: '트러블슈팅' },
 ]
 
 const route = useRoute()
@@ -376,6 +377,10 @@ onBeforeUnmount(() => {
 
 .app.entered .nav-links a:nth-child(3) {
   animation-delay: 0.65s;
+}
+
+.app.entered .nav-links a:nth-child(4) {
+  animation-delay: 0.75s;
 }
 
 .app.entered .nav-right :deep(.unit-toggler) {

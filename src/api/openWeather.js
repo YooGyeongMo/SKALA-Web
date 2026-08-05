@@ -17,10 +17,19 @@ const client = axios.create({
   timeout: 5000,
 })
 
+// 캐시에 유효한 데이터가 있는지 확인한다.
+// 스켈레톤을 보여줄지(첫 로딩) 건너뛸지(재방문) 판단할 때 쓴다.
 // 간단한 메모리 캐시 — 같은 도시를 5분 안에 다시 조회하면 네트워크 없이 즉시 반환한다.
 // 화면 사이를 오갈 때 목데이터가 깜빡였다가 실데이터로 바뀌는 현상을 없앤다.
 const cache = new Map()
 const CACHE_TTL = 5 * 60 * 1000
+
+// 캐시에 유효한 데이터가 있는지 확인한다.
+// 스켈레톤을 보여줄지(첫 로딩) 건너뛸지(재방문) 판단할 때 쓴다.
+export const hasCachedCity = (englishName) => {
+  const hit = cache.get(englishName)
+  return Boolean(hit && Date.now() - hit.ts < CACHE_TTL)
+}
 
 /**
  * 도시 영문명으로 현재 날씨를 조회한다.

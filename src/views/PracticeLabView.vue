@@ -4,6 +4,7 @@ import WeatherMockup from '@/practices/mockup/WeatherMockup.vue'
 import WeatherComposition from '@/practices/composition/WeatherComposition.vue'
 import WeatherParent from '@/practices/component/WeatherParent.vue'
 import UnitToggler from '@/components/weather/UnitToggler.vue'
+import WeatherElement from '@/practices/element/WeatherElement.vue'
 import { useConfigStore } from '@/stores/configStore'
 
 // 05 스토어 데모 — 아래 토글과 내비의 토글이 같은 전역 상태를 바라본다
@@ -18,6 +19,7 @@ const lessons = [
   { no: '04', anchor: '#lesson-04', title: 'Router 활용', desc: '페이지 전환과 동적 매칭' },
   { no: '05', anchor: '#lesson-05', title: 'Store 적용', desc: 'Pinia 전역 상태' },
   { no: '06', anchor: '#lesson-06', title: '데이터 연동', desc: 'Axios와 OpenWeather' },
+  { no: '07', anchor: '#lesson-07', title: 'Element Plus', desc: 'UI 라이브러리 적용' },
 ]
 </script>
 
@@ -183,6 +185,26 @@ const lessons = [
             <RouterLink to="/lessons/api/weather/city_01" class="demo-link">서울 실시간 관측 /lessons/api/weather/city_01</RouterLink>
           </div>
         </div>
+      </template>
+    </LessonLayout>
+
+    <div id="lesson-07" class="lesson-anchor"></div>
+    <LessonLayout index="07" title="Element Plus 활용" subtitle="UI 라이브러리로 3일차 과제 개선" toc-href="#archive-top">
+      <template #spec>
+        <ul class="spec-list">
+          <li>검색 입력: <code>input</code> → <code>el-input</code> (clearable)</li>
+          <li>공통 카드: BaseDashboardCard → <code>el-card</code></li>
+          <li>온도 칩: 자작 칩 → <code>el-tag</code> (구간별 타입)</li>
+          <li>버튼: 자작 버튼 → <code>el-button</code></li>
+          <li>알림: <code>window.alert</code> → <code>ElMessageBox</code></li>
+          <li>선택 피드백: <code>ElMessage</code> 토스트 추가</li>
+          <li>상태바: 자작 스트립 → <code>el-alert</code></li>
+          <li>빈 결과: 안내 문구 → <code>el-empty</code></li>
+        </ul>
+        <p class="spec-note">기능은 3일차와 동일하고 부품만 라이브러리로 교체했습니다</p>
+      </template>
+      <template #preview>
+        <WeatherElement />
       </template>
     </LessonLayout>
   </div>

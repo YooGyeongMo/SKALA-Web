@@ -72,6 +72,12 @@ const router = createRouter({
       name: 'about',
       component: () => import('@/views/WeatherAboutView.vue'),
     },
+    // 트러블슈팅 게시판 — 실습 중 만난 문제와 해결 기록
+    {
+      path: '/troubleshooting',
+      name: 'troubleshooting',
+      component: () => import('@/views/TroubleshootingView.vue'),
+    },
     // Catch-all Route — 위 규칙에 걸리지 않는 모든 경로는 404 페이지로
     {
       path: '/:pathMatch(.*)*',
