@@ -1,0 +1,53 @@
+# PR 검증 — 린트와 빌드가 통과해야 머지할 수 있다.
+# PR이 열리거나 갱신되면 자동으로 돌고, PR 코멘트에 /ci 를 남기면 수동으로 다시 돈다.
+name: CI
+
+on:
+  pull_request:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  test:
+    name: CI Test
+    # 자동 실행(PR 이벤트) 또는 PR 코멘트가 /ci 로 시작할 때만
+    if: >
+      github.event_name == 'pull_request' ||
+      (github.event.issue.pull_request && startsWith(github.event.comment.body, '/ci'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 코멘트로 트리거되면 해당 PR의 최신 커밋을 받아 검사한다
+          ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 린트
+        run: npm run lint
+
+      - name: 빌드
+        run: npm run build
+
+      - name: 통과 코멘트
+        if: github.event_name == 'issue_comment' && success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment ${{ github.event.issue.number }} --repo ${{ github.repository }} --body "CI Test 통과. 린트와 빌드 모두 성공했습니다."
+
+      - name: 실패 코멘트
+        if: github.event_name == 'issue_comment' && failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment ${{ github.event.issue.number }} --repo ${{ github.repository }} --body "CI Test 실패. Actions 로그를 확인해 주세요."
